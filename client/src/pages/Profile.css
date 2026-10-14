@@ -1,0 +1,115 @@
+.profile-container {
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background: #f0f5ff;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+.profile-card {
+  background: #fff;
+  padding: 32px;
+  border-radius: 12px;
+  border: 1px solid #e3e9f5;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 14px rgba(29, 79, 184, 0.08);
+}
+.profile-card h2 {
+  margin-top: 0;
+  color: #0b2f73;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.profile-info-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.profile-avatar-box {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1d4fb8;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 36px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #374151;
+}
+.profile-details p { margin: 0; }
+.badge-role {
+  background: #e0edff;
+  color: #1d4fb8;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.upload-form {
+  border-top: 1px solid #e3e9f5;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.upload-form label { font-size: 13px; font-weight: 600; color: #374151; }
+.upload-form input { font-size: 13px; }
+.btn-upload {
+  background: #1d4fb8;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.btn-upload:hover { background: #0b2f73; }
+.btn-logout {
+  width: 100%;
+  background: #fde6e4;
+  color: #b42318;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+}
+.btn-logout:hover { background: #fcdadc; }
+.alert-success {
+  background: #e6f4ea;
+  color: #137333;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.alert-error {
+  background: #fde6e4;
+  color: #b42318;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  text-align: center;
+}
