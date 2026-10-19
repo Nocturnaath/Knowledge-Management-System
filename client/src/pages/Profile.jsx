@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 import './Profile.css';
 
 export default function Profile() {
@@ -31,7 +32,7 @@ export default function Profile() {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile/photo', {
+      const res = await fetch(`${API_URL}/api/auth/profile/photo`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData
@@ -63,7 +64,7 @@ export default function Profile() {
         <div className="profile-info-section">
           <div className="profile-avatar-box">
             {user.photoUrl ? (
-              <img src={`http://localhost:5000${user.photoUrl}`} alt="Avatar" className="avatar-img" />
+              <img src={`${API_URL}${user.photoUrl}`} alt="Avatar" className="avatar-img" />
             ) : (
               <div className="avatar-placeholder">{user.nama ? user.nama.charAt(0) : 'U'}</div>
             )}

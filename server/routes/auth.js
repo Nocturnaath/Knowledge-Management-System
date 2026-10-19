@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const db = require('../config/db');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -17,6 +20,7 @@ router.post('/login', async (req, res) => {
   }
 
   try {
+    console.log(`Mencoba login dengan username: ${username}`);
     // Ambil data user beserta nama divisinya
     const query = `
       SELECT u.id, u.username, u.password, u.nama_lengkap, u.email, u.role, u.foto_url,
@@ -26,7 +30,7 @@ router.post('/login', async (req, res) => {
       WHERE u.username = ?
     `;
     const [rows] = await db.query(query, [username]);
-
+    console.log('Hasil user ditemukan:', rows.length);
     if (rows.length === 0) {
       return res.status(401).json({ 
         success: false, 
@@ -104,6 +108,35 @@ router.get('/me', verifyToken, async (req, res) => {
   } catch (error) {
     console.error('Error ambil profil:', error);
     res.status(500).json({ success: false, message: 'Terjadi kesalahan mengambil profil.' });
+  }
+});
+
+// 3. Endpoint Unggah Foto Profil: POST /api/auth/profile/photo (field form: "foto")
+const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: UPLOAD_DIR,
+    filename: (req, file, cb) =>
+      cb(null, `u${req.user.id}-${Date.now()}${path.extname(file.originalname).toLowerCase()}`)
+  }),
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB
+  fileFilter: (req, file, cb) =>
+    file.mimetype.startsWith('image/') ? cb(null, true) : cb(new Error('File harus berupa gambar.'))
+});
+
+router.post('/profile/photo', verifyToken, upload.single('foto'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'Pilih foto terlebih dahulu.' });
+  }
+  try {
+    const photoUrl = `/uploads/${req.file.filename}`;
+    await db.query('UPDATE users SET foto_url = ? WHERE id = ?', [photoUrl, req.user.id]);
+    res.json({ success: true, photoUrl });
+  } catch (error) {
+    console.error('Error simpan foto:', error);
+    res.status(500).json({ success: false, message: 'Gagal menyimpan foto profil.' });
   }
 });
 
