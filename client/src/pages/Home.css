@@ -1,0 +1,36 @@
+/* Pembungkus seluruh halaman: tersusun ke bawah (header, hero, fitur) */
+.home { min-height: 100vh; display: flex; flex-direction: column; background: #fff; color: #111827; color-scheme: light; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; text-align: left; }
+
+/* ----- Header (selebar layar) ----- */
+.home-header { display: flex; align-items: center; gap: 12px; height: 60px; padding: 0 32px; background: #fff; box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12); }
+.logo-ico { width: 40px; height: 32px; }
+.logo { height: 40px; width: auto; display: block; }
+
+/* ----- Bagian utama: selebar layar, teks di kiri, gambar di kanan ----- */
+.hero { flex: 1; display: grid; grid-template-columns: 1.15fr 1fr; align-items: center; gap: 24px; width: 100%; padding: 48px 32px; }
+/* Lebar kotak teks mengikuti lebar judul; deskripsi dan tombol rata tengah terhadap judul */
+.hero-text { width: fit-content; max-width: 100%; }
+.hero-text h1 { margin: 0 0 40px; font-size: clamp(26px, 3vw, 44px); line-height: 1.2; color: #0a0a0f; white-space: nowrap; }
+.hero-text p { margin: 0 auto 56px; max-width: 78%; text-align: center; font-size: 16px; line-height: 1.5; color: #111827; }
+.btn-masuk { display: block; margin: 0 auto; background: #0f5bd8; color: #fff; border: 0; border-radius: 8px; padding: 14px 44px; font-size: 17px; font-weight: 700; cursor: pointer; font-family: inherit; }
+.btn-masuk:hover { background: #0b47ad; }
+
+.hero-art-wrap { display: grid; place-items: center; }
+.hero-art { width: 100%; max-width: 520px; height: auto; }
+
+/* ----- Tiga fitur di bawah (selebar layar) ----- */
+.features { background: #f1f5fc; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 32px 48px; }
+.feat { display: flex; gap: 14px; align-items: center; }
+.feat-ico { flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%; background: #dbe8fb; display: grid; place-items: center; }
+.feat-ico svg { width: 30px; height: 30px; }
+.feat h3 { margin: 0 0 4px; font-size: 14px; color: #0a0a0f; }
+.feat p { margin: 0; font-size: 12.5px; line-height: 1.4; color: #111827; }
+
+/* ----- Layar kecil: susun jadi satu kolom ----- */
+@media (max-width: 820px) {
+  .hero { grid-template-columns: 1fr; padding: 32px 20px; }
+  .hero-text { width: 100%; }
+  .hero-text h1 { white-space: normal; font-size: 30px; text-align: center; }
+  .hero-text p { max-width: 100%; }
+  .features { grid-template-columns: 1fr; padding: 24px 20px; }
+}

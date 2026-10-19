@@ -1,4 +1,5 @@
 import React from 'react';
+import Home from './pages/Home';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
@@ -12,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
     return <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>Memuat sesi...</div>;
   }
   
-  return user ? children : <Navigate to="/login" replace />;
+  return user ? children : <Navigate to="/" replace />;
 };
 
 function AppRoutes() {
@@ -24,6 +25,15 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* BARU: alamat "/" = homepage. Kalau sudah login, langsung ke Profil */}
+      <Route path="/" 
+      element={!user ? <Home /> : <Navigate to="/profile" replace />} />
+
+      {/* UBAH: alamat yang tidak dikenal -> Profil (jika login) atau Homepage (jika belum) */}
+      <Route
+      Path="*"
+      element={<Navigate to={user ? "/profile" : "/"} replace />}
+      />
       <Route 
         path="/login" 
         element={!user ? <Login /> : <Navigate to="/profile" replace />} 
