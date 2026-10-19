@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
@@ -10,6 +11,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
@@ -20,15 +22,18 @@ export default function Login() {
     try {
       const res = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
+
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok && data.success) {
         login(data.token, data.user);
       } else {
-        setError(data.message || 'Login gagal.');
+        setError(data.message || 'Login gagal. Periksa akun Anda.');
       }
     } catch (err) {
       setError('Gagal terhubung ke server backend.');
@@ -38,56 +43,99 @@ export default function Login() {
   };
 
   return (
-    <div className="login-wrapper">
-      <div className="login-card">
+    <main className="login-wrapper">
+      <section className="login-card">
+        {/* Logo sudah berisi tulisan C-BIJAK */}
         <div className="login-brand">
-          <h2>C-BIJAK</h2>
-          <p>Basis Informasi dan Jejak Arsip Kerja</p>
+          <img
+            src="/logo-cbijak.png"
+            alt="Logo C-BIJAK"
+            className="login-logo"
+          />
         </div>
 
-        {error && <div className="login-error">{error}</div>}
+        <header className="login-heading">
+          <h1>Selamat Datang</h1>
+          <p>Masuk untuk melanjutkan ke akun anda</p>
+        </header>
+
+        {error && (
+          <div className="login-error" role="alert">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="input-group">
-            <label>Username</label>
+            <label className="sr-only" htmlFor="username">
+              ID Karyawan
+            </label>
+
             <input
+              id="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Contoh: nanami.it"
+              placeholder="ID Karyawan"
+              autoComplete="username"
               required
             />
           </div>
 
-          <div className="input-group">
-            <label>Kata Sandi</label>
-            <div className="password-container">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-              <button
-                type="button"
-                className="eye-btn"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
+          <div className="input-group password-group">
+            <label className="sr-only" htmlFor="password">
+              Kata Sandi
+            </label>
+
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Kata Sandi"
+              autoComplete="current-password"
+              required
+            />
+
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={
+                showPassword
+                  ? 'Sembunyikan kata sandi'
+                  : 'Tampilkan kata sandi'
+              }
+            >
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
+            </button>
           </div>
 
-          <button type="submit" className="btn-login-submit" disabled={loading}>
-            {loading ? 'Memproses...' : 'Masuk ke Sistem'}
+          <div className="forgot-password">
+            <button
+              type="button"
+              onClick={() =>
+                setError('Fitur lupa kata sandi belum tersedia.')
+              }
+            >
+              Lupa Kata Sandi?
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            className="btn-login-submit"
+            disabled={loading}
+          >
+            {loading ? 'Memproses...' : 'Masuk'}
           </button>
         </form>
-
-        <div className="login-hints">
-          <small>Gunakan akun yang sudah terdaftar di database sistem.</small>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
+

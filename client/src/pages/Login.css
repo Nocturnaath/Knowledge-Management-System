@@ -1,81 +1,296 @@
+.login-wrapper,
+.login-wrapper * {
+  box-sizing: border-box;
+}
+
+/* ==================================================
+    LATAR BELAKANG HALAMAN
+   Memusatkan kartu dan menampilkan foto kantor.
+   ================================================== */
 .login-wrapper {
+  min-height: 100vh;
+  width: 100%;
   display: grid;
   place-items: center;
-  min-height: 100vh;
-  background: #f0f5ff;
-  font-family: system-ui, sans-serif;
+  padding: 32px 20px;
+
+  background:
+    linear-gradient(
+      rgba(8, 20, 35, 0.18),
+      rgba(8, 20, 35, 0.18)
+    ),
+    url('/bg_welcome.png') center center / cover no-repeat;
+
+  font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ==================================================
+   KARTU LOGIN
+   ================================================== */
 .login-card {
-  background: #fff;
-  padding: 32px;
-  border-radius: 12px;
-  border: 1px solid #3b60aaee;
   width: 100%;
-  max-width: 380px;
-  box-shadow: 0 4px 14px rgba(62, 98, 177, 0.861);
+  max-width: 510px;
+  padding: 42px 51px 72px;
+
+  background: #ffffff;
+  border: 1px solid rgba(230, 234, 240, 0.8);
+  border-radius: 18px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
 }
+
+/* ==================================================
+   LOGO C-BIJAK
+   ================================================== */
 .login-brand {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #294271;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
 }
-.login-brand h2 { margin: 0; font-size: 24px; }
-.login-brand p { margin: 4px 0 0; font-size: 12px; color: #3b6dd0; }
-.login-error {
-  background: #fde6e4;
-  color: #b42318;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-align: center;
+
+.login-logo {
+  display: block;
+  width: 160px;
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
 }
+
+/* ==================================================
+    JUDUL DAN DESKRIPSI
+   ================================================== */
+.login-heading {
+  margin: 59px 0 34px;
+  text-align: center;
+  color: #080808;
+}
+
+.login-heading h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 750;
+}
+
+.login-heading p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+/* ==================================================
+   INPUT USERNAME DAN PASSWORD
+   ================================================== */
 .input-group {
-  margin-bottom: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  position: relative;
+  margin-bottom: 32px;
 }
-.input-group label { font-size: 13px; font-weight: 600; color: #374151; }
+
 .input-group input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #000104;
-  font-size: 14px;
-}
-.btn-login-submit {
+  display: block;
   width: 100%;
-  background: #1d4fb8;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
+  height: 67px;
+  padding: 0 39px;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 10px;
+  outline: none;
+
+  background: #ffffff;
+  color: #202938;
+  font-family: inherit;
+  font-size: 16px;
+
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.btn-login-submit:hover { background: #0b2f73; }
-.login-hints {
-  margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px solid #e3e9f5;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+
+/* Warna placeholder saat input masih kosong. */
+.input-group input::placeholder {
+  color: #b6b6b6;
+  opacity: 1;
 }
-.login-hints small { color: #010206; font-size: 11px; }
-.password-container { position: relative; display: flex; }
-.password-container input { width: 100%; padding-right: 42px; }
+
+/* Efek fokus saat pengguna memilih input. */
+.input-group input:focus {
+  border-color: #1260dc;
+  box-shadow: 0 0 0 3px rgba(18, 96, 220, 0.1);
+}
+
+/* ==================================================
+   TOMBOL LIHAT / SEMBUNYIKAN PASSWORD
+   Ikon ditempatkan di sisi kanan input kata sandi.
+   ================================================== */
+.password-group {
+  margin-bottom: 0;
+}
+
+.password-group input {
+  padding-right: 52px;
+}
+
 .eye-btn {
   position: absolute;
-  right: 10px;
   top: 50%;
+  right: 16px;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #446fc5;
+
   display: grid;
   place-items: center;
-  padding: 0;
+  padding: 5px;
+
+  border: none;
+  background: transparent;
+  color: #667085;
+  cursor: pointer;
 }
+
+/* Indikator fokus untuk pengguna keyboard. */
+.eye-btn:focus-visible {
+  outline: 2px solid #1260dc;
+  border-radius: 4px;
+}
+
+/* ==================================================
+   LUPA KATA SANDI
+   ================================================== */
+.forgot-password {
+  display: flex;
+  justify-content: flex-end;
+  margin: 27px 0 21px;
+}
+
+.forgot-password button {
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  color: #103d80;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.forgot-password button:hover {
+  text-decoration: underline;
+}
+
+/* ==================================================
+    TOMBOL MASUK
+   ================================================== */
+.btn-login-submit {
+  width: 100%;
+  min-height: 53px;
+  padding: 12px 18px;
+
+  border: none;
+  border-radius: 9px;
+  background: #1059d9;
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+/* Menggelapkan tombol ketika kursor berada di atasnya. */
+.btn-login-submit:hover:not(:disabled) {
+  background: #0848b7;
+}
+
+/* Efek ketika tombol ditekan. */
+.btn-login-submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Mencegah tombol diklik selama proses login. */
+.btn-login-submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* ==================================================
+    PESAN ERROR
+   ================================================== */
+.login-error {
+  margin: -12px 0 20px;
+  padding: 12px 14px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b42318;
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ==================================================
+   LABEL AKSESIBILITAS
+   ================================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==================================================
+   12. RESPONSIVE DESIGN
+   Menyesuaikan ukuran kartu pada layar kecil.
+   ================================================== */
+@media (max-width: 600px) {
+  .login-wrapper {
+    padding: 20px 16px;
+  }
+
+  .login-card {
+    max-width: 430px;
+    padding: 32px 24px 40px;
+    border-radius: 15px;
+  }
+
+  .login-logo {
+    width: 145px;
+  }
+
+  .login-heading {
+    margin: 44px 0 30px;
+  }
+
+  .login-heading h1 {
+    font-size: 26px;
+  }
+
+  .login-heading p {
+    font-size: 15px;
+  }
+
+  .input-group input {
+    height: 58px;
+    padding-left: 20px;
+    font-size: 15px;
+  }
+
+  .password-group input {
+    padding-right: 48px;
+  }
+
+  .forgot-password button {
+    font-size: 15px;
+  }
+
+  .btn-login-submit {
+    min-height: 50px;
+    font-size: 19px;
+  }
+}
+
