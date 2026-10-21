@@ -1,36 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './Profile.css';
 
 export default function Profile() {
-  const { user, token, updateUserPhoto, logout } = useAuth();
+  const { user, token, updateUserPhoto } = useAuth();
+  const fileInputRef = useRef(null);
+
   const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Bersihkan alamat pratinjau agar tidak memenuhi memori
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
+
   if (!user) {
-    return <div className="profile-container">Silakan login terlebih dahulu.</div>;
+    return (
+      <div className="profile-page">
+        <p>Silakan login terlebih dahulu.</p>
+      </div>
+    );
   }
 
+  // Memilih foto: tampilkan pratinjau (belum disimpan)
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files?.[0];
     setError('');
     setMessage('');
-  };
+    if (!file) return;
 
-  const handleUpload = async (e) => {
-    e.preventDefault();
-    if (!selectedFile) {
-      setError('Pilih foto terlebih dahulu.');
+    if (!file.type.startsWith('image/')) {
+      setError('File harus berupa gambar.');
+      e.target.value = '';
       return;
     }
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Ukuran foto maksimal 2 MB.');
+      e.target.value = '';
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  // Tombol "Simpan Perubahan": kirim foto ke server
+  const handleSimpan = async () => {
+    if (!selectedFile) return;
 
     const formData = new FormData();
     formData.append('foto', selectedFile);
 
     setLoading(true);
+    setError('');
+    setMessage('');
+
     try {
       const res = await fetch(`${API_URL}/api/auth/profile/photo`, {
         method: 'POST',
@@ -39,56 +69,87 @@ export default function Profile() {
       });
       const data = await res.json();
 
-      if (data.success) {
-        setMessage('Foto profil berhasil diperbarui!');
-        updateUserPhoto(data.photoUrl);
-        setSelectedFile(null);
-      } else {
+      if (!res.ok || !data.success) {
         setError(data.message || 'Gagal mengunggah foto.');
+        return;
       }
+
+      updateUserPhoto(data.photoUrl);
+      setMessage('Foto profil berhasil diperbarui!');
+      setSelectedFile(null);
+      setPreview(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
-      setError('Terjadi kesalahan pada server.');
+      setError('Tidak dapat terhubung ke server.');
     } finally {
       setLoading(false);
     }
   };
 
+  // Urutan foto: pratinjau (baru dipilih) -> foto dari server -> huruf awal nama
+  const photoSrc = preview || (user.photoUrl ? `${API_URL}${user.photoUrl}` : null);
+  const initial = user.nama?.trim()?.charAt(0)?.toUpperCase() || 'U';
+
   return (
-    <div className="profile-container">
-      <div className="profile-card">
-        <h2>Profil Pengguna C-BIJAK</h2>
-        
-        {message && <div className="alert-success">{message}</div>}
-        {error && <div className="alert-error">{error}</div>}
+    <main className="profile-page">
+      <h1>Profil Saya</h1>
+      <p className="sub">
+        Hanya bisa mengubah foto. Informasi lainnya adalah informasi tetap.
+      </p>
 
-        <div className="profile-info-section">
-          <div className="profile-avatar-box">
-            {user.photoUrl ? (
-              <img src={`${API_URL}${user.photoUrl}`} alt="Avatar" className="avatar-img" />
-            ) : (
-              <div className="avatar-placeholder">{user.nama ? user.nama.charAt(0) : 'U'}</div>
-            )}
+      {message && <div className="alert-success" role="status">{message}</div>}
+      {error && <div className="alert-error" role="alert">{error}</div>}
+
+      <section className="profile-box">
+        {/* Kolom kiri: foto profil */}
+        <div className="pf-left">
+          <div className="pf-avatar">
+            {photoSrc ? <img src={photoSrc} alt="Foto profil pengguna" /> : <span>{initial}</span>}
           </div>
 
-          <div className="profile-details">
-            <p><strong>Nama Lengkap:</strong> {user.nama}</p>
-            <p><strong>Username:</strong> {user.username}</p>
-            <p><strong>Email:</strong> {user.email || '-'}</p>
-            <p><strong>Divisi:</strong> {user.divisi}</p>
-            <p><strong>Role Sistem:</strong> <span className="badge-role">{user.role}</span></p>
-          </div>
+          <input
+            ref={fileInputRef}
+            className="pf-file-input"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            aria-label="Pilih foto profil"
+          />
+          <button
+            type="button"
+            className="btn-foto"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={loading}
+          >
+            Ubah Foto
+          </button>
         </div>
 
-        <form onSubmit={handleUpload} className="upload-form">
-          <label>Ganti Foto Profil (Maks. 2MB)</label>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          <button type="submit" className="btn-upload" disabled={loading}>
-            {loading ? 'Mengunggah...' : 'Unggah Foto Baru'}
-          </button>
-        </form>
+        {/* Kolom kanan: data profil (tidak bisa diedit) */}
+        <div className="pf-right">
+          <div className="pf-field">
+            <label htmlFor="profile-nama">Nama Lengkap*</label>
+            <input id="profile-nama" type="text" value={user.nama || '-'} disabled readOnly />
+          </div>
+          <div className="pf-field">
+            <label htmlFor="profile-divisi">Divisi*</label>
+            <input id="profile-divisi" type="text" value={user.divisi || '-'} disabled readOnly />
+          </div>
+          <div className="pf-field">
+            <label htmlFor="profile-jabatan">Jabatan*</label>
+            <input id="profile-jabatan" type="text" value={user.jabatan || '-'} disabled readOnly />
+          </div>
 
-        <button onClick={logout} className="btn-logout">Keluar (Logout)</button>
-      </div>
-    </div>
+          <button
+            type="button"
+            className="btn-simpan"
+            onClick={handleSimpan}
+            disabled={!selectedFile || loading}
+          >
+            {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </button>
+        </div>
+      </section>
+    </main>
   );
 }

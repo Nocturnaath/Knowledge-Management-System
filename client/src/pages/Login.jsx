@@ -6,7 +6,7 @@ import { API_URL } from '../config';
 import './Login.css';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
+  const [ssoId, setSsoId] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -25,7 +25,9 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(
+          { sso_id: ssoId, 
+          password: password }),
       });
 
       const data = await res.json();
@@ -74,8 +76,9 @@ export default function Login() {
             <input
               id="username"
               type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              aria-label="ID Karyawan"
+              value={ssoId}
+              onChange={(e) => setSsoId(e.target.value)}
               placeholder="ID Karyawan"
               autoComplete="username"
               required

@@ -1,115 +1,208 @@
-.profile-container {
-  display: grid;
-  place-items: center;
-  padding: 40px 20px;
-  background: #f0f5ff;
-  min-height: 100vh;
-  font-family: system-ui, sans-serif;
-}
-.profile-card {
-  background: #fff;
-  padding: 32px;
-  border-radius: 12px;
-  border: 1px solid #e3e9f5;
+/* ==================================================
+   HALAMAN PROFIL SAYA
+   ================================================== */
+.profile-page {
   width: 100%;
-  max-width: 500px;
-  box-shadow: 0 4px 14px rgba(29, 79, 184, 0.08);
+  color: #111827;
+  font-family: Arial, Helvetica, sans-serif;
 }
-.profile-card h2 {
-  margin-top: 0;
-  color: #0b2f73;
-  font-size: 20px;
-  text-align: center;
-  margin-bottom: 24px;
+
+.profile-page h1 {
+  margin: 0;
+  color: #000;
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 700;
 }
-.profile-info-section {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  margin-bottom: 24px;
+
+.profile-page .sub {
+  margin: 4px 0 clamp(14px, 3.5vh, 40px);
+  color: #111827;
+  font-size: 16px;
+  line-height: 1.5;
+  font-style: italic;
 }
-.profile-avatar-box {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
+
+/* Kartu profil: kolom foto + kolom data */
+.profile-box {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  background: #fff;
+  border: 2px solid #bdbdbd;
+  border-radius: 12px;
   overflow: hidden;
-  background: #1d4fb8;
+}
+
+/* Kolom kiri: foto */
+.pf-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: clamp(20px, 4.5vh, 48px) 20px;
+  border-right: 2px solid #bdbdbd;
+}
+
+.pf-avatar {
   display: grid;
   place-items: center;
-  color: #fff;
-  font-size: 36px;
-  font-weight: bold;
   flex-shrink: 0;
+  width: clamp(110px, 22vh, 170px);
+  height: clamp(110px, 22vh, 170px);
+  margin-bottom: clamp(14px, 4vh, 48px);
+  overflow: hidden;
+  border-radius: 50%;
+  background: #d9d9d9;
+  color: #0b2f73;
+  font-size: clamp(44px, 8vh, 64px);
+  font-weight: 700;
 }
-.avatar-img {
+
+.pf-avatar img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.profile-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: #374151;
+
+.pf-file-input {
+  display: none;
 }
-.profile-details p { margin: 0; }
-.badge-role {
-  background: #e0edff;
-  color: #1d4fb8;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.upload-form {
-  border-top: 1px solid #e3e9f5;
-  padding-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.upload-form label { font-size: 13px; font-weight: 600; color: #374151; }
-.upload-form input { font-size: 13px; }
-.btn-upload {
-  background: #1d4fb8;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
+
+.btn-foto {
+  padding: 8px 16px;
+  border: 1px solid #bdbdbd;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 4px;
 }
-.btn-upload:hover { background: #0b2f73; }
-.btn-logout {
+
+.btn-foto:hover:not(:disabled) {
+  background: #f3f4f6;
+}
+
+.btn-foto:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Kolom kanan: data + tombol simpan */
+.pf-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  gap: clamp(12px, 2.6vh, 24px);
+  min-width: 0;
+  padding: clamp(18px, 3.5vh, 36px) 40px;
+}
+
+.pf-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.pf-field input {
+  display: block;
   width: 100%;
-  background: #fde6e4;
-  color: #b42318;
-  border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 16px;
+  min-width: 0;
+  height: clamp(40px, 6vh, 48px);
+  padding: 0 16px;
+  border: 1px solid #d4d4d4;
+  border-radius: 10px;
+  background: #fff;
+  color: #374151;
+  font-family: inherit;
+  font-size: 16px;
+  opacity: 1;
+  -webkit-text-fill-color: #374151;
+  cursor: default;
 }
-.btn-logout:hover { background: #fcdadc; }
+
+.btn-simpan {
+  height: clamp(42px, 6.4vh, 52px);
+  margin-top: 4px;
+  border: 0;
+  border-radius: 10px;
+  background: #0a5de0;
+  color: #fff;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-simpan:hover:not(:disabled) {
+  background: #0b47ad;
+}
+
+.btn-simpan:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pesan berhasil / gagal */
+.alert-success,
+.alert-error {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .alert-success {
   background: #e6f4ea;
   color: #137333;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-align: center;
 }
+
 .alert-error {
   background: #fde6e4;
   color: #b42318;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 16px;
-  text-align: center;
+}
+
+/* Tablet dan HP: satu kolom (di sini halaman boleh di-scroll) */
+@media (max-width: 900px) {
+  .profile-box {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 560px;
+  }
+
+  .pf-left {
+    padding: 28px 24px;
+    border-right: 0;
+    border-bottom: 2px solid #bdbdbd;
+  }
+
+  .pf-right {
+    padding: 28px 24px;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page h1 {
+    font-size: 24px;
+  }
+
+  .profile-page .sub {
+    font-size: 14px;
+  }
+
+  .pf-field input {
+    font-size: 14px;
+  }
 }

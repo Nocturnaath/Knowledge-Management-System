@@ -1,0 +1,145 @@
+
+.app-layout { 
+  display: flex; 
+  width: 100%; 
+  height: 100vh; 
+  overflow: hidden; 
+  background: #f1f5fc; 
+  font-family: Arial, Helvetica, sans-serif; 
+  color: #111827; 
+}
+
+/* ===== SIDEBAR KIRI ===== */
+.sidebar { 
+  width: 267px; 
+  min-width: 267px; 
+  height: 100vh; 
+  overflow-y: auto; 
+  padding: clamp(14px, 3vh, 25px) 19px; 
+  background: #103777; 
+  color: #fff; 
+  display: flex; 
+  flex-direction: column; 
+  box-sizing: border-box; 
+}
+.sidebar-logo { 
+  display: flex; 
+  justify-content: center; 
+  margin-bottom: clamp(12px, 3vh, 48px); 
+}
+.sidebar-logo img { 
+  display: block; 
+  width: 150px; 
+  max-width: 100%; 
+  height: auto; 
+  object-fit: contain; 
+}
+
+.sidebar-user { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  min-width: 0; 
+  padding: 9px 6px; 
+  margin-bottom: clamp(8px, 1.6vh, 15px); 
+  border-radius: 11px; 
+  background: #2862b7; 
+}
+.sidebar-avatar { 
+  width: 55px; 
+  height: 55px; 
+  min-width: 55px; 
+  display: grid; 
+  place-items: center; 
+  border-radius: 50%; 
+  background: #d9d9d9; 
+  color: #103777; 
+  font-size: 23px; 
+  font-weight: 700; 
+}
+.sidebar-user-info { 
+  min-width: 0; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 3px; 
+}
+.sidebar-user-info strong, .sidebar-user-info span { 
+  overflow-wrap: anywhere; }
+.sidebar-user-info strong { 
+  font-size: 16px; }
+.sidebar-user-info span { 
+  font-size: 14px; }
+
+.sidebar-nav { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 4px; }
+.sidebar-link { 
+  display: flex; 
+  align-items: center; 
+  gap: 9px; 
+  padding: clamp(6px, 1.2vh, 10px) 13px; 
+  border-radius: 7px; 
+  color: #fff; 
+  text-decoration: none; 
+  font-size: 16px; 
+  font-weight: 700; 
+  transition: background 0.2s; 
+}
+.sidebar-link:hover, .sidebar-link.active { 
+  background: #2456a0; }
+.sidebar-link svg { 
+  flex-shrink: 0; }
+.sidebar-divider { 
+  height: 1px; 
+  background: rgba(255, 255, 255, 0.7); 
+  margin: clamp(6px, 1.4vh, 13px) 5px; 
+}
+
+.sidebar-logout { 
+  display: flex; 
+  align-items: center; 
+  gap: 9px; 
+  width: 100%; 
+  margin-top: auto; 
+  padding: clamp(8px, 1.4vh, 12px) 13px; 
+  border: 0; 
+  border-radius: 7px; 
+  background: transparent; 
+  color: #fff; 
+  font-family: inherit; 
+  font-size: 16px; 
+  font-weight: 700; 
+  text-align: left; 
+  cursor: pointer; 
+}
+.sidebar-logout:hover { 
+  background: #2456a0; }
+
+/* ===== AREA KONTEN KANAN ===== */
+.app-main { 
+  flex: 1; 
+  min-width: 0; 
+  height: 100vh; 
+  overflow-y: auto; 
+  padding: clamp(18px, 4vh, 54px) 42px; 
+  box-sizing: border-box; 
+  background: #f1f5fc; 
+}
+
+@media (max-width: 900px) {
+  .sidebar { width: 220px; min-width: 220px; padding: 18px 14px; }
+  .sidebar-user { gap: 8px; }
+  .sidebar-avatar { width: 43px; height: 43px; min-width: 43px; }
+  .sidebar-user-info strong, .sidebar-user-info span, .sidebar-link, .sidebar-logout { font-size: 13px; }
+  .app-main { padding: 24px 22px; }
+}
+@media (max-width: 600px) {
+  .sidebar { width: 76px; min-width: 76px; padding: 16px 8px; }
+  .sidebar-logo img { width: 58px; }
+  .sidebar-user { justify-content: center; padding: 6px 0; background: transparent; }
+  .sidebar-avatar { width: 42px; height: 42px; min-width: 42px; }
+  .sidebar-user-info, .sidebar-link span, .sidebar-logout span { display: none; }
+  .sidebar-link, .sidebar-logout { justify-content: center; padding: 12px 5px; }
+  .app-main { padding: 20px 14px; }
+}

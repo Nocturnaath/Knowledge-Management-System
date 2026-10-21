@@ -86,7 +86,7 @@ export default function Home() {
       {/* 2. Bagian utama: teks + tombol di kiri, ilustrasi di kanan */}
       <main className="hero">
         <div className="hero-text">
-          <h1>Knowledge Management System</h1>
+          <h1>Basis Informasi dan Jejak Aplikasi</h1>
           <p>Kelola dan akses dokumentasi, panduan serta informasi terkini di lingkungan PPK Kemayoran.</p>
           {/* Klik "Masuk" -> pindah ke halaman /login */}
           <button className="btn-masuk" onClick={() => navigate('/login')}>Masuk</button>

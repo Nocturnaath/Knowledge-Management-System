@@ -29,13 +29,13 @@
    ================================================== */
 .login-card {
   width: 100%;
-  max-width: 510px;
-  padding: 42px 51px 72px;
+  max-width: 420px; 
+  padding: 28px 30px 32px;
 
   background: #ffffff;
   border: 1px solid rgba(230, 234, 240, 0.8);
-  border-radius: 18px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
 /* ==================================================
@@ -50,7 +50,7 @@
 
 .login-logo {
   display: block;
-  width: 160px;
+  width: 125px;
   max-width: 100%;
   height: auto;
   object-fit: contain;
@@ -60,21 +60,21 @@
     JUDUL DAN DESKRIPSI
    ================================================== */
 .login-heading {
-  margin: 59px 0 34px;
+  margin: 28px 0 22px;
   text-align: center;
   color: #080808;
 }
 
 .login-heading h1 {
   margin: 0 0 6px;
-  font-size: 30px;
+  font-size: 26px;
   line-height: 1.2;
   font-weight: 750;
 }
 
 .login-heading p {
   margin: 0;
-  font-size: 18px;
+  font-size: 15px;
   line-height: 1.5;
 }
 
@@ -83,14 +83,14 @@
    ================================================== */
 .input-group {
   position: relative;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
 }
 
 .input-group input {
   display: block;
   width: 100%;
-  height: 67px;
-  padding: 0 39px;
+  height: 52px;
+  padding: 0 18px;
 
   border: 1px solid #d8d8d8;
   border-radius: 10px;
@@ -99,7 +99,7 @@
   background: #ffffff;
   color: #202938;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 14px;
 
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -156,7 +156,7 @@
 .forgot-password {
   display: flex;
   justify-content: flex-end;
-  margin: 27px 0 21px;
+  margin: 18px 0 16px;
 }
 
 .forgot-password button {
@@ -180,7 +180,7 @@
    ================================================== */
 .btn-login-submit {
   width: 100%;
-  min-height: 53px;
+  min-height: 46px;
   padding: 12px 18px;
 
   border: none;
@@ -189,7 +189,7 @@
   color: #ffffff;
 
   font-family: inherit;
-  font-size: 22px;
+  font-size: px;
   font-weight: 700;
   cursor: pointer;
 
@@ -253,44 +253,55 @@
   }
 
   .login-card {
-    max-width: 430px;
-    padding: 32px 24px 40px;
-    border-radius: 15px;
+    max-width: 380px;
+    padding: 25px 22px 28px;
+    border-radius: 14px;
   }
 
   .login-logo {
-    width: 145px;
+    width: 115px;
   }
 
   .login-heading {
-    margin: 44px 0 30px;
+    margin: 26px 0 22px;
   }
 
   .login-heading h1 {
-    font-size: 26px;
+    font-size: 24px;
   }
 
   .login-heading p {
-    font-size: 15px;
+    font-size: 14px;
+  }
+
+  .input-group {
+    margin-bottom: 20px;
   }
 
   .input-group input {
-    height: 58px;
-    padding-left: 20px;
-    font-size: 15px;
+    height: 48px;
+    padding: 0 15px;
+    font-size: 14px;
+  }
+
+  .password-group {
+    margin-bottom: 0;
   }
 
   .password-group input {
-    padding-right: 48px;
+    padding-right: 45px;
+  }
+
+  .forgot-password {
+    margin: 16px 0;
   }
 
   .forgot-password button {
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .btn-login-submit {
-    min-height: 50px;
-    font-size: 19px;
+    min-height: 44px;
+    font-size: 17px;
   }
 }
-
