@@ -1,0 +1,212 @@
+/* ===== Halaman Aplikasi ===== */
+.apl-page {
+    width: 100%;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Judul + tanggal */
+.apl-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.apl-head h1 {
+    margin: 0;
+    color: #000;
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.apl-sub {
+    margin: 4px 0 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #111827;
+}
+
+.apl-tanggal {
+    flex-shrink: 0;
+    font-size: 16px;
+    color: #111827;
+}
+
+/* Kolom pencarian + filter rumpun */
+.apl-filter {
+    display: flex;
+    gap: 10px;
+    margin-top: clamp(16px, 4vh, 40px);
+}
+
+.apl-cari,
+.apl-select {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+}
+
+.apl-cari {
+    flex: 1;
+    min-width: 0;
+}
+
+.apl-cari input {
+    width: 100%;
+    height: 54px;
+    padding: 0 36px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #111827;
+    font-family: inherit;
+    font-size: 18px;
+    outline: none;
+}
+
+.apl-cari input::placeholder {
+    color: #6b7280;
+}
+
+.apl-select {
+    position: relative;
+    width: 335px;
+    max-width: 45%;
+}
+
+.apl-select select {
+    width: 100%;
+    height: 54px;
+    padding: 0 44px 0 24px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #4b5563;
+    font-family: inherit;
+    font-size: 17px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.apl-select svg {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #374151;
+}
+
+/* Kotak info biru */
+.apl-info {
+    margin: 12px 0 22px;
+    padding: 10px 42px;
+    border-radius: 2px;
+    background: #dbe7fb;
+    color: #1a3b9c;
+    font-size: 14px;
+}
+
+/* Daftar kartu */
+.apl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px 26px;
+}
+
+.apl-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 165px;
+    padding: 16px;
+    border: 1px solid #d9dde6;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.apl-card h3 {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #000;
+    text-transform: uppercase;
+}
+
+.apl-desc {
+    margin: 4px 0 0;
+    font-size: 12px;
+    line-height: 1.3;
+    color: #111827;
+}
+
+.apl-skor {
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.apl-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.apl-detail {
+    color: #0b2f73;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+.apl-detail:hover {
+    text-decoration: underline;
+}
+
+.apl-badge {
+    padding: 3px 10px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 12px;
+}
+
+.apl-badge.lengkap {
+    background: #00a651;
+}
+
+.apl-badge.belum {
+    background: #ff9a1f;
+}
+
+.apl-pesan {
+    padding: 40px 0;
+    text-align: center;
+    color: #6b7280;
+}
+
+.apl-pesan.error {
+    color: #b42318;
+}
+
+@media (max-width: 700px) {
+    .apl-head {
+        flex-direction: column;
+    }
+
+    .apl-filter {
+        flex-direction: column;
+    }
+
+    .apl-select {
+        width: 100%;
+        max-width: none;
+    }
+
+    .apl-info {
+        padding: 10px 16px;
+    }
+}

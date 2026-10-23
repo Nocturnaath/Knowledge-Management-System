@@ -11,6 +11,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 import './Layout.css';
 
 export default function Layout() {
@@ -32,11 +33,12 @@ export default function Layout() {
 
   const nama = user?.nama || user?.nama_lengkap || user?.username || 'Pengguna';
   const divisi = user?.divisi || 'Divisi belum tersedia';
+  const photoSrc = user?.photoUrl ? `${API_URL}${user.photoUrl}` : null;
 
   const handleLogout = () => {
-    // Jalankan logout dari AuthContext, lalu arahkan ke login.
+    // Jalankan logout dari AuthContext, lalu arahkan ke halaman utama.
     logout();
-    navigate('/login');
+    navigate('/', { replace: true, state: { loggedOut: true } });
   };
 
   return (
@@ -48,16 +50,24 @@ export default function Layout() {
         </div>
 
         {/* Informasi pengguna */}
-        <div className="sidebar-user">
+        <NavLink
+          to="/profile"
+          className="sidebar-user"
+          aria-label="Buka profil pengguna"
+        >
           <div className="sidebar-avatar">
-            {nama.charAt(0).toUpperCase()}
+            {photoSrc ? (
+              <img src={photoSrc} alt={`Foto profil ${nama}`} />
+            ) : (
+              nama.charAt(0).toUpperCase()
+            )}
           </div>
 
           <div className="sidebar-user-info">
             <strong>{nama}</strong>
             <span>{divisi}</span>
           </div>
-        </div>
+        </NavLink>
 
         {/* Menu utama */}
         <nav className="sidebar-nav">

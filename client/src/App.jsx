@@ -4,7 +4,8 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
+  useLocation
 } from 'react-router-dom';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -12,11 +13,24 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Application from './pages/Aplikasi';
+import Notifications from './pages/Notifications';
+import DetailAplikasi from './pages/DetailAplikasi';
 import Layout from './components/Layout';
+
+function SidebarPage({ title }) {
+  return (
+    <main>
+      <h1>{title}</h1>
+      <p>Halaman {title.toLowerCase()} belum tersedia.</p>
+    </main>
+  );
+}
 
 // Mengatur route berdasarkan status login pengguna.
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   // Tunggu sampai status sesi login selesai diperiksa.
   if (loading) {
@@ -39,7 +53,7 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          user
+          user && !location.state?.loggedOut
             ? <Navigate to="/profile" replace />
             : <Home />
         }
@@ -60,14 +74,18 @@ function AppRoutes() {
         element={
           user
             ? <Layout />
-            : <Navigate to="/login" replace />
+            : <Navigate to="/" replace />
         }
       >
+        <Route path="/dashboard" element={<SidebarPage title="Beranda" />} />
+        <Route path="/dokumen" element={<SidebarPage title="Dokumen" />} />
+        <Route path="/dokumen-divisi" element={<SidebarPage title="Dokumen Divisi" />} />
+        <Route path="/informasi" element={<SidebarPage title="Informasi Umum" />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/notifikasi" element={<Notifications />} />
+        <Route path="/aplikasi" element={<Application />} />
+        <Route path="/aplikasi/:id" element={<DetailAplikasi />} />
 
-        {/* Tambahkan halaman lain di sini jika sudah tersedia */}
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        {/* <Route path="/dokumen" element={<Dokumen />} /> */}
       </Route>
 
       {/* Alamat yang tidak dikenal diarahkan sesuai status login */}

@@ -8,7 +8,7 @@ const db = require('./config/db');
 
 // Rute
 const authRoutes = require('./routes/auth');
-
+const aplikasiRoutes = require('./routes/aplikasi');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -18,8 +18,9 @@ app.use(express.json());
 
 // Foto profil yang diunggah dapat diakses lewat /uploads/<nama-file>
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/aplikasi', aplikasiRoutes);
 
-// Sambungkan rute auth
+// Sambung rute auth
 app.use('/api/auth', authRoutes);
 
 // Rute tes utama
