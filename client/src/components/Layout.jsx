@@ -8,7 +8,10 @@ import {
   Folder,
   Info,
   Bell,
-  LogOut
+  LogOut,
+  CheckSquare,
+  Tag,
+  Lock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
@@ -18,16 +21,29 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Daftar menu sidebar.
+   // Menu menyesuaikan role: staff = menu dasar,
+  // admin = + Persetujuan Dokumen & Kelola Kategori, super_admin = + Hak Akses
+  const role = user?.role;
+  const atasan = role === 'admin' || role === 'super_admin';
+
   const menuUtama = [
     { label: 'Beranda', path: '/dashboard', icon: Home },
     { label: 'Dokumen', path: '/dokumen', icon: FileText },
     { label: 'Dokumen Divisi', path: '/dokumen-divisi', icon: Users },
+    ...(atasan
+      ? [{ label: 'Persetujuan Dokumen', path: '/persetujuan-dokumen', icon: CheckSquare }]
+      : []),
     { label: 'Aplikasi', path: '/aplikasi', icon: Folder }
   ];
 
   const menuTambahan = [
     { label: 'Informasi Umum', path: '/informasi', icon: Info },
+    ...(atasan
+      ? [{ label: 'Kelola Kategori', path: '/kelola-kategori', icon: Tag }]
+      : []),
+    ...(role === 'super_admin'
+      ? [{ label: 'Hak Akses', path: '/hak-akses', icon: Lock }]
+      : []),
     { label: 'Notifikasi', path: '/notifikasi', icon: Bell }
   ];
 

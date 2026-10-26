@@ -1,0 +1,180 @@
+/* ===== Halaman Persetujuan Dokumen ===== */
+.ps-page {
+    width: 100%;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.ps-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.ps-head h1 {
+    margin: 0;
+    color: #000;
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.ps-sub {
+    margin: 4px 0 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.ps-tanggal {
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+/* Kolom pencarian */
+.ps-cari {
+    margin-top: clamp(14px, 3.5vh, 36px);
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+}
+
+.ps-cari input {
+    width: 100%;
+    height: 54px;
+    padding: 0 52px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #111827;
+    font-family: inherit;
+    font-size: 18px;
+    outline: none;
+}
+
+.ps-cari input::placeholder {
+    color: #6b7280;
+}
+
+/* Tab */
+.ps-tab {
+    display: flex;
+    gap: 14px;
+    margin: clamp(14px, 3vh, 26px) 0 clamp(10px, 2vh, 18px) 18px;
+}
+
+.ps-tab button {
+    padding: 8px 15px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #555;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.ps-tab button.aktif {
+    background: #8ebcff;
+    color: #0b2f73;
+}
+
+.ps-tab button:hover:not(.aktif) {
+    background: rgba(142, 188, 255, 0.25);
+}
+
+/* Tabel */
+.ps-tabel {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+    max-height: calc(100vh - 340px);
+    min-height: 160px;
+    overflow-y: auto;
+}
+
+.ps-baris {
+    display: grid;
+    grid-template-columns: 2.4fr 1.5fr 1.3fr 1.8fr 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    border-bottom: 1px solid #d9dde6;
+    font-size: 15px;
+}
+
+.ps-kepala {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #fff;
+    color: #555;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.ps-judul {
+    text-transform: uppercase;
+}
+
+.ps-badge {
+    display: inline-block;
+    justify-self: start;
+    padding: 3px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ps-badge.menunggu {
+    background: #ff9a1f;
+    color: #fff;
+}
+
+.ps-badge.disetujui {
+    background: #3dff9f;
+    color: #07773f;
+}
+
+.ps-badge.ditolak {
+    background: #ffa9a9;
+    color: #d10000;
+}
+
+.ps-aksi {
+    padding: 1px 10px;
+    border: 1px solid #6b7280;
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    justify-self: start;
+}
+
+.ps-aksi:hover {
+    background: #f3f4f6;
+}
+
+.ps-kosong {
+    padding: 44px 16px;
+    color: #555;
+    font-size: 18px;
+    text-align: center;
+}
+
+@media (max-width: 800px) {
+    .ps-head {
+        flex-direction: column;
+    }
+
+    .ps-tabel {
+        overflow-x: auto;
+    }
+
+    .ps-baris {
+        min-width: 640px;
+    }
+}

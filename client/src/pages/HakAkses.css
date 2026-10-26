@@ -1,0 +1,158 @@
+/* ===== Halaman Hak Akses (RBAC) ===== */
+.ha-page {
+    width: 100%;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.ha-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.ha-head h1 {
+    margin: 0;
+    color: #000;
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.ha-sub {
+    margin: 4px 0 0;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.ha-tanggal {
+    flex-shrink: 0;
+    font-size: 16px;
+}
+
+.ha-info {
+    margin-top: clamp(14px, 3.5vh, 36px);
+    padding: 14px 24px;
+    border-radius: 3px;
+    background: #dbe7fb;
+    color: #1a3b9c;
+    font-size: 14px;
+}
+
+/* Tab */
+.ha-tab {
+    display: flex;
+    gap: 18px;
+    margin: clamp(12px, 2.6vh, 24px) 0 clamp(10px, 2vh, 16px) 24px;
+}
+
+.ha-tab button {
+    padding: 7px 24px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #555;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.ha-tab button.aktif {
+    background: #8ebcff;
+    color: #0b2f73;
+}
+
+.ha-tab button:hover:not(.aktif) {
+    background: rgba(142, 188, 255, 0.25);
+}
+
+/* Tabel */
+.ha-tabel {
+    max-height: calc(100vh - 330px);
+    min-height: 160px;
+    overflow: auto;
+    border: 1px solid #c9d6ee;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.ha-baris {
+    display: grid;
+    grid-template-columns: 200px repeat(7, minmax(92px, 1fr));
+    align-items: center;
+    min-width: 880px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #edf0f6;
+}
+
+.ha-baris:last-child {
+    border-bottom: 0;
+}
+
+.ha-kepala {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #dbe7fb;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.ha-kepala span:first-child {
+    text-align: left;
+}
+
+.ha-nama {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+}
+
+.ha-nama small {
+    display: block;
+    margin-top: 2px;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ha-sel {
+    display: grid;
+    place-items: center;
+}
+
+.ha-sel input {
+    width: 20px;
+    height: 20px;
+    accent-color: #0a5de0;
+    cursor: pointer;
+}
+
+.ha-sel input:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.ha-pesan {
+    padding: 40px 0;
+    text-align: center;
+    color: #6b7280;
+}
+
+.ha-pesan.error {
+    margin-bottom: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fde6e4;
+    color: #b42318;
+    font-size: 14px;
+}
+
+@media (max-width: 800px) {
+    .ha-head {
+        flex-direction: column;
+    }
+}

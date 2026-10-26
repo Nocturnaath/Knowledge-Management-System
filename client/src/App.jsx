@@ -17,6 +17,8 @@ import Application from './pages/Aplikasi';
 import Notifications from './pages/Notifications';
 import DetailAplikasi from './pages/DetailAplikasi';
 import Layout from './components/Layout';
+import PersetujuanDokumen from './pages/PersetujuanDokumen';
+import HakAkses from './pages/HakAkses';
 
 function SidebarPage({ title }) {
   return (
@@ -31,6 +33,11 @@ function SidebarPage({ title }) {
 function AppRoutes() {
   const { user, loading } = useAuth();
   const location = useLocation();
+  // Hanya role tertentu yang boleh membuka halaman; selain itu kembali ke profil
+const RoleRoute = ({ roles, children }) => {
+  const { user } = useAuth();
+  return roles.includes(user?.role) ? children : <Navigate to="/profile" replace />;
+};
 
   // Tunggu sampai status sesi login selesai diperiksa.
   if (loading) {
@@ -85,6 +92,9 @@ function AppRoutes() {
         <Route path="/notifikasi" element={<Notifications />} />
         <Route path="/aplikasi" element={<Application />} />
         <Route path="/aplikasi/:id" element={<DetailAplikasi />} />
+        <Route path="/persetujuan-dokumen" element={<RoleRoute roles={['admin', 'super_admin']}> <PersetujuanDokumen /> </RoleRoute>}/>
+        <Route path="/kelola-kategori" element={<RoleRoute roles={['admin', 'super_admin']}> <SidebarPage title="Kelola Kategori" /> </RoleRoute>}/>
+        <Route path="/hak-akses" element={<RoleRoute roles={['super_admin']}> <HakAkses/> </RoleRoute>}/>
 
       </Route>
 
