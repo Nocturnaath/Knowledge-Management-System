@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
         });
         const data = await res.json();
         if (data.success) {
-          setUser(data.data);
+          setUser(data.user);
         } else if (res.status === 401 || res.status === 403) {
           logout(); // token benar-benar tidak valid / kedaluwarsa
         }

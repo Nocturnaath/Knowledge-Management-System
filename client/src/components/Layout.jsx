@@ -11,8 +11,9 @@ import {
   LogOut,
   CheckSquare,
   Tag,
-  Lock
+  Lock,
 } from 'lucide-react';
+
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './Layout.css';
@@ -21,8 +22,7 @@ export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-   // Menu menyesuaikan role: staff = menu dasar,
-  // admin = + Persetujuan Dokumen & Kelola Kategori, super_admin = + Hak Akses
+  // menyesuaikan menu sama role pengguna yang sedang login.
   const role = user?.role;
   const atasan = role === 'admin' || role === 'super_admin';
 
@@ -30,50 +30,119 @@ export default function Layout() {
     { label: 'Beranda', path: '/dashboard', icon: Home },
     { label: 'Dokumen', path: '/dokumen', icon: FileText },
     { label: 'Dokumen Divisi', path: '/dokumen-divisi', icon: Users },
+
     ...(atasan
-      ? [{ label: 'Persetujuan Dokumen', path: '/persetujuan-dokumen', icon: CheckSquare }]
+      ? [
+          {
+            label: 'Persetujuan Dokumen',
+            path: '/persetujuan-dokumen',
+            icon: CheckSquare,
+          },
+        ]
       : []),
-    { label: 'Aplikasi', path: '/aplikasi', icon: Folder }
+
+    { label: 'Aplikasi', path: '/aplikasi', icon: Folder },
   ];
 
   const menuTambahan = [
     { label: 'Informasi Umum', path: '/informasi', icon: Info },
+
     ...(atasan
-      ? [{ label: 'Kelola Kategori', path: '/kelola-kategori', icon: Tag }]
+      ? [
+          {
+            label: 'Kelola Kategori',
+            path: '/kelola-kategori',
+            icon: Tag,
+          },
+        ]
       : []),
+
     ...(role === 'super_admin'
-      ? [{ label: 'Hak Akses', path: '/hak-akses', icon: Lock }]
+      ? [
+          {
+            label: 'Hak Akses',
+            path: '/hak-akses',
+            icon: Lock,
+          },
+        ]
       : []),
-    { label: 'Notifikasi', path: '/notifikasi', icon: Bell }
+
+    { label: 'Notifikasi', path: '/notifikasi', icon: Bell },
   ];
 
-  const nama = user?.nama || user?.nama_lengkap || user?.username || 'Pengguna';
-  const divisi = user?.divisi || 'Divisi belum tersedia';
-  const photoSrc = user?.photoUrl ? `${API_URL}${user.photoUrl}` : null;
+  // Ambil identitas pengguna dari AuthContext.
+  const nama =
+    user?.nama ||
+    user?.nama_lengkap ||
+    user?.username ||
+    'Pengguna';
 
+  const divisi =
+    user?.divisi ||
+    user?.nama_divisi ||
+    'Divisi belum tersedia';
+
+  // Gunakan foto profil jika tersedia.
+  const photoSrc = user?.photoUrl
+    ? `${API_URL}${user.photoUrl}`
+    : user?.foto_url
+      ? `${API_URL}${user.foto_url}`
+      : null;
+
+  
   const handleLogout = () => {
-    // Jalankan logout dari AuthContext, lalu arahkan ke halaman utama.
     logout();
-    navigate('/', { replace: true, state: { loggedOut: true } });
+    navigate('/', {
+      replace: true,
+      state: { loggedOut: true },
+    });
   };
+
+  // Komponen menu agar tampilan menu utama dan tambahan konsisten.
+  const renderMenu = (items) =>
+    items.map(({ label, path, icon: Icon }) => (
+      <NavLink
+        to={path}
+        key={path}
+        end={path === '/dashboard'}
+        className={({ isActive }) =>
+          `sidebar-link${isActive ? ' active' : ''}`
+        }
+      >
+        <Icon size={19} strokeWidth={1.9} />
+        <span>{label}</span>
+      </NavLink>
+    ));
 
   return (
     <div className="app-layout">
-      {/* Sidebar di sebelah kiri */}
+      {/* Sidebar permanen pakai desain nala. */}
       <aside className="sidebar">
+        {/* Logo tetap memakai aset logo C-BIJAK. */}
         <div className="sidebar-logo">
-          <img src="/logo-cbijak-putih.png" alt="Logo C-BIJAK" />
+          <img
+            src="/logo-cbijak-putih.png"
+            alt="Logo C-BIJAK"
+          />
         </div>
 
-        {/* Informasi pengguna */}
+        {/* Profil pengguna dari akun yang sedang login. */}
         <NavLink
           to="/profile"
-          className="sidebar-user"
+          className={({ isActive }) =>
+            `sidebar-user${isActive ? ' profile-active' : ''}`
+          }
           aria-label="Buka profil pengguna"
         >
           <div className="sidebar-avatar">
             {photoSrc ? (
-              <img src={photoSrc} alt={`Foto profil ${nama}`} />
+              <img
+                src={photoSrc}
+                alt={`Foto profil ${nama}`}
+                onError={(event) => {
+                  event.currentTarget.style.display = 'none';
+                }}
+              />
             ) : (
               nama.charAt(0).toUpperCase()
             )}
@@ -81,38 +150,32 @@ export default function Layout() {
 
           <div className="sidebar-user-info">
             <strong>{nama}</strong>
-            <span>{divisi}</span>
+            <small>{divisi}</small>
           </div>
         </NavLink>
 
-        {/* Menu utama */}
-        <nav className="sidebar-nav">
-          {menuUtama.map(({ label, path, icon: Icon }) => (
-            <NavLink to={path} className="sidebar-link" key={path}>
-              <Icon size={20} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+        {/* Navigasi utama. */}
+        <nav className="sidebar-nav" aria-label="Navigasi utama">
+          {renderMenu(menuUtama)}
 
           <div className="sidebar-divider" />
 
-          {/* Menu informasi tambahan */}
-          {menuTambahan.map(({ label, path, icon: Icon }) => (
-            <NavLink to={path} className="sidebar-link" key={path}>
-              <Icon size={20} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+          {/* Navigasi tambahan. */}
+          {renderMenu(menuTambahan)}
         </nav>
 
-        {/* Tombol keluar selalu di bawah sidebar */}
-        <button className="sidebar-logout" onClick={handleLogout}>
-          <LogOut size={20} />
+        {/* Tombol keluar tetap berada di bawah sidebar. */}
+        <button
+          type="button"
+          className="sidebar-logout"
+          onClick={handleLogout}
+        >
+          <LogOut size={19} strokeWidth={1.9} />
           <span>Keluar</span>
         </button>
       </aside>
 
-      {/* Halaman aktif, misalnya Profil atau Beranda */}
+      {/* Konten halaman dari React Router. */}
       <main className="app-main">
         <Outlet />
       </main>

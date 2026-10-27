@@ -2,7 +2,7 @@
 .ps-page {
     width: 100%;
     color: #111827;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Inter, Arial, sans-serif;
 }
 
 .ps-head {
@@ -47,7 +47,7 @@
     border-radius: 4px;
     background: transparent;
     color: #111827;
-    font-family: inherit;
+    font-family: inter, Arial, sans-serif;
     font-size: 18px;
     outline: none;
 }
@@ -69,7 +69,7 @@
     border-radius: 8px;
     background: transparent;
     color: #555;
-    font-family: inherit;
+    font-family: inter, Arial, sans-serif;
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
@@ -148,12 +148,12 @@
     border-radius: 4px;
     background: #fff;
     color: #000;
-    font-family: inherit;
+    font-family: inter, Arial, sans-serif;
     font-size: 13px;
     cursor: pointer;
     justify-self: start;
 }
-
+    
 .ps-aksi:hover {
     background: #f3f4f6;
 }

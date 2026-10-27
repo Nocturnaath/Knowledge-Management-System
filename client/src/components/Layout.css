@@ -1,160 +1,361 @@
 
-.app-layout { 
-  display: flex; 
-  width: 100%; 
-  height: 100vh; 
-  overflow: hidden; 
-  background: #f1f5fc; 
-  font-family: Arial, Helvetica, sans-serif; 
-  color: #111827; 
+/* ========================================
+   LAYOUT UTAMA
+   Diadaptasi desain sidebar dari nala
+   ======================================== */
+
+.app-layout {
+  --layout-navy: #0e3676;
+  --layout-blue: #2863b5;
+  --layout-text-muted: #d5e1f3;
+
+  min-height: 100vh;
+  font-family: Inter, Arial, sans-serif;
+  color: #111827;
+  background: #f0f4fb;
 }
 
-/* ===== SIDEBAR KIRI ===== */
-.sidebar { 
-  width: 267px; 
-  min-width: 267px; 
-  height: 100vh; 
-  overflow-y: auto; 
-  padding: clamp(14px, 3vh, 25px) 19px; 
-  background: #103777; 
-  color: #fff; 
-  display: flex; 
-  flex-direction: column; 
-  box-sizing: border-box; 
-}
-.sidebar-logo { 
-  display: flex; 
-  justify-content: center; 
-  margin-bottom: clamp(12px, 3vh, 48px); 
-}
-.sidebar-logo img { 
-  display: block; 
-  width: 150px; 
-  max-width: 100%; 
-  height: auto; 
-  object-fit: contain; 
-}
+/* ========================================
+   SIDEBAR PERMANEN
+   ======================================== */
 
-.sidebar-user { 
-  display: flex; 
-  align-items: center; 
-  gap: 12px; 
-  min-width: 0; 
-  padding: 9px 6px; 
-  margin-bottom: clamp(8px, 1.6vh, 15px); 
-  border-radius: 11px; 
-  background: #2862b7; 
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-}
-.sidebar-user:hover,
-.sidebar-user:focus-visible {
-  background: #3471c8;
-  outline: none;
-}
-.sidebar-avatar { 
-  width: 55px; 
-  height: 55px; 
-  min-width: 55px; 
-  display: grid; 
-  place-items: center; 
+.app-layout .sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+
+  display: flex;
+  flex-direction: column;
+
+  width: clamp(190px, 18.6vw, 224px);
+  height: 100vh;
+
   overflow: hidden;
-  border-radius: 50%; 
-  background: #d9d9d9; 
-  color: #103777; 
-  font-size: 23px; 
-  font-weight: 700; 
+  background: var(--layout-navy);
+  color: #fff;
 }
-.sidebar-avatar img {
+
+/* ========================================
+   LOGO C-BIJAK
+   ======================================== */
+
+.app-layout .sidebar-logo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  flex: 0 0 112px;
+  min-height: 112px;
+  padding: 20px;
+}
+
+.app-layout .sidebar-logo img {
+  display: block;
+  width: 100%;
+  max-width: 180px;
+  max-height: 72px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* ========================================
+   PROFIL PENGGUNA
+   ======================================== */
+
+.app-layout .sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 0;
+  margin: 0 12px 20px;
+  padding: 10px 8px;
+
+  color: #fff;
+  text-decoration: none;
+  border-radius: 7px;
+
+  transition: background-color 0.18s ease;
+}
+
+.app-layout .sidebar-user:hover,
+.app-layout .sidebar-user.profile-active {
+  background: rgb(255 255 255 / 10%);
+}
+
+.app-layout .sidebar-avatar {
+  display: grid;
+  place-items: center;
+
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+
+  overflow: hidden;
+  border-radius: 50%;
+  background: #d2d7df;
+  color: #0e3676;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.app-layout .sidebar-avatar img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.sidebar-user-info { 
-  min-width: 0; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 3px; 
-}
-.sidebar-user-info strong, .sidebar-user-info span { 
-  overflow-wrap: anywhere; }
-.sidebar-user-info strong { 
-  font-size: 16px; }
-.sidebar-user-info span { 
-  font-size: 14px; }
-
-.sidebar-nav { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 4px; }
-.sidebar-link { 
-  display: flex; 
-  align-items: center; 
-  gap: 9px; 
-  padding: clamp(6px, 1.2vh, 10px) 13px; 
-  border-radius: 7px; 
-  color: #fff; 
-  text-decoration: none; 
-  font-size: 16px; 
-  font-weight: 700; 
-  transition: background 0.2s; 
-}
-.sidebar-link:hover, .sidebar-link.active { 
-  background: #2456a0; }
-.sidebar-link svg { 
-  flex-shrink: 0; }
-.sidebar-divider { 
-  height: 1px; 
-  background: rgba(255, 255, 255, 0.7); 
-  margin: clamp(6px, 1.4vh, 13px) 5px; 
+  border-radius: 50%;
 }
 
-.sidebar-logout { 
-  display: flex; 
-  align-items: center; 
-  gap: 9px; 
-  width: 100%; 
-  margin-top: auto; 
-  padding: clamp(8px, 1.4vh, 12px) 13px; 
-  border: 0; 
-  border-radius: 7px; 
-  background: transparent; 
-  color: #fff; 
-  font-family: inherit; 
-  font-size: 16px; 
-  font-weight: 700; 
-  text-align: left; 
-  cursor: pointer; 
-}
-.sidebar-logout:hover { 
-  background: #2456a0; }
-
-/* ===== AREA KONTEN KANAN ===== */
-.app-main { 
-  flex: 1; 
-  min-width: 0; 
-  height: 100vh; 
-  overflow-y: auto; 
-  padding: clamp(18px, 4vh, 54px) 42px; 
-  box-sizing: border-box; 
-  background: #f1f5fc; 
+.app-layout .sidebar-user-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
-@media (max-width: 900px) {
-  .sidebar { width: 220px; min-width: 220px; padding: 18px 14px; }
-  .sidebar-user { gap: 8px; }
-  .sidebar-avatar { width: 43px; height: 43px; min-width: 43px; }
-  .sidebar-user-info strong, .sidebar-user-info span, .sidebar-link, .sidebar-logout { font-size: 13px; }
-  .app-main { padding: 24px 22px; }
+.app-layout .sidebar-user-info strong {
+  overflow: hidden;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+
+.app-layout .sidebar-user-info small {
+  overflow: hidden;
+  color: var(--layout-text-muted);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========================================
+   NAVIGASI
+   ======================================== */
+
+.app-layout .sidebar-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+
+  min-height: 0;
+  padding: 0 15px 12px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #5276a8 transparent;
+}
+
+.app-layout .sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: 100%;
+  min-height: 38px;
+  flex: 0 0 auto;
+  padding: 8px 11px;
+
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #fff;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  text-decoration: none;
+
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.app-layout .sidebar-link svg {
+  flex: 0 0 19px;
+}
+
+.app-layout .sidebar-link span {
+  min-width: 0;
+}
+
+.app-layout .sidebar-link:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
+.app-layout .sidebar-link.active {
+  background: var(--layout-blue);
+  color: #fff;
+}
+
+.app-layout .sidebar-link:focus-visible,
+.app-layout .sidebar-user:focus-visible,
+.app-layout .sidebar-logout:focus-visible {
+  outline: 2px solid #a9d0ff;
+  outline-offset: 2px;
+}
+
+/* Garis pemisah menu utama dan tambahan. */
+
+.app-layout .sidebar-divider {
+  height: 1px;
+  flex: 0 0 1px;
+  margin: 12px 4px 10px;
+  background: rgb(255 255 255 / 40%);
+}
+
+/* ========================================
+   TOMBOL KELUAR
+   ======================================== */
+
+.app-layout .sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  width: calc(100% - 30px);
+  min-height: 42px;
+  flex: 0 0 auto;
+  margin: 8px 15px 20px;
+  padding: 0 11px;
+
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #fff;
+
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+
+  transition: background-color 0.18s ease;
+}
+
+.app-layout .sidebar-logout:hover {
+  background: rgb(255 255 255 / 12%);
+}
+
+/* ========================================
+   KONTEN HALAMAN
+   ======================================== */
+
+.app-layout .app-main {
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: clamp(190px, 18.6vw, 224px);
+  padding: 34px 30px 24px;
+}
+
+/* ========================================
+   RESPONSIVE
+   Sidebar tetap terbuka di layar kecil
+   ======================================== */
+
+@media (max-width: 950px) {
+  .app-layout .sidebar {
+    width: 190px;
+  }
+
+  .app-layout .app-main {
+    margin-left: 190px;
+    padding: 28px 20px 24px;
+  }
+
+  .app-layout .sidebar-logo {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .app-layout .sidebar-nav {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}
+
 @media (max-width: 600px) {
-  .sidebar { width: 76px; min-width: 76px; padding: 16px 8px; }
-  .sidebar-logo img { width: 58px; }
-  .sidebar-user { justify-content: center; padding: 6px 0; background: transparent; }
-  .sidebar-avatar { width: 42px; height: 42px; min-width: 42px; }
-  .sidebar-user-info, .sidebar-link span, .sidebar-logout span { display: none; }
-  .sidebar-link, .sidebar-logout { justify-content: center; padding: 12px 5px; }
-  .app-main { padding: 20px 14px; }
+  .app-layout .sidebar {
+    width: 155px;
+  }
+
+  .app-layout .app-main {
+    margin-left: 155px;
+    padding: 20px 12px 20px;
+  }
+
+  .app-layout .sidebar-logo {
+    min-height: 90px;
+    flex-basis: 90px;
+    padding: 12px;
+  }
+
+  .app-layout .sidebar-logo img {
+    max-height: 58px;
+  }
+
+  .app-layout .sidebar-user {
+    gap: 7px;
+    margin-right: 7px;
+    margin-left: 7px;
+    padding: 7px 4px;
+  }
+
+  .app-layout .sidebar-avatar {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    font-size: 13px;
+  }
+
+  .app-layout .sidebar-user-info strong {
+    font-size: 10px;
+  }
+
+  .app-layout .sidebar-user-info small {
+    font-size: 9px;
+  }
+
+  .app-layout .sidebar-nav {
+    padding-right: 7px;
+    padding-left: 7px;
+  }
+
+  .app-layout .sidebar-link {
+    gap: 6px;
+    padding: 8px 6px;
+    font-size: 10px;
+  }
+
+  .app-layout .sidebar-link svg {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+  }
+
+  .app-layout .sidebar-logout {
+    width: calc(100% - 14px);
+    margin: 8px 7px 12px;
+    gap: 6px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+}
+
+/* Menghormati preferensi gerakan pengguna. */
+
+@media (prefers-reduced-motion: reduce) {
+  .app-layout .sidebar-link,
+  .app-layout .sidebar-user,
+  .app-layout .sidebar-logout {
+    transition: none;
+  }
 }

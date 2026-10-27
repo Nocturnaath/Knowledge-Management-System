@@ -12,7 +12,10 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Beranda from './pages/Beranda';
 import Profile from './pages/Profile';
+import DokumenSaya from './pages/DokumenSaya';
+import UnggahDokumen from './pages/UnggahDokumen';
 import Application from './pages/Aplikasi';
 import Notifications from './pages/Notifications';
 import DetailAplikasi from './pages/DetailAplikasi';
@@ -61,17 +64,17 @@ const RoleRoute = ({ roles, children }) => {
         path="/"
         element={
           user && !location.state?.loggedOut
-            ? <Navigate to="/profile" replace />
+            ? <Navigate to="/dashboard" replace />
             : <Home />
         }
       />
 
-      {/* Login: pengguna yang sudah login langsung ke profil */}
+      {/* Login: pengguna yang sudah login langsung ke beranda */}
       <Route
         path="/login"
         element={
           user
-            ? <Navigate to="/profile" replace />
+            ? <Navigate to="/dashboard" replace />
             : <Login />
         }
       />
@@ -84,8 +87,9 @@ const RoleRoute = ({ roles, children }) => {
             : <Navigate to="/" replace />
         }
       >
-        <Route path="/dashboard" element={<SidebarPage title="Beranda" />} />
-        <Route path="/dokumen" element={<SidebarPage title="Dokumen" />} />
+        <Route path="/dashboard" element={<Beranda/>} />
+        <Route path="/dokumen" element={<DokumenSaya/>} />
+        <Route path="/dokumen/upload" element={<UnggahDokumen />} />
         <Route path="/dokumen-divisi" element={<SidebarPage title="Dokumen Divisi" />} />
         <Route path="/informasi" element={<SidebarPage title="Informasi Umum" />} />
         <Route path="/profile" element={<Profile />} />
@@ -103,7 +107,7 @@ const RoleRoute = ({ roles, children }) => {
         path="*"
         element={
           <Navigate
-            to={user ? '/profile' : '/'}
+            to={user ? '/dashboard' : '/'}
             replace
           />
         }

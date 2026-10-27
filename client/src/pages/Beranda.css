@@ -1,0 +1,181 @@
+
+/* Seluruh style dibatasi untuk halaman Beranda. */
+.beranda-page {
+  width: 100%;
+  min-width: 0;
+  color: #111827;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* Header halaman */
+.beranda-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 2px 0 40px;
+}
+
+.beranda-header h1 {
+  margin: 0 0 7px;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.beranda-header h1 em {
+  font-style: normal;
+  font-weight: 700;
+}
+
+.beranda-header p {
+  margin: 0;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.beranda-header time {
+  flex-shrink: 0;
+  padding-top: 5px;
+  color: #667085;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+/* Kartu statistik */
+.beranda-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.beranda-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100px;
+  padding: 16px;
+  border: 1px solid #e8edf4;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 7px #18345c12;
+}
+
+.beranda-stat-card span {
+  color: #667085;
+  font-size: 13px;
+}
+
+.beranda-stat-card strong {
+  color: #0e3676;
+  font-size: 30px;
+  line-height: 1;
+}
+
+/* Aktivitas terbaru */
+.beranda-activity-card {
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid #e8edf4;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 7px #18345c12;
+}
+
+.beranda-activity-heading {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.beranda-activity-heading h2 {
+  margin: 0;
+  color: #344054;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.beranda-activity-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.beranda-activity-card li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  min-height: 48px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #eef0f3;
+  font-size: 12px;
+}
+
+.beranda-activity-card li:last-child {
+  border-bottom: 0;
+}
+
+.beranda-activity-card li time {
+  flex-shrink: 0;
+  color: #667085;
+  font-size: 11px;
+}
+
+.beranda-activity-empty {
+  display: grid;
+  min-height: 160px;
+  place-items: center;
+  padding: 24px;
+  color: #7b8492;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* Footer */
+.beranda-footer {
+  padding: 26px 0 0;
+  color: #8590a0;
+  font-size: 11px;
+}
+
+.beranda-footer span {
+  padding: 0 5px;
+}
+
+/* Penyesuaian layar kecil */
+@media (max-width: 700px) {
+  .beranda-header {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .beranda-header h1 {
+    font-size: 20px;
+  }
+
+  .beranda-header time {
+    padding-top: 0;
+  }
+
+  .beranda-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .beranda-stat-card {
+    min-height: 82px;
+    gap: 8px;
+  }
+
+  .beranda-activity-card li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
