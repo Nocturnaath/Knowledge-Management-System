@@ -1,7 +1,7 @@
 .notifications-page {
   width: 100%;
   color: #111827;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, Arial, sans-serif;
 }
 
 .notifications-header {
@@ -16,7 +16,7 @@
 .notifications-header h1 {
   margin: 0 0 8px;
   color: #000;
-  font-size: 28px;
+  font-size: 21px;
   line-height: 1.3;
 }
 

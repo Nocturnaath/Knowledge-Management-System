@@ -23,7 +23,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/aplikasi', aplikasiRoutes);
 app.use('/api/hak-akses', hakAksesRoutes); // Rute ini untuk super_admin, middleware ada di routes/hakakses.js
 app.use('/api/dokumen', dokumenRoutes);
-app.use('/document-files', express.static(path.join(__dirname, 'uploads', 'documents')));
+app.use('/document-files', express.static(path.join(__dirname, 'uploads', 'documents'), {
+  index: false,
+}));
 
 // Sambung rute auth
 app.use('/api/auth', authRoutes);

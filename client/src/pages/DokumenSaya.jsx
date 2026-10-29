@@ -169,7 +169,7 @@ export default function DokumenSaya() {
       </section>
 
       <footer className="dashboard-footer">
-        KMS PPK Kemayoran <span>•</span> Portal pengetahuan internal
+        C-BIJAK <span>•</span> Portal pengetahuan internal
       </footer>
     </div>
   );

@@ -250,6 +250,7 @@
    ======================================== */
 
 .app-layout .app-main {
+  box-sizing: border-box;
   min-width: 0;
   min-height: 100vh;
   margin-left: clamp(190px, 18.6vw, 224px);

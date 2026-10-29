@@ -22,6 +22,7 @@ import DetailAplikasi from './pages/DetailAplikasi';
 import Layout from './components/Layout';
 import PersetujuanDokumen from './pages/PersetujuanDokumen';
 import HakAkses from './pages/HakAkses';
+import DokumenDivisi from './pages/DokumenDivisi';
 
 function SidebarPage({ title }) {
   return (
@@ -32,15 +33,17 @@ function SidebarPage({ title }) {
   );
 }
 
+function RoleRoute({ roles, children }) {
+  const { user } = useAuth();
+  return roles.includes(user?.role)
+    ? children
+    : <Navigate to="/profile" replace />;
+}
+
 // Mengatur route berdasarkan status login pengguna.
 function AppRoutes() {
   const { user, loading } = useAuth();
   const location = useLocation();
-  // Hanya role tertentu yang boleh membuka halaman; selain itu kembali ke profil
-const RoleRoute = ({ roles, children }) => {
-  const { user } = useAuth();
-  return roles.includes(user?.role) ? children : <Navigate to="/profile" replace />;
-};
 
   // Tunggu sampai status sesi login selesai diperiksa.
   if (loading) {
@@ -87,19 +90,39 @@ const RoleRoute = ({ roles, children }) => {
             : <Navigate to="/" replace />
         }
       >
-        <Route path="/dashboard" element={<Beranda/>} />
-        <Route path="/dokumen" element={<DokumenSaya/>} />
+        <Route path="/dashboard" element={<Beranda />} />
+        <Route path="/dokumen" element={<DokumenSaya />} />
         <Route path="/dokumen/upload" element={<UnggahDokumen />} />
-        <Route path="/dokumen-divisi" element={<SidebarPage title="Dokumen Divisi" />} />
+        <Route path="/dokumen-divisi" element={<DokumenDivisi />} />
         <Route path="/informasi" element={<SidebarPage title="Informasi Umum" />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/notifikasi" element={<Notifications />} />
         <Route path="/aplikasi" element={<Application />} />
         <Route path="/aplikasi/:id" element={<DetailAplikasi />} />
-        <Route path="/persetujuan-dokumen" element={<RoleRoute roles={['admin', 'super_admin']}> <PersetujuanDokumen /> </RoleRoute>}/>
-        <Route path="/kelola-kategori" element={<RoleRoute roles={['admin', 'super_admin']}> <SidebarPage title="Kelola Kategori" /> </RoleRoute>}/>
-        <Route path="/hak-akses" element={<RoleRoute roles={['super_admin']}> <HakAkses/> </RoleRoute>}/>
-
+        <Route
+          path="/persetujuan-dokumen"
+          element={
+            <RoleRoute roles={['admin', 'super_admin']}>
+              <PersetujuanDokumen />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/kelola-kategori"
+          element={
+            <RoleRoute roles={['admin', 'super_admin']}>
+              <SidebarPage title="Kelola Kategori" />
+            </RoleRoute>
+          }
+        />
+        <Route
+          path="/hak-akses"
+          element={
+            <RoleRoute roles={['super_admin']}>
+              <HakAkses />
+            </RoleRoute>
+          }
+        />
       </Route>
 
       {/* Alamat yang tidak dikenal diarahkan sesuai status login */}

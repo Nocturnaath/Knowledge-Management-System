@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
+const WordExtractor = require('word-extractor');
 const db = require('../config/db');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -28,6 +29,117 @@ const upload = multer({
     }
     callback(null, true);
   },
+});
+
+function requireReviewer(req, res, next) {
+  if (!['admin', 'super_admin'].includes(req.user.role)) {
+    return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses persetujuan dokumen.' });
+  }
+  next();
+}
+
+router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT
+        d.id,
+        d.title AS name,
+        d.file_name AS fileName,
+        d.stored_file_name AS storedFileName,
+        d.category,
+        d.application,
+        d.description,
+        d.status,
+        d.created_at AS createdAt,
+        owner.nama_lengkap AS uploader,
+        divisi.nama_divisi AS division
+      FROM documents d
+      JOIN users owner ON owner.id = d.user_id
+      LEFT JOIN divisi ON divisi.id = owner.divisi_id
+      WHERE d.status IN ('pending', 'approved', 'rejected')
+      ORDER BY d.created_at DESC`,
+    );
+    return res.json({ success: true, documents: rows });
+  } catch (error) {
+    console.error('Error mengambil dokumen persetujuan:', error);
+    return res.status(500).json({ success: false, message: 'Gagal memuat dokumen persetujuan.' });
+  }
+});
+
+router.patch('/:id/status', verifyToken, requireReviewer, async (req, res) => {
+  const { status, note } = req.body;
+  if (!['approved', 'rejected'].includes(status)) {
+    return res.status(400).json({ success: false, message: 'Status persetujuan tidak valid.' });
+  }
+
+  try {
+    const [result] = await db.query(
+      'UPDATE documents SET status = ? WHERE id = ? AND status = ?',
+      [status, req.params.id, 'pending'],
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Dokumen tidak ditemukan atau sudah diproses.' });
+    }
+
+    console.log(`Dokumen ${req.params.id} ${status} oleh ${req.user.id}. Catatan: ${note || '-'}`);
+    return res.json({ success: true, message: status === 'approved' ? 'Dokumen disetujui.' : 'Dokumen ditolak.' });
+  } catch (error) {
+    console.error('Error memperbarui status dokumen:', error);
+    return res.status(500).json({ success: false, message: 'Gagal memperbarui status dokumen.' });
+  }
+});
+
+router.get('/preview/:fileName', verifyToken, async (req, res) => {
+  const fileName = path.basename(req.params.fileName);
+  const filePath = path.join(uploadDirectory, fileName);
+
+  if (path.extname(fileName).toLowerCase() !== '.doc') {
+    return res.status(400).json({
+      success: false,
+      message: 'Endpoint pratinjau ini hanya untuk file DOC.',
+    });
+  }
+
+  try {
+    const extractor = new WordExtractor();
+    const document = await extractor.extract(filePath);
+    return res.json({ success: true, text: document.getBody() });
+  } catch (error) {
+    console.error('Error memproses pratinjau DOC:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'File DOC tidak dapat dipratinjau. Silakan unduh file tersebut.',
+    });
+  }
+});
+
+router.get('/divisi', verifyToken, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT
+        d.id,
+        d.title AS name,
+        d.file_name AS fileName,
+        d.stored_file_name AS storedFileName,
+        d.category,
+        d.status,
+        d.created_at AS createdAt,
+        CONCAT(owner.nama_lengkap) AS uploader
+      FROM documents d
+      JOIN users owner ON owner.id = d.user_id
+      WHERE owner.divisi_id = ?
+      ORDER BY d.created_at DESC`,
+      [req.user.divisi_id]
+    );
+
+    return res.json({ success: true, documents: rows });
+  } catch (error) {
+    console.error('Error mengambil dokumen divisi:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Gagal mengambil dokumen divisi.',
+    });
+  }
 });
 
 router.get('/', verifyToken, async (req, res) => {

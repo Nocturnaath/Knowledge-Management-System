@@ -91,8 +91,8 @@ export default function Aplikasi() {
           />
         </div>
 
-        {/* Dropdown rumpun hanya tampil kalau ada lebih dari satu pilihan */}
-        {rumpunTersedia.length > 1 && (
+        {/* Dropdown rumpun tampil jika ada rumpun yang tersedia */}
+        {rumpunTersedia.length > 0 && (
           <div className="apl-select">
             <select
               aria-label="Filter rumpun aplikasi"

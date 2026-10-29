@@ -2,7 +2,7 @@
 .apl-page {
     width: 100%;
     color: #111827;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Inter, Arial, sans-serif;
 }
 
 /* Judul + tanggal */
@@ -16,14 +16,14 @@
 .apl-head h1 {
     margin: 0;
     color: #000;
-    font-size: 28px;
+    font-size: 21px;
     line-height: 1.3;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .apl-sub {
     margin: 4px 0 0;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1.5;
     color: #111827;
 }

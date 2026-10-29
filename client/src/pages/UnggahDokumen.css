@@ -1,6 +1,7 @@
 .upload-page {
   max-width: 860px;
   margin: 0 auto;
+  padding-bottom: 4px;
 }
 
 .upload-page-header {
@@ -8,7 +9,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 20px;
-  margin-bottom: 28px;
+  margin-bottom: 12px;
 }
 
 .upload-page-header h1 {
@@ -36,8 +37,8 @@
 
 .upload-form {
   display: grid;
-  gap: 18px;
-  padding: 24px;
+  gap: 8px;
+  padding: 14px;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 2px 7px #18345c20;
@@ -45,7 +46,7 @@
 
 .upload-form label {
   display: grid;
-  gap: 7px;
+  gap: 3px;
   color: #344054;
   font-weight: 600;
 }
@@ -57,12 +58,71 @@
   box-sizing: border-box;
   border: 1px solid #d9dee7;
   border-radius: 6px;
-  padding: 11px 12px;
+  padding: 7px 12px;
   font: inherit;
 }
 
 .upload-form textarea {
+  min-height: 54px;
   resize: vertical;
+}
+
+.application-select {
+  position: relative;
+}
+
+.application-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 12px;
+  border: 1px solid #d9dee7;
+  border-radius: 6px;
+  background: #fff;
+  color: #344054;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.application-select-trigger span {
+  color: #667085;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.application-select-menu {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 2px);
+  right: 0;
+  left: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  border: 1px solid #b8c2d1;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(24, 52, 92, 0.2);
+}
+
+.application-select-menu button {
+  display: block;
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  background: #fff;
+  color: #344054;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.application-select-menu button:hover,
+.application-select-menu button.selected {
+  background: #e8eef8;
+  color: #164c9b;
 }
 
 .upload-file-field {
@@ -100,4 +160,9 @@
 .upload-error {
   margin: 0;
   color: #b42318;
+}
+
+.upload-field-error {
+  color: #b42318;
+  font-weight: 400;
 }

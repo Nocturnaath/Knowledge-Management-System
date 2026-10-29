@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: Inter, Arial, sans-serif;
   color: #111827;
   background: #fff;
   color-scheme: light;

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
@@ -22,7 +22,53 @@ const categories = [
   'Manajemen Risiko SPI',
 ];
 
-const applications = ['IT SUPPORT', 'ABSEN ONLINE', 'C - MARK', 'C - CLEO', 'C - MANTAP', 'ZIMBRA'];
+function ApplicationSelect({ applications, value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const selectedApplication = applications.find((application) => application.nama === value);
+
+  return (
+    <div className="application-select">
+      <button
+        type="button"
+        className="application-select-trigger"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+      >
+        {selectedApplication?.nama || 'Pilih aplikasi'}
+        <span aria-hidden="true">⌄</span>
+      </button>
+      {open && (
+        <div className="application-select-menu" role="listbox">
+          <button
+            type="button"
+            className={!value ? 'selected' : ''}
+            onClick={() => {
+              onChange('');
+              setOpen(false);
+            }}
+          >
+            Pilih aplikasi
+          </button>
+          {applications.map((application) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={application.nama === value}
+              className={application.nama === value ? 'selected' : ''}
+              key={application.id}
+              onClick={() => {
+                onChange(application.nama);
+                setOpen(false);
+              }}
+            >
+              {application.nama}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function UnggahDokumen() {
   const { token } = useAuth();
@@ -37,8 +83,29 @@ export default function UnggahDokumen() {
     publicAccess: false,
   });
   const [file, setFile] = useState(null);
+  const [applications, setApplications] = useState([]);
   const [error, setError] = useState('');
+  const [applicationsError, setApplicationsError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const loadApplications = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/aplikasi/options`, {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Gagal memuat daftar aplikasi.');
+        }
+        setApplications(data.applications);
+      } catch (requestError) {
+        setApplicationsError(requestError.message);
+      }
+    };
+
+    loadApplications();
+  }, [token]);
 
   const updateField = (event) => {
     const { name, value, checked, type } = event.target;
@@ -73,7 +140,7 @@ export default function UnggahDokumen() {
     try {
       const response = await fetch(`${API_URL}/api/dokumen`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: 'Bearer ' + token },
         body,
       });
       const data = await response.json();
@@ -114,14 +181,16 @@ export default function UnggahDokumen() {
         </label>
         <label>
           Aplikasi
-          <select name="application" value={form.application} onChange={updateField}>
-            <option value="">Pilih aplikasi</option>
-            {applications.map((application) => <option key={application} value={application}>{application}</option>)}
-          </select>
+          <ApplicationSelect
+            applications={applications}
+            value={form.application}
+            onChange={(application) => setForm((current) => ({ ...current, application }))}
+          />
+          {applicationsError && <small className="upload-field-error">{applicationsError}</small>}
         </label>
         <label>
           Deskripsi *
-          <textarea name="description" value={form.description} onChange={updateField} rows="4" required />
+          <textarea name="description" value={form.description} onChange={updateField} rows="3" required />
         </label>
         <div className="upload-file-field">
           <input

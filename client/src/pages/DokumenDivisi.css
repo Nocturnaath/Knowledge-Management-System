@@ -1,0 +1,160 @@
+.division-page {
+  width: 100%;
+  color: #111827;
+}
+
+.division-page-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.division-page-header p {
+  margin: 8px 0 0;
+}
+
+.division-search {
+  display: block;
+  margin-top: 32px;
+}
+
+.division-search input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 24px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+  font-size: 17px;
+}
+
+.division-table-card {
+  margin-top: 16px;
+  padding: 20px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+}
+
+.division-table-scroll {
+  overflow-x: auto;
+}
+
+.division-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.division-table th,
+.division-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.division-table th {
+  color: #0b2f73;
+}
+
+.division-table button {
+  padding: 6px 12px;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background: #fff;
+  color: #0b2f73;
+  cursor: pointer;
+}
+
+.division-message,
+.division-preview-empty {
+  padding: 36px 16px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.division-message.error,
+.division-preview-empty.error {
+  color: #b42318;
+}
+
+.division-preview-backdrop {
+  position: fixed;
+  z-index: 20;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.division-preview-modal {
+  display: flex;
+  width: min(850px, 100%);
+  max-height: 92vh;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.division-preview-modal header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.division-preview-modal h2 {
+  margin: 0;
+}
+
+.division-preview-modal header p {
+  margin: 5px 0 0;
+  color: #6b7280;
+}
+
+.division-preview-modal header button {
+  align-self: flex-start;
+  padding: 6px 12px;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.division-preview-frame {
+  width: 100%;
+  min-height: 500px;
+  border: 1px solid #d9dde6;
+}
+
+.division-preview-text,
+.division-preview-html {
+  max-height: 500px;
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid #d9dde6;
+  background: #f9fafb;
+  line-height: 1.6;
+}
+
+.division-preview-html table {
+  border-collapse: collapse;
+}
+
+.division-preview-html td,
+.division-preview-html th {
+  padding: 6px 10px;
+  border: 1px solid #d9dde6;
+}
+
+.division-download {
+  align-self: flex-end;
+  padding: 9px 16px;
+  border-radius: 4px;
+  background: #1264d8;
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
