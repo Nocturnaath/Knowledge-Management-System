@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
+import CategoryFilter from '../components/CategoryFilter';
 import './DokumenDivisi.css';
 
 const statusLabels = {
@@ -17,8 +18,10 @@ export default function DokumenDivisi() {
   const { token } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Kategori');
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [versions, setVersions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,17 +51,26 @@ export default function DokumenDivisi() {
   const visibleDocuments = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase('id-ID');
     return documents.filter((document) =>
+      (selectedCategory === 'Kategori' || document.category === selectedCategory) &&
       `${document.name} ${document.category || ''}`.toLocaleLowerCase('id-ID').includes(query)
     );
-  }, [documents, searchQuery]);
+  }, [documents, searchQuery, selectedCategory]);
 
   const openPreview = async (document) => {
     setSelectedDocument(document);
     setPreview(null);
+    setVersions([]);
     setPreviewError('');
     setPreviewLoading(true);
 
     try {
+      const versionsResponse = await fetch(`${API_URL}/api/dokumen/${document.id}/versions`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const versionsData = await versionsResponse.json();
+      if (!versionsResponse.ok || !versionsData.success) throw new Error(versionsData.message);
+      setVersions(versionsData.versions);
+
       const extension = extensionOf(document);
       if (extension === 'pdf') {
         setPreview({ type: 'pdf' });
@@ -110,15 +122,18 @@ export default function DokumenDivisi() {
         </div>
       </header>
 
-      <label className="division-search">
-        <span className="sr-only">Cari dokumen divisi</span>
-        <input
-          type="search"
-          placeholder="Cari Judul Dokumen"
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-        />
-      </label>
+      <div className="division-toolbar">
+        <label className="division-search">
+          <span className="sr-only">Cari dokumen divisi</span>
+          <input
+            type="search"
+            placeholder="Cari Judul Dokumen"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+          />
+        </label>
+        <CategoryFilter value={selectedCategory} onChange={setSelectedCategory} />
+      </div>
 
       <section className="division-table-card" aria-label="Daftar dokumen divisi">
         {loading ? <p className="division-message">Memuat dokumen...</p> : null}
@@ -182,6 +197,18 @@ export default function DokumenDivisi() {
             {!previewLoading && !previewError && preview?.type === 'html' && (
               <div className="division-preview-html" dangerouslySetInnerHTML={{ __html: preview.value }} />
             )}
+            <section className="division-version-history">
+              <h3>Riwayat Versi</h3>
+              {versions.map((version) => (
+                <article key={version.id}>
+                  <div>
+                    <strong>v{version.version} · {version.eventType === 'upload' ? 'Dokumen pertama diunggah' : 'Pembaruan dokumen'}</strong>
+                    <small>Diunggah oleh {version.uploader}</small>
+                  </div>
+                  <time>{new Date(version.createdAt).toLocaleDateString('id-ID')}</time>
+                </article>
+              ))}
+            </section>
             <a
               className="division-download"
               href={`${API_URL}/document-files/${selectedDocument.storedFileName}`}

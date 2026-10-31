@@ -23,6 +23,7 @@ import Layout from './components/Layout';
 import PersetujuanDokumen from './pages/PersetujuanDokumen';
 import HakAkses from './pages/HakAkses';
 import DokumenDivisi from './pages/DokumenDivisi';
+import InformasiUmum from './pages/InformasiUmum';
 
 function SidebarPage({ title }) {
   return (
@@ -94,7 +95,7 @@ function AppRoutes() {
         <Route path="/dokumen" element={<DokumenSaya />} />
         <Route path="/dokumen/upload" element={<UnggahDokumen />} />
         <Route path="/dokumen-divisi" element={<DokumenDivisi />} />
-        <Route path="/informasi" element={<SidebarPage title="Informasi Umum" />} />
+        <Route path="/informasi" element={<InformasiUmum />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/notifikasi" element={<Notifications />} />
         <Route path="/aplikasi" element={<Application />} />

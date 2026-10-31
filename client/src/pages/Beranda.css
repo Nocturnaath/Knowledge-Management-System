@@ -60,6 +60,16 @@
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 2px 7px #18345c12;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.beranda-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #18345c22;
 }
 
 .beranda-stat-card span {
@@ -133,6 +143,11 @@
   color: #7b8492;
   font-size: 13px;
   text-align: center;
+}
+
+.beranda-error {
+  color: #b42318;
+  font-size: 13px;
 }
 
 /* Footer */

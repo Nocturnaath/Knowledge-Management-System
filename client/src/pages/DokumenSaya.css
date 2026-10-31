@@ -29,7 +29,7 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 24px;
-    margin: 2px 0 clamp(16px, 4vh, 40px);
+    margin: 2px 0 48px;
 }
 
 .dokumen-saya .page-header h1 {
@@ -54,9 +54,7 @@
 /* Panel utama */
 .dokumen-saya .documents-panel {
     overflow: visible;
-    border-radius: 6px;
-    background: #fff;
-    box-shadow: 0 2px 7px #18345c20;
+    background: transparent;
 }
 
 /* Baris pencarian, filter kategori, tombol unggah */
@@ -65,8 +63,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 20px;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 0;
 }
 
 .dokumen-saya .document-search {
@@ -164,17 +161,19 @@
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 0 20px;
-    border-bottom: 1px solid #e5e7eb;
+    margin-top: 18px;
+    margin-bottom: 14px;
+    padding: 0 16px;
     scrollbar-width: thin;
 }
 
 .dokumen-saya .document-tab {
     flex: none;
-    min-height: 54px;
+    min-height: 42px;
     padding: 0 12px;
     border: 0;
-    border-bottom: 3px solid transparent;
+    border: 0;
+    border-radius: 8px;
     background: transparent;
     color: #667085;
     font-size: 13px;
@@ -188,7 +187,7 @@
 }
 
 .dokumen-saya .document-tab.active {
-    border-bottom-color: #1765d8;
+    background: #8dbaf4;
     color: #164c9b;
 }
 
@@ -200,12 +199,98 @@
 
 /* Daftar dokumen (tingginya mengikuti layar supaya halaman tidak ikut ter-scroll) */
 .dokumen-saya .document-list {
+    margin-top: 0;
     min-height: 200px;
-    max-height: calc(100vh - 350px);
+    max-height: calc(100vh - 300px);
     overflow-y: auto;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 2px 7px #18345c20;
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
     scrollbar-color: #c3ccd8 #f4f6f8;
+}
+
+.dokumen-saya .document-table-scroll {
+    overflow-x: auto;
+}
+
+.dokumen-saya .document-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    color: #242424;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.dokumen-saya .document-table th,
+.dokumen-saya .document-table td {
+    height: 49px;
+    padding: 0 14px;
+    border-bottom: 1px solid #dedede;
+    text-align: left;
+}
+
+.dokumen-saya .document-table th {
+    color: #707070;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.dokumen-saya .document-table th:first-child,
+.dokumen-saya .document-table td:first-child {
+    padding-left: 16px;
+}
+
+.dokumen-saya .document-table th:nth-child(3),
+.dokumen-saya .document-table td:nth-child(3),
+.dokumen-saya .document-table th:nth-child(4),
+.dokumen-saya .document-table td:nth-child(4) {
+    text-align: center;
+}
+
+.dokumen-saya .document-table th:last-child,
+.dokumen-saya .document-table td:last-child {
+    padding-right: 12px;
+    text-align: center;
+}
+
+.dokumen-saya .document-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.dokumen-saya .document-actions button {
+    padding: 2px 6px;
+    border: 1px solid #aeb4bb;
+    border-radius: 4px;
+    background: #fff;
+    color: #303030;
+    font-size: 12px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.dokumen-saya .document-actions a {
+    padding: 2px 6px;
+    border: 1px solid #aeb4bb;
+    border-radius: 4px;
+    background: #fff;
+    color: #303030;
+    font-size: 12px;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.dokumen-saya .document-actions button:hover {
+    background: #f1f5fb;
+}
+
+.dokumen-saya .document-actions .delete-action {
+    color: #e00000;
 }
 
 /* Tampilan kosong */
@@ -298,12 +383,12 @@
 /* Label status */
 .dokumen-saya .document-status {
     flex: none;
-    margin-left: auto;
-    padding: 5px 9px;
+    display: inline-block;
+    padding: 4px 10px;
     border-radius: 20px;
     background: #fff5dc;
     color: #936400;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
 }
 
@@ -325,6 +410,185 @@
 
 .dokumen-saya .dashboard-footer span {
     padding: 0 5px;
+}
+
+.dokumen-saya .document-preview-backdrop {
+    position: fixed;
+    z-index: 30;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgb(15 23 42 / 48%);
+}
+
+.dokumen-saya .document-preview-modal {
+    display: flex;
+    width: min(850px, 100%);
+    max-height: 92vh;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.dokumen-saya .document-preview-modal header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dokumen-saya .document-preview-modal h2 {
+    margin: 0;
+}
+
+.dokumen-saya .document-preview-modal header p {
+    margin: 5px 0 0;
+    color: #6b7280;
+}
+
+.dokumen-saya .document-preview-modal header button {
+    align-self: flex-start;
+    padding: 6px 12px;
+    border: 1px solid #9ca3af;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.dokumen-saya .document-preview-frame {
+    width: 100%;
+    min-height: 500px;
+    border: 1px solid #d9dde6;
+}
+
+.dokumen-saya .document-preview-text,
+.dokumen-saya .document-preview-html {
+    max-height: 500px;
+    overflow: auto;
+    padding: 16px;
+    border: 1px solid #d9dde6;
+    background: #f9fafb;
+    line-height: 1.6;
+}
+
+.dokumen-saya .document-preview-html table {
+    border-collapse: collapse;
+}
+
+.dokumen-saya .document-preview-html td,
+.dokumen-saya .document-preview-html th {
+    padding: 6px 10px;
+    border: 1px solid #d9dde6;
+}
+
+.dokumen-saya .document-preview-empty {
+    padding: 36px 16px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.dokumen-saya .document-preview-empty.error {
+    color: #b42318;
+}
+
+.dokumen-saya .document-version-history h3 {
+    margin: 0 0 8px;
+    color: #172033;
+    font-size: 16px;
+}
+
+.dokumen-saya .document-version-history article {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.dokumen-saya .document-version-history strong,
+.dokumen-saya .document-version-history small {
+    display: block;
+}
+
+.dokumen-saya .document-version-history strong {
+    color: #344054;
+    font-size: 13px;
+}
+
+.dokumen-saya .document-version-history small,
+.dokumen-saya .document-version-history time {
+    margin-top: 4px;
+    color: #7b8492;
+    font-size: 11px;
+}
+
+.dokumen-saya .document-edit-modal {
+    display: grid;
+    width: min(470px, 100%);
+    max-height: 92vh;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 24px;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.dokumen-saya .document-edit-modal h2 {
+    margin: 0 0 4px;
+    color: #172033;
+    font-size: 18px;
+}
+
+.dokumen-saya .document-edit-modal label {
+    display: grid;
+    gap: 6px;
+    color: #667085;
+    font-size: 12px;
+}
+
+.dokumen-saya .document-edit-modal input:not([type="checkbox"]),
+.dokumen-saya .document-edit-modal textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+    font: inherit;
+}
+
+.dokumen-saya .document-edit-modal .category-filter {
+    width: 100%;
+}
+
+.dokumen-saya .document-edit-checkbox {
+    display: flex !important;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 8px;
+}
+
+.dokumen-saya .document-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.dokumen-saya .document-edit-actions button {
+    padding: 10px 16px;
+    border: 1px solid #d9dee7;
+    border-radius: 7px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.dokumen-saya .document-edit-actions button:last-child {
+    border-color: #1456c8;
+    background: #1456c8;
+    color: #fff;
 }
 
 @media (max-width: 700px) {

@@ -71,6 +71,18 @@
   text-align: right;
 }
 
+.notifications-empty,
+.notifications-error {
+  margin: 0;
+  padding: 48px 20px;
+  color: #667085;
+  text-align: center;
+}
+
+.notifications-error {
+  color: #b42318;
+}
+
 @media (max-width: 600px) {
   .notifications-header {
     flex-direction: column;

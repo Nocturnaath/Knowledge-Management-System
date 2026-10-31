@@ -1,15 +1,26 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 import './Beranda.css';
 
-// Label statistik akan tetap tampil.
-// Angka akan diisi setelah terhubung ke backend.
 const documentStats = [
-  'Total Dokumen',
-  'Dokumen Saya',
-  'Menunggu Persetujuan',
+  { label: 'Total Dokumen', key: 'totalDocuments', path: '/dokumen-divisi' },
+  { label: 'Dokumen Saya', key: 'ownDocuments', path: '/dokumen' },
+  { label: 'Menunggu Persetujuan', key: 'pendingDocuments', path: '/dokumen?status=pending' },
 ];
+
+function formatActivityDate(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  return date.toLocaleString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 function PageHeader() {
   const { user } = useAuth();
@@ -41,27 +52,23 @@ function PageHeader() {
   );
 }
 
-function DocumentStats() {
+function DocumentStats({ counts, onNavigate }) {
   return (
     <section
       className="beranda-stats"
       aria-label="Ringkasan dokumen"
     >
-      {documentStats.map((label) => (
-        <article className="beranda-stat-card" key={label}>
+      {documentStats.map(({ label, key, path }) => (
+        <button className="beranda-stat-card" key={label} type="button" onClick={() => onNavigate(path)}>
           <span>{label}</span>
-          <strong>—</strong>
-        </article>
+          <strong>{counts[key]}</strong>
+        </button>
       ))}
     </section>
   );
 }
 
-function RecentActivities() {
-  // Belum menggunakan data contoh.
-  // Nantinya aktivitas akan diambil dari backend.
-  const activities = [];
-
+function RecentActivities({ activities }) {
   return (
     <section className="beranda-activity-card">
       <div className="beranda-activity-heading">
@@ -72,14 +79,16 @@ function RecentActivities() {
         <ul>
           {activities.map((activity) => (
             <li key={activity.id}>
-              <span>{activity.description}</span>
-              <time>{activity.time}</time>
+              <span>
+                <b>{activity.uploader}</b> {activity.eventType === 'update' ? 'memperbarui' : 'mengunggah'} dokumen <b>{activity.documentName}</b>
+              </span>
+              <time>{formatActivityDate(activity.createdAt)}</time>
             </li>
           ))}
         </ul>
       ) : (
         <div className="beranda-activity-empty">
-          Aktivitas akan ditampilkan setelah data terhubung.
+          Belum ada aktivitas dokumen di divisi Anda.
         </div>
       )}
     </section>
@@ -87,11 +96,42 @@ function RecentActivities() {
 }
 
 export default function Beranda() {
+  const { token } = useAuth();
+  const navigate = useNavigate();
+  const [counts, setCounts] = useState({
+    totalDocuments: 0,
+    ownDocuments: 0,
+    pendingDocuments: 0,
+  });
+  const [activities, setActivities] = useState([]);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadSummary = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/dokumen/ringkasan`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Gagal mengambil ringkasan dokumen.');
+        }
+        setCounts(data.counts);
+        setActivities(data.activities);
+      } catch (requestError) {
+        setError(requestError.message);
+      }
+    };
+
+    loadSummary();
+  }, [token]);
+
   return (
     <div className="beranda-page">
       <PageHeader />
-      <DocumentStats />
-      <RecentActivities />
+      <DocumentStats counts={counts} onNavigate={(path) => navigate(path)} />
+      <RecentActivities activities={activities} />
+      {error && <p className="beranda-error">{error}</p>}
 
       <footer className="beranda-footer">
         C-BIJAK <span>•</span> Portal pengetahuan internal
