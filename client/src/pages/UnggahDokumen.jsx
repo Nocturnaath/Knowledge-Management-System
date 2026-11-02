@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './UnggahDokumen.css';
 
-const categories = [
+const defaultCategories = [
   'Overview',
   'Business Process',
   'Application Architecture',
@@ -78,17 +78,34 @@ export default function UnggahDokumen() {
     title: '',
     category: '',
     application: '',
+    tags: '',
     description: '',
     needsApproval: false,
     publicAccess: false,
   });
   const [file, setFile] = useState(null);
   const [applications, setApplications] = useState([]);
+  const [categories, setCategories] = useState(defaultCategories);
   const [error, setError] = useState('');
   const [applicationsError, setApplicationsError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/kategori`, {
+          headers: { Authorization: 'Bearer ' + token },
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Gagal memuat daftar kategori.');
+        }
+        setCategories(data.categories.map((category) => category.name));
+      } catch (requestError) {
+        setError(requestError.message);
+      }
+    };
+
     const loadApplications = async () => {
       try {
         const response = await fetch(`${API_URL}/api/aplikasi/options`, {
@@ -104,6 +121,7 @@ export default function UnggahDokumen() {
       }
     };
 
+    loadCategories();
     loadApplications();
   }, [token]);
 
@@ -191,6 +209,17 @@ export default function UnggahDokumen() {
         <label>
           Deskripsi *
           <textarea name="description" value={form.description} onChange={updateField} rows="3" required />
+        </label>
+        <label>
+          Tag
+          <input
+            name="tags"
+            value={form.tags}
+            onChange={updateField}
+            placeholder="#keuangan, #pegawai"
+            aria-describedby="tag-help"
+          />
+          <small id="tag-help" className="upload-field-help">Gunakan tag untuk memudahkan pencarian, misalnya #keuangan atau #kepegawaian.</small>
         </label>
         <div className="upload-file-field">
           <input

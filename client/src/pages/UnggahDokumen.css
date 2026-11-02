@@ -71,6 +71,14 @@
   position: relative;
 }
 
+.upload-field-help {
+  display: block;
+  margin-top: 5px;
+  color: #667085;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 .application-select-trigger {
   display: flex;
   align-items: center;

@@ -3,7 +3,7 @@
 .dokumen-saya {
     width: 100%;
     color: #111827;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Inter, Arial, sans-serif;
 }
 
 .dokumen-saya button,
@@ -191,6 +191,25 @@
     color: #164c9b;
 }
 
+.dokumen-saya .document-tag-filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 16px 10px;
+    color: #245bb5;
+    font-size: 12px;
+}
+
+.dokumen-saya .document-tag-filter button {
+    margin-left: 4px;
+    border: 0;
+    background: transparent;
+    color: #667085;
+    font-size: 11px;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .dokumen-saya .document-tab:focus-visible,
 .dokumen-saya .document-list:focus-visible {
     outline: 3px solid #7eb4ff;
@@ -254,6 +273,30 @@
 .dokumen-saya .document-table td:last-child {
     padding-right: 12px;
     text-align: center;
+}
+
+.dokumen-saya .document-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+}
+
+.dokumen-saya .document-tag {
+    padding: 2px 7px;
+    border: 1px solid #9fc2ff;
+    border-radius: 999px;
+    background: #e7f0ff;
+    color: #245bb5;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.dokumen-saya .document-tag:hover,
+.dokumen-saya .document-tag.active {
+    border-color: #2563eb;
+    background: #cfe1ff;
+    box-shadow: 0 0 0 2px rgb(37 99 235 / 12%);
 }
 
 .dokumen-saya .document-actions {
@@ -426,6 +469,7 @@
     display: flex;
     width: min(850px, 100%);
     max-height: 92vh;
+    overflow-y: auto;
     flex-direction: column;
     gap: 16px;
     padding: 24px;
@@ -459,7 +503,9 @@
 
 .dokumen-saya .document-preview-frame {
     width: 100%;
-    min-height: 500px;
+    height: min(48vh, 500px);
+    min-height: 260px;
+    flex: 0 1 auto;
     border: 1px solid #d9dde6;
 }
 

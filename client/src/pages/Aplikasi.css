@@ -125,6 +125,14 @@
     border: 1px solid #d9dde6;
     border-radius: 4px;
     background: #fff;
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.apl-card:active,
+.apl-card:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18), 0 8px 22px rgba(37, 99, 235, 0.18);
+    transform: translateY(-2px);
 }
 
 .apl-card h3 {
@@ -133,6 +141,33 @@
     line-height: 1.3;
     color: #000;
     text-transform: uppercase;
+}
+
+.apl-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.apl-tags span,
+.detail-document-tags {
+  display: inline-flex;
+  padding: 3px 8px;
+  border: 1px solid #9fc2ff;
+  border-radius: 999px;
+  background: #e7f0ff;
+  color: #245bb5;
+  font-size: 11px;
+  font-weight: 600;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.apl-card:hover .apl-tags span,
+.apl-card:focus-within .apl-tags span {
+  border-color: #4b8ff8;
+  background: #cfe1ff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
 }
 
 .apl-desc {

@@ -56,7 +56,9 @@ export default function Aplikasi() {
     const kata = cari.trim().toLowerCase();
     return aplikasi.filter((a) => {
       const cocokRumpun = rumpunDipilih === 'semua' || String(a.rumpunId) === rumpunDipilih;
-      const cocokKata = !kata || a.nama.toLowerCase().includes(kata);
+      const cocokKata = !kata
+        || a.nama.toLowerCase().includes(kata)
+        || (a.tags || []).some((tag) => tag.toLowerCase().includes(kata));
       return cocokRumpun && cocokKata;
     });
   }, [aplikasi, cari, rumpunDipilih]);
@@ -127,7 +129,10 @@ export default function Aplikasi() {
           return (
             <article className="apl-card" key={a.id}>
               <h3>{a.nama}</h3>
-              <div className="apl-skor">{a.terisi}/10</div>
+              {a.tags?.length > 0 && (
+                <div className="apl-tags">{a.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+              )}
+              <div className="apl-skor" title="Kelengkapan dokumentasi">{a.terisi}/10</div>
               <div className="apl-foot">
                 <Link to={`/aplikasi/${a.id}`} className="apl-detail">← Lihat Detail</Link>
                 <span className={`apl-badge ${lengkap ? 'lengkap' : 'belum'}`}>

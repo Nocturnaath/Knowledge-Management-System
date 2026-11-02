@@ -15,6 +15,9 @@ export default function DetailAplikasi() {
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [versions, setVersions] = useState([]);
+  const [versionsLoading, setVersionsLoading] = useState(false);
+  const [versionsError, setVersionsError] = useState('');
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -65,9 +68,25 @@ export default function DetailAplikasi() {
     setSelectedDocument(document);
     setPreview(null);
     setPreviewError('');
+    setVersions([]);
+    setVersionsError('');
+    setVersionsLoading(true);
     setPreviewLoading(true);
 
     try {
+      try {
+        const versionsResponse = await fetch(`${API_URL}/api/dokumen/${document.id}/versions`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const versionsData = await versionsResponse.json();
+        if (!versionsResponse.ok || !versionsData.success) {
+          throw new Error(versionsData.message || 'Gagal memuat riwayat versi dokumen.');
+        }
+        setVersions(versionsData.versions);
+      } catch (versionRequestError) {
+        setVersionsError(versionRequestError.message || 'Riwayat versi tidak dapat dimuat.');
+      }
+
       const extension = extensionOf(document);
       if (extension === 'pdf') {
         setPreview({ type: 'pdf' });
@@ -106,6 +125,7 @@ export default function DetailAplikasi() {
       setPreviewError(previewRequestError.message || 'File tidak dapat dipratinjau.');
     } finally {
       setPreviewLoading(false);
+      setVersionsLoading(false);
     }
   };
 
@@ -123,6 +143,22 @@ export default function DetailAplikasi() {
   }
 
   const lengkap = aplikasi.terisi >= 10;
+  const applicationDocuments = documents.filter((document) => document.categoryType !== 'informasi');
+  const informationDocuments = documents.filter((document) => document.categoryType === 'informasi');
+  const renderDocuments = (items) => (
+    <ul className="detail-dokumen-list">
+      {items.map((document) => (
+        <li className="detail-dokumen-item" key={document.id}>
+          <div>
+            <strong>{document.name}</strong>
+            <small>{document.category} · {document.fileName}</small>
+            {document.tags?.length > 0 && <small className="detail-document-tags">{document.tags.join(' ')}</small>}
+          </div>
+          <button type="button" onClick={() => openPreview(document)}>Lihat</button>
+        </li>
+      ))}
+    </ul>
+  );
 
   return (
     <div className="detail-aplikasi-page">
@@ -135,7 +171,7 @@ export default function DetailAplikasi() {
       </header>
 
       <div className="detail-aplikasi-summary">
-        Kelengkapan dokumentasi: <strong>{aplikasi.terisi}/10</strong>
+        <strong>{aplikasi.terisi}/10</strong>
         <span className={`detail-status ${lengkap ? 'lengkap' : 'belum'}`}>
           {lengkap ? 'Lengkap' : 'Belum Lengkap'}
         </span>
@@ -151,19 +187,15 @@ export default function DetailAplikasi() {
         ) : documents.length === 0 ? (
           <div className="detail-dokumen-empty">Belum ada dokumen untuk aplikasi ini.</div>
         ) : (
-          <ul className="detail-dokumen-list">
-            {documents.map((document) => (
-              <li className="detail-dokumen-item" key={document.id}>
-                <div>
-                  <strong>{document.name}</strong>
-                  <small>{document.category} · {document.fileName}</small>
-                </div>
-                <button type="button" onClick={() => openPreview(document)}>
-                  Lihat
-                </button>
-              </li>
-            ))}
-          </ul>
+          <>
+            {applicationDocuments.length > 0 && renderDocuments(applicationDocuments)}
+            {informationDocuments.length > 0 && (
+              <section className="detail-related-information">
+                <h3>Informasi Umum terkait aplikasi</h3>
+                {renderDocuments(informationDocuments)}
+              </section>
+            )}
+          </>
         )}
       </section>
 
@@ -199,6 +231,23 @@ export default function DetailAplikasi() {
             {!previewLoading && !previewError && preview?.type === 'html' && (
               <div className="document-preview-unavailable document-preview-html" dangerouslySetInnerHTML={{ __html: preview.value }} />
             )}
+
+            <section className="document-version-history" aria-labelledby="document-version-title">
+              {versionsLoading && <p>Memuat riwayat versi...</p>}
+              {versionsError && <p className="document-version-error">{versionsError}</p>}
+              {!versionsLoading && !versionsError && versions.length === 0 && (
+                <p>Belum ada riwayat versi.</p>
+              )}
+              {!versionsLoading && !versionsError && versions.map((version) => (
+                <div className="document-version-row" key={version.id}>
+                  <div>
+                    <strong>v{version.version} · {version.eventType === 'upload' ? 'Unggah' : 'Pembaruan'}</strong>
+                    <small>{version.uploader} · {new Date(version.createdAt).toLocaleString('id-ID')}</small>
+                  </div>
+                  <span>{version.description || 'Tidak ada catatan perubahan.'}</span>
+                </div>
+              ))}
+            </section>
 
             <a
               className="document-download-button"

@@ -12,6 +12,7 @@ const aplikasiRoutes = require('./routes/aplikasi');
 const hakAksesRoutes = require('./routes/hakakses');
 const dokumenRoutes = require('./routes/dokumen');
 const informasiRoutes = require('./routes/informasi');
+const kategoriRoutes = require('./routes/kategori');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -25,6 +26,7 @@ app.use('/api/aplikasi', aplikasiRoutes);
 app.use('/api/hak-akses', hakAksesRoutes); // Rute ini untuk super_admin, middleware ada di routes/hakakses.js
 app.use('/api/dokumen', dokumenRoutes);
 app.use('/api/informasi-umum', informasiRoutes);
+app.use('/api/kategori', kategoriRoutes);
 app.use('/document-files', express.static(path.join(__dirname, 'uploads', 'documents'), {
   index: false,
 }));

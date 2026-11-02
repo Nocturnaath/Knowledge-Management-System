@@ -5,12 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './Beranda.css';
 
-const documentStats = [
-  { label: 'Total Dokumen', key: 'totalDocuments', path: '/dokumen-divisi' },
-  { label: 'Dokumen Saya', key: 'ownDocuments', path: '/dokumen' },
-  { label: 'Menunggu Persetujuan', key: 'pendingDocuments', path: '/dokumen?status=pending' },
-];
-
 function formatActivityDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '-';
@@ -52,14 +46,35 @@ function PageHeader() {
   );
 }
 
-function DocumentStats({ counts, onNavigate }) {
+function DocumentStats({ counts, onNavigate, isReviewer }) {
+  const [activeCard, setActiveCard] = useState(null);
+  const documentStats = [
+    { label: 'Total Dokumen', key: 'totalDocuments', path: '/dokumen-divisi' },
+    { label: 'Dokumen Saya', key: 'ownDocuments', path: '/dokumen' },
+    {
+      label: 'Menunggu Persetujuan',
+      key: 'pendingDocuments',
+      path: isReviewer ? '/persetujuan-dokumen' : '/dokumen?status=pending',
+    },
+  ];
+
+  const handleNavigate = (key, path) => {
+    setActiveCard(key);
+    window.setTimeout(() => onNavigate(path), 220);
+  };
+
   return (
     <section
       className="beranda-stats"
       aria-label="Ringkasan dokumen"
     >
       {documentStats.map(({ label, key, path }) => (
-        <button className="beranda-stat-card" key={label} type="button" onClick={() => onNavigate(path)}>
+        <button
+          className={`beranda-stat-card${activeCard === key ? ' is-clicked' : ''}`}
+          key={label}
+          type="button"
+          onClick={() => handleNavigate(key, path)}
+        >
           <span>{label}</span>
           <strong>{counts[key]}</strong>
         </button>
@@ -80,7 +95,11 @@ function RecentActivities({ activities }) {
           {activities.map((activity) => (
             <li key={activity.id}>
               <span>
-                <b>{activity.uploader}</b> {activity.eventType === 'update' ? 'memperbarui' : 'mengunggah'} dokumen <b>{activity.documentName}</b>
+                <b>{activity.uploader}</b>{' '}
+                {activity.eventType === 'category_move'
+                  ? `memindahkan ${activity.documentName}`
+                  : `${activity.eventType === 'update' ? 'memperbarui' : 'mengunggah'} dokumen `}
+                {activity.eventType !== 'category_move' && <b>{activity.documentName}</b>}
               </span>
               <time>{formatActivityDate(activity.createdAt)}</time>
             </li>
@@ -96,7 +115,7 @@ function RecentActivities({ activities }) {
 }
 
 export default function Beranda() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
   const [counts, setCounts] = useState({
     totalDocuments: 0,
@@ -129,7 +148,11 @@ export default function Beranda() {
   return (
     <div className="beranda-page">
       <PageHeader />
-      <DocumentStats counts={counts} onNavigate={(path) => navigate(path)} />
+      <DocumentStats
+        counts={counts}
+        isReviewer={['admin', 'super_admin'].includes(user?.role)}
+        onNavigate={(path) => navigate(path)}
+      />
       <RecentActivities activities={activities} />
       {error && <p className="beranda-error">{error}</p>}
 

@@ -142,6 +142,13 @@
     color: #d10000;
 }
 
+.ps-table-history {
+    display: block;
+    margin-top: 4px;
+    color: #667085;
+    font-size: 11px;
+}
+
 .ps-aksi {
     padding: 1px 10px;
     border: 1px solid #6b7280;
@@ -254,6 +261,13 @@
     color: #111827;
 }
 
+.ps-review-history {
+    display: block;
+    margin-top: 8px;
+    color: #667085;
+    font-size: 12px;
+}
+
 .ps-view-file {
     margin-top: 40px;
     padding: 8px 12px;
@@ -310,6 +324,12 @@
     color: #07773f;
 }
 
+.ps-forward {
+    border: 0;
+    background: #0b2f73;
+    color: #fff;
+}
+
 .ps-review-buttons button:disabled {
     cursor: wait;
     opacity: .6;
@@ -328,10 +348,12 @@
 .ps-file-preview-modal {
     display: flex;
     width: min(850px, 100%);
-    max-height: 92vh;
+    max-height: calc(100vh - 48px);
+    box-sizing: border-box;
     flex-direction: column;
     gap: 16px;
     padding: 24px;
+    overflow: hidden;
     border-radius: 8px;
     background: #fff;
     box-shadow: 0 16px 50px rgba(15, 23, 42, .3);
@@ -367,8 +389,9 @@
 .ps-file-preview-message,
 .ps-file-preview-text,
 .ps-file-preview-html {
-    max-height: 520px;
-    min-height: 180px;
+    max-height: min(520px, calc(100vh - 220px));
+    min-height: 0;
+    flex: 1 1 auto;
     overflow: auto;
     box-sizing: border-box;
     padding: 16px;
@@ -390,7 +413,10 @@
 
 .ps-file-preview-frame {
     width: 100%;
-    min-height: 520px;
+    height: min(520px, calc(100vh - 220px));
+    min-height: 220px;
+    flex: 1 1 auto;
+    box-sizing: border-box;
     border: 1px solid #d9dde6;
 }
 
@@ -401,6 +427,18 @@
 
 .ps-file-preview-html {
     display: block;
+}
+
+.ps-file-preview-html img,
+.ps-file-preview-html video,
+.ps-file-preview-html canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+.ps-file-preview-html table {
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .ps-file-preview-html table {

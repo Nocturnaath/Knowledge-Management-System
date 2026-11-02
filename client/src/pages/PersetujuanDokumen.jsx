@@ -30,6 +30,7 @@ export default function PersetujuanDokumen() {
   const [error, setError] = useState('');
   const [actionError, setActionError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [permissions, setPermissions] = useState({ canReview: false, canApprove: false });
 
   const loadDocuments = async () => {
     try {
@@ -39,6 +40,7 @@ export default function PersetujuanDokumen() {
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || 'Gagal memuat dokumen.');
       setDocuments(data.documents);
+      setPermissions(data.permissions || { canReview: false, canApprove: false });
     } catch (requestError) {
       setError(requestError.message);
     } finally {
@@ -59,18 +61,22 @@ export default function PersetujuanDokumen() {
       .filter((document) => document.name.toLowerCase().includes(query));
   }, [documents, search, tab]);
 
-  const processDocument = async (status) => {
+  const processDocument = async (action) => {
     setSaving(true);
     setActionError('');
     try {
-      const response = await fetch(`${API_URL}/api/dokumen/${selectedDocument.id}/status`, {
-        method: 'PATCH',
+      const isForward = action === 'forwarded';
+      const response = await fetch(
+        `${API_URL}/api/dokumen/${selectedDocument.id}${isForward ? '/forward' : '/status'}`,
+        {
+        method: isForward ? 'POST' : 'PATCH',
         headers: {
           Authorization: 'Bearer ' + token,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status, note }),
-      });
+        body: JSON.stringify(isForward ? { note } : { status: action, note }),
+        },
+      );
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || 'Gagal memproses dokumen.');
       setSelectedDocument(null);
@@ -209,6 +215,9 @@ export default function PersetujuanDokumen() {
                   ? 'Menunggu Persetujuan'
                   : document.status === 'approved' ? 'Disetujui' : 'Ditolak'}
               </span>
+              {document.lastActor && (
+                <small className="ps-table-history">oleh {document.lastActor}</small>
+              )}
             </span>
             <button type="button" className="ps-aksi" onClick={() => setSelectedDocument(document)}>
               {tab === 'menunggu' ? 'Tinjau' : 'Detail'}
@@ -230,6 +239,11 @@ export default function PersetujuanDokumen() {
                     ? 'Menunggu Persetujuan'
                     : selectedDocument.status === 'approved' ? 'Disetujui' : 'Ditolak'}
                 </span>
+                  {selectedDocument.lastActor && (
+                    <small className="ps-review-history">
+                      Tindakan terakhir: {selectedDocument.lastAction === 'forwarded' ? 'diteruskan' : selectedDocument.lastAction} oleh {selectedDocument.lastActor}
+                    </small>
+                  )}
               </div>
               <button type="button" className="ps-review-close" onClick={() => setSelectedDocument(null)}>← Kembali</button>
             </header>
@@ -256,10 +270,16 @@ export default function PersetujuanDokumen() {
                   onChange={(event) => setNote(event.target.value)}
                 />
                 {actionError && <p className="ps-action-error">{actionError}</p>}
-                {selectedDocument.status === 'pending' && (
+                {selectedDocument.status === 'pending' && (permissions.canReview || permissions.canApprove) && (
                   <div className="ps-review-buttons">
-                    <button type="button" className="ps-reject" disabled={saving} onClick={() => processDocument('rejected')}>Tolak</button>
-                    <button type="button" className="ps-approve" disabled={saving} onClick={() => processDocument('approved')}>{saving ? 'Memproses...' : 'Setujui'}</button>
+                    {permissions.canReview && (
+                      <button type="button" className="ps-reject" disabled={saving} onClick={() => processDocument('rejected')}>Tolak</button>
+                    )}
+                    {permissions.canApprove ? (
+                      <button type="button" className="ps-approve" disabled={saving} onClick={() => processDocument('approved')}>{saving ? 'Memproses...' : 'Setujui'}</button>
+                    ) : permissions.canReview && (
+                      <button type="button" className="ps-forward" disabled={saving} onClick={() => processDocument('forwarded')}>{saving ? 'Memproses...' : 'Teruskan ke Super Admin'}</button>
+                    )}
                   </div>
                 )}
               </div>

@@ -25,6 +25,8 @@ export default function Layout() {
   // menyesuaikan menu sama role pengguna yang sedang login.
   const role = user?.role;
   const atasan = role === 'admin' || role === 'super_admin';
+  const permissions = user?.permissions || [];
+  const canManageCategories = permissions.includes('kelola_kategori');
 
   const menuUtama = [
     { label: 'Beranda', path: '/dashboard', icon: Home },
@@ -47,7 +49,7 @@ export default function Layout() {
   const menuTambahan = [
     { label: 'Informasi Umum', path: '/informasi', icon: Info },
 
-    ...(atasan
+    ...(canManageCategories
       ? [
           {
             label: 'Kelola Kategori',

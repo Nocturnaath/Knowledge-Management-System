@@ -7,7 +7,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const db = require('../config/db');
-const { verifyToken } = require('../middleware/authMiddleware');
+const { verifyToken, getEffectivePermissions } = require('../middleware/authMiddleware');
 
 // ==================================================
 // 1. LOGIN: POST /api/auth/login
@@ -65,6 +65,8 @@ router.post('/login', async (req, res) => {
       });
     }
 
+    const permissions = await getEffectivePermissions(user.id, user.role);
+
     // Buat token autentikasi.
     const token = jwt.sign(
       {
@@ -92,7 +94,8 @@ router.post('/login', async (req, res) => {
         jabatan: user.jabatan,
         divisi: user.nama_divisi || 'Lintas Divisi',
         role: user.role,
-        photoUrl: user.foto_url
+        photoUrl: user.foto_url,
+        permissions
       }
     });
   } catch (error) {
@@ -138,6 +141,7 @@ router.get('/me', verifyToken, async (req, res) => {
     }
 
     const user = rows[0];
+    const permissions = await getEffectivePermissions(user.id, user.role);
 
     // Perhatikan: gunakan variabel user, bukan row.
     return res.json({
@@ -151,7 +155,8 @@ router.get('/me', verifyToken, async (req, res) => {
         jabatan: user.jabatan,
         divisi: user.nama_divisi || 'Lintas Divisi',
         role: user.role,
-        photoUrl: user.foto_url
+        photoUrl: user.foto_url,
+        permissions
       }
     });
   } catch (error) {

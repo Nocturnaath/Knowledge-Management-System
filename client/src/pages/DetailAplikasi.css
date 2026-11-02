@@ -115,6 +115,22 @@
   display: block;
 }
 
+.detail-document-tags {
+  color: #245bb5;
+}
+
+.detail-related-information {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid #e4e7ec;
+}
+
+.detail-related-information h3 {
+  margin: 0 0 10px;
+  color: #182230;
+  font-size: 15px;
+}
+
 .detail-dokumen-item strong {
   color: #111827;
 }
@@ -151,10 +167,12 @@
 .document-preview-modal {
   display: flex;
   width: min(760px, 100%);
-  max-height: min(760px, 92vh);
+  max-height: calc(100vh - 48px);
+  box-sizing: border-box;
   flex-direction: column;
   gap: 16px;
   padding: 24px;
+  overflow: hidden;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 16px 50px rgba(15, 23, 42, 0.25);
@@ -181,15 +199,21 @@
 
 .document-preview-frame {
   width: 100%;
-  min-height: 480px;
-  flex: 1;
+  height: min(480px, calc(100vh - 220px));
+  min-height: 220px;
+  flex: 1 1 auto;
+  box-sizing: border-box;
   border: 1px solid #d9dde6;
   border-radius: 4px;
 }
 
 .document-preview-unavailable {
   display: grid;
-  min-height: 180px;
+  min-height: 0;
+  max-height: min(480px, calc(100vh - 220px));
+  flex: 1 1 auto;
+  overflow: auto;
+  box-sizing: border-box;
   place-content: center;
   padding: 20px;
   border: 1px solid #d9dde6;
@@ -203,7 +227,7 @@
 
 .document-preview-text,
 .document-preview-html {
-  max-height: 480px;
+  max-height: min(480px, calc(100vh - 220px));
   overflow: auto;
   box-sizing: border-box;
   width: 100%;
@@ -221,13 +245,71 @@
 }
 
 .document-preview-html table {
+  max-width: 100%;
   border-collapse: collapse;
+  overflow-wrap: anywhere;
+}
+
+.document-preview-html img,
+.document-preview-html video,
+.document-preview-html canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 .document-preview-html td,
 .document-preview-html th {
   padding: 6px 10px;
   border: 1px solid #d9dde6;
+}
+
+.document-version-history {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 14px;
+  border: 1px solid #d9dde6;
+  border-radius: 4px;
+  background: #f9fafb;
+}
+
+.document-version-history h3 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 15px;
+}
+
+.document-version-history p {
+  margin: 0;
+  color: #667085;
+  font-size: 12px;
+}
+
+.document-version-error {
+  color: #b42318 !important;
+}
+
+.document-version-row {
+  display: grid;
+  grid-template-columns: minmax(150px, .7fr) minmax(0, 1.3fr);
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 12px;
+}
+
+.document-version-row strong,
+.document-version-row small {
+  display: block;
+}
+
+.document-version-row strong {
+  color: #111827;
+}
+
+.document-version-row small {
+  margin-top: 3px;
+  color: #667085;
 }
 
 .document-download-button {
@@ -276,5 +358,10 @@
 
   .document-preview-modal {
     padding: 16px;
+  }
+
+  .document-version-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
   }
 }

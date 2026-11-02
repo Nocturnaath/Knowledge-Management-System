@@ -35,6 +35,21 @@ async function ensureVersionTable() {
   await db.documentVersionTableReady;
 }
 
+function normalizeTags(value) {
+  // Simpan tag dalam satu format agar pencarian dan filter konsisten.
+  const raw = Array.isArray(value) ? value : String(value || '').split(',');
+  return [...new Set(raw.map((tag) => tag.trim().replace(/^#+/, '').toLowerCase()).filter(Boolean).map((tag) => `#${tag}`))].slice(0, 20);
+}
+
+function parseTags(value) {
+  try {
+    const parsed = JSON.parse(value || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return normalizeTags(value);
+  }
+}
+
 async function recordVersion(document, userId, eventTypeOverride = null) {
   const [rows] = await db.query(
     `SELECT COUNT(*) AS versionCount
@@ -45,8 +60,8 @@ async function recordVersion(document, userId, eventTypeOverride = null) {
   const versionCount = Number(rows[0].versionCount || 0);
   await db.query(
     `INSERT INTO document_versions
-      (document_id, version_number, user_id, title, file_name, stored_file_name, category, description, event_type)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (document_id, version_number, user_id, title, file_name, stored_file_name, category, tags, description, event_type)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       document.id,
       versionCount + 1,
@@ -55,6 +70,7 @@ async function recordVersion(document, userId, eventTypeOverride = null) {
       document.fileName,
       document.storedFileName,
       document.category,
+      JSON.stringify(normalizeTags(document.tags)),
       document.description,
       eventTypeOverride || (versionCount === 0 ? 'upload' : 'update'),
     ],
@@ -62,14 +78,40 @@ async function recordVersion(document, userId, eventTypeOverride = null) {
 }
 
 function requireReviewer(req, res, next) {
-  if (!['admin', 'super_admin'].includes(req.user.role)) {
-    return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses persetujuan dokumen.' });
+  getEffectivePermissions(req.user).then((permissions) => {
+    req.permissions = permissions;
+    if (!permissions.has('review_dokumen') && !permissions.has('acc_final')) {
+      return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses persetujuan dokumen.' });
+    }
+    next();
+  }).catch((error) => {
+    console.error('Error memeriksa hak persetujuan:', error);
+    res.status(500).json({ success: false, message: 'Gagal memeriksa hak persetujuan.' });
+  });
+}
+
+async function getEffectivePermissions(user) {
+  await db.authorizationTablesReady;
+  if (user.role === 'super_admin') {
+    const [rows] = await db.query('SELECT perm_key FROM permissions');
+    return new Set(rows.map((row) => row.perm_key));
   }
-  next();
+  const [defaults] = await db.query('SELECT perm_key FROM role_permissions WHERE role = ?', [user.role]);
+  const [overrides] = await db.query(
+    'SELECT perm_key, allowed FROM user_permission_overrides WHERE user_id = ?',
+    [user.id],
+  );
+  const permissions = new Set(defaults.map((row) => row.perm_key));
+  overrides.forEach((row) => {
+    if (row.allowed) permissions.add(row.perm_key);
+    else permissions.delete(row.perm_key);
+  });
+  return permissions;
 }
 
 router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
   try {
+    await db.authorizationTablesReady;
     const [rows] = await db.query(
       `SELECT
         d.id,
@@ -82,14 +124,34 @@ router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
         d.status,
         d.created_at AS createdAt,
         owner.nama_lengkap AS uploader,
-        divisi.nama_divisi AS division
+        divisi.nama_divisi AS division,
+        latest.action AS lastAction,
+        latest.note AS lastNote,
+        actor.nama_lengkap AS lastActor
       FROM documents d
       JOIN users owner ON owner.id = d.user_id
       LEFT JOIN divisi ON divisi.id = owner.divisi_id
+      LEFT JOIN (
+        SELECT l.document_id, l.action, l.note, l.actor_id
+        FROM document_approval_logs l
+        INNER JOIN (
+          SELECT document_id, MAX(id) AS id
+          FROM document_approval_logs
+          GROUP BY document_id
+        ) latest_log ON latest_log.id = l.id
+      ) latest ON latest.document_id = d.id
+      LEFT JOIN users actor ON actor.id = latest.actor_id
       WHERE d.status IN ('pending', 'approved', 'rejected')
       ORDER BY d.created_at DESC`,
     );
-    return res.json({ success: true, documents: rows });
+    return res.json({
+      success: true,
+      documents: rows,
+      permissions: {
+        canReview: req.permissions.has('review_dokumen'),
+        canApprove: req.permissions.has('acc_final'),
+      },
+    });
   } catch (error) {
     console.error('Error mengambil dokumen persetujuan:', error);
     return res.status(500).json({ success: false, message: 'Gagal memuat dokumen persetujuan.' });
@@ -101,8 +163,15 @@ router.patch('/:id/status', verifyToken, requireReviewer, async (req, res) => {
   if (!['approved', 'rejected'].includes(status)) {
     return res.status(400).json({ success: false, message: 'Status persetujuan tidak valid.' });
   }
+  if (status === 'approved' && !req.permissions.has('acc_final')) {
+    return res.status(403).json({ success: false, message: 'Anda belum mendapat izin ACC Final dari Super Admin.' });
+  }
+  if (status === 'rejected' && !req.permissions.has('review_dokumen')) {
+    return res.status(403).json({ success: false, message: 'Anda belum mendapat izin untuk menolak dokumen.' });
+  }
 
   try {
+    await db.authorizationTablesReady;
     const [result] = await db.query(
       'UPDATE documents SET status = ? WHERE id = ? AND status = ?',
       [status, req.params.id, 'pending'],
@@ -111,11 +180,39 @@ router.patch('/:id/status', verifyToken, requireReviewer, async (req, res) => {
       return res.status(404).json({ success: false, message: 'Dokumen tidak ditemukan atau sudah diproses.' });
     }
 
+    await db.query(
+      'INSERT INTO document_approval_logs (document_id, actor_id, action, note) VALUES (?, ?, ?, ?)',
+      [req.params.id, req.user.id, status, note || null],
+    );
     console.log(`Dokumen ${req.params.id} ${status} oleh ${req.user.id}. Catatan: ${note || '-'}`);
     return res.json({ success: true, message: status === 'approved' ? 'Dokumen disetujui.' : 'Dokumen ditolak.' });
   } catch (error) {
     console.error('Error memperbarui status dokumen:', error);
     return res.status(500).json({ success: false, message: 'Gagal memperbarui status dokumen.' });
+  }
+});
+
+router.post('/:id/forward', verifyToken, requireReviewer, async (req, res) => {
+  if (!req.permissions.has('review_dokumen')) {
+    return res.status(403).json({ success: false, message: 'Anda belum mendapat izin untuk meneruskan dokumen.' });
+  }
+  try {
+    await db.authorizationTablesReady;
+    const [documents] = await db.query(
+      'SELECT id FROM documents WHERE id = ? AND status = ?',
+      [req.params.id, 'pending'],
+    );
+    if (documents.length === 0) {
+      return res.status(404).json({ success: false, message: 'Dokumen tidak ditemukan atau sudah diproses.' });
+    }
+    await db.query(
+      'INSERT INTO document_approval_logs (document_id, actor_id, action, note) VALUES (?, ?, ?, ?)',
+      [req.params.id, req.user.id, 'forwarded', req.body.note || null],
+    );
+    return res.json({ success: true, message: 'Dokumen telah diteruskan ke Super Admin.' });
+  } catch (error) {
+    console.error('Error meneruskan dokumen:', error);
+    return res.status(500).json({ success: false, message: 'Gagal meneruskan dokumen.' });
   }
 });
 
@@ -198,7 +295,7 @@ router.get('/divisi', verifyToken, async (req, res) => {
       [req.user.divisi_id]
     );
 
-    return res.json({ success: true, documents: rows });
+    return res.json({ success: true, documents: rows.map((row) => ({ ...row, tags: parseTags(row.tags) })) });
   } catch (error) {
     console.error('Error mengambil dokumen divisi:', error);
     return res.status(500).json({
@@ -220,7 +317,16 @@ router.get('/aktivitas', verifyToken, async (req, res) => {
         owner.nama_lengkap AS uploader
       FROM document_versions v
       JOIN users owner ON owner.id = v.user_id
-      ORDER BY v.created_at DESC
+      UNION ALL
+      SELECT
+        l.id,
+        CONCAT(l.document_count, ' dokumen dipindahkan dari ', l.source_category, ' ke ', l.target_category) AS documentName,
+        'category_move' AS eventType,
+        l.created_at AS createdAt,
+        owner.nama_lengkap AS uploader
+      FROM category_activity_logs l
+      JOIN users owner ON owner.id = l.actor_id
+      ORDER BY createdAt DESC
       LIMIT 50`,
     );
     return res.json({ success: true, activities: rows });
@@ -233,15 +339,19 @@ router.get('/aktivitas', verifyToken, async (req, res) => {
 router.get('/ringkasan', verifyToken, async (req, res) => {
   try {
     await ensureVersionTable();
+    const canReviewAll = ['admin', 'super_admin'].includes(req.user.role);
     const [countRows] = await db.query(
       `SELECT
-        COUNT(*) AS totalDocuments,
+        (SELECT COUNT(*)
+         FROM documents d
+         JOIN users owner ON owner.id = d.user_id
+         WHERE owner.divisi_id = ?) AS totalDocuments,
         SUM(user_id = ?) AS ownDocuments,
-        SUM(user_id = ? AND status = 'pending') AS pendingDocuments
-      FROM documents d
-      JOIN users owner ON owner.id = d.user_id
-      WHERE owner.divisi_id = ?`,
-      [req.user.id, req.user.id, req.user.divisi_id],
+        SUM(status = 'pending'${canReviewAll ? '' : ' AND user_id = ?'}) AS pendingDocuments
+      FROM documents`,
+      canReviewAll
+        ? [req.user.divisi_id, req.user.id]
+        : [req.user.divisi_id, req.user.id, req.user.id],
     );
     const [activityRows] = await db.query(
       `SELECT
@@ -253,10 +363,17 @@ router.get('/ringkasan', verifyToken, async (req, res) => {
       FROM document_versions v
       JOIN users owner ON owner.id = v.user_id
       JOIN documents d ON d.id = v.document_id
-      WHERE owner.divisi_id = ?
-      ORDER BY v.created_at DESC
+      UNION ALL
+      SELECT
+        l.id,
+        CONCAT(l.document_count, ' dokumen dipindahkan dari ', l.source_category, ' ke ', l.target_category) AS documentName,
+        'category_move' AS eventType,
+        l.created_at AS createdAt,
+        owner.nama_lengkap AS uploader
+      FROM category_activity_logs l
+      JOIN users owner ON owner.id = l.actor_id
+      ORDER BY createdAt DESC
       LIMIT 10`,
-      [req.user.divisi_id],
     );
 
     return res.json({
@@ -283,7 +400,7 @@ router.put('/:id', verifyToken, (req, res) => {
       return res.status(400).json({ success: false, message: uploadError.message });
     }
 
-    const { title, category, description, publicAccess } = req.body;
+    const { title, category, tags, description, publicAccess } = req.body;
     if (!title || !category || !description) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ success: false, message: 'Judul, kategori, dan deskripsi wajib diisi.' });
@@ -293,7 +410,7 @@ router.put('/:id', verifyToken, (req, res) => {
       await ensureVersionTable();
       const [documents] = await db.query(
         `SELECT id, title, file_name AS fileName, stored_file_name AS storedFileName,
-          category, description FROM documents WHERE id = ? AND user_id = ?`,
+          category, tags, description FROM documents WHERE id = ? AND user_id = ?`,
         [req.params.id, req.user.id],
       );
       if (documents.length === 0) {
@@ -305,11 +422,12 @@ router.put('/:id', verifyToken, (req, res) => {
       const storedFileName = req.file ? req.file.filename : oldFileName;
       await db.query(
         `UPDATE documents
-         SET title = ?, category = ?, description = ?, public_access = ?, stored_file_name = ?, file_name = ?, created_at = CURRENT_TIMESTAMP
+         SET title = ?, category = ?, tags = ?, description = ?, public_access = ?, stored_file_name = ?, file_name = ?, created_at = CURRENT_TIMESTAMP
          WHERE id = ? AND user_id = ?`,
         [
           title.trim(),
           category,
+          JSON.stringify(normalizeTags(tags)),
           description.trim(),
           publicAccess === 'true',
           storedFileName,
@@ -324,6 +442,7 @@ router.put('/:id', verifyToken, (req, res) => {
         fileName: req.file ? req.file.originalname : documents[0].fileName,
         storedFileName,
         category,
+        tags,
         description: description.trim(),
       }, req.user.id, 'update');
 
@@ -369,6 +488,7 @@ router.get('/', verifyToken, async (req, res) => {
         stored_file_name AS storedFileName,
         category,
         application,
+        tags,
         description,
         status,
         public_access AS publicAccess,
@@ -379,7 +499,7 @@ router.get('/', verifyToken, async (req, res) => {
       [req.user.id]
     );
 
-    return res.json({ success: true, documents: rows });
+    return res.json({ success: true, documents: rows.map((row) => ({ ...row, tags: parseTags(row.tags) })) });
   } catch (error) {
     console.error('Error mengambil dokumen:', error);
     return res.status(500).json({
@@ -398,7 +518,7 @@ router.post('/', verifyToken, (req, res) => {
       return res.status(400).json({ success: false, message });
     }
 
-    const { title, category, application, description, needsApproval, publicAccess } = req.body;
+    const { title, category, application, tags, description, needsApproval, publicAccess } = req.body;
     if (!req.file || !title || !category || !description) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({
@@ -413,8 +533,8 @@ router.post('/', verifyToken, (req, res) => {
       await ensureVersionTable();
       const [result] = await db.query(
         `INSERT INTO documents
-          (user_id, title, file_name, stored_file_name, category, application, description, status, public_access)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (user_id, title, file_name, stored_file_name, category, application, tags, description, status, public_access)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           req.user.id,
           title.trim(),
@@ -422,6 +542,7 @@ router.post('/', verifyToken, (req, res) => {
           req.file.filename,
           category,
           application || null,
+          JSON.stringify(normalizeTags(tags)),
           description.trim(),
           status,
           publicAccess === 'true',
@@ -433,6 +554,7 @@ router.post('/', verifyToken, (req, res) => {
         fileName: req.file.originalname,
         storedFileName: req.file.filename,
         category,
+        tags,
         description: description.trim(),
       }, req.user.id);
 
@@ -445,6 +567,7 @@ router.post('/', verifyToken, (req, res) => {
           fileName: req.file.originalname,
           category,
           application: application || null,
+          tags: normalizeTags(tags),
           description: description.trim(),
           status,
         },

@@ -48,6 +48,7 @@ export default function DokumenSaya() {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedTag, setSelectedTag] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Kategori');
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -55,7 +56,7 @@ export default function DokumenSaya() {
   const [previewError, setPreviewError] = useState('');
   const [versions, setVersions] = useState([]);
   const [editDocument, setEditDocument] = useState(null);
-  const [editForm, setEditForm] = useState({ title: '', category: '', description: '', publicAccess: false });
+  const [editForm, setEditForm] = useState({ title: '', category: '', tags: '', description: '', publicAccess: false });
   const [editFile, setEditFile] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
 
@@ -143,6 +144,7 @@ export default function DokumenSaya() {
     setEditForm({
       title: document.name || '',
       category: document.category || '',
+      tags: (document.tags || []).join(', '),
       description: document.description || '',
       publicAccess: Boolean(document.publicAccess),
     });
@@ -157,6 +159,7 @@ export default function DokumenSaya() {
     const body = new FormData();
     body.append('title', editForm.title);
     body.append('category', editForm.category);
+    body.append('tags', editForm.tags);
     body.append('description', editForm.description);
     body.append('publicAccess', String(editForm.publicAccess));
     if (editFile) body.append('file', editFile);
@@ -204,10 +207,11 @@ export default function DokumenSaya() {
       tabStatuses[activeTab] === null || document.status === tabStatuses[activeTab];
     const matchesCategory =
       selectedCategory === 'Kategori' || document.category === selectedCategory;
-    const searchableText = `${document.name} ${document.category || ''}`.toLocaleLowerCase('id-ID');
+    const searchableText = `${document.name} ${document.category || ''} ${(document.tags || []).join(' ')}`.toLocaleLowerCase('id-ID');
     const matchesSearch = searchableText.includes(normalizedQuery);
+    const matchesTag = !selectedTag || (document.tags || []).includes(selectedTag);
 
-    return matchesStatus && matchesCategory && matchesSearch;
+    return matchesStatus && matchesCategory && matchesSearch && matchesTag;
   });
 
   const noDocuments = documents.length === 0;
@@ -264,6 +268,12 @@ export default function DokumenSaya() {
             </button>
           ))}
         </div>
+        {selectedTag && (
+          <div className="document-tag-filter" role="status">
+            Menampilkan <strong>{visibleDocuments.length}</strong> dokumen dengan tag <strong>{selectedTag}</strong>
+            <button type="button" onClick={() => setSelectedTag('')}>Hapus filter</button>
+          </div>
+        )}
 
         <div
           className="document-list"
@@ -297,7 +307,7 @@ export default function DokumenSaya() {
                 <thead>
                   <tr>
                     <th>Judul Dokumen</th>
-                    <th>Kategori</th>
+                    <th>Kategori & Tag</th>
                     <th>Tanggal</th>
                     <th>Status</th>
                     <th>Aksi</th>
@@ -307,7 +317,25 @@ export default function DokumenSaya() {
                   {visibleDocuments.map((document) => (
                     <tr key={document.id}>
                       <td>{document.name}</td>
-                      <td>{document.category || 'Lainnya'}</td>
+                      <td>
+                        <div>{document.category || 'Lainnya'}</div>
+                        {document.tags?.length > 0 && (
+                          <div className="document-tags">
+                            {/* Tag menjadi filter langsung agar pengguna dapat menemukan dokumen terkait. */}
+                            {document.tags.map((tag) => (
+                              <button
+                                type="button"
+                                className={`document-tag ${selectedTag === tag ? 'active' : ''}`}
+                                key={tag}
+                                onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
+                                title={`Tampilkan dokumen dengan tag ${tag}`}
+                              >
+                                {tag}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </td>
                       <td>{formatDocumentDate(document.updatedAt)}</td>
                       <td>
                         <span className={`document-status status-${document.status}`}>
@@ -378,6 +406,11 @@ export default function DokumenSaya() {
             <label>
               Kategori
               <CategoryFilter value={editForm.category || 'Kategori'} onChange={(category) => setEditForm({ ...editForm, category })} />
+            </label>
+            <label>
+              Tag
+              <input value={editForm.tags} onChange={(event) => setEditForm({ ...editForm, tags: event.target.value })} placeholder="#keuangan, #pegawai" />
+              <small className="upload-field-help">Contoh: #keuangan atau #kepegawaian.</small>
             </label>
             <label>
               Deskripsi

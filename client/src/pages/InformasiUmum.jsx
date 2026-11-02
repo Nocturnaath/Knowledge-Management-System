@@ -3,9 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './InformasiUmum.css';
 
-const TAB_DOKUMEN = ['Notulensi', 'Memorandum', 'RAB', 'Evidence Harian', 'Manajemen Risiko SPI'];
 const TAB_KONTAK = 'Kontak IT';
-const SEMUA_TAB = [...TAB_DOKUMEN, TAB_KONTAK];
 
 // GANTI dengan data kontak IT yang sebenarnya
 const KONTAK_IT = [
@@ -20,7 +18,8 @@ const formatTanggal = (nilai) =>
 export default function InformasiUmum() {
   const { token } = useAuth();
   const [dokumen, setDokumen] = useState([]);
-  const [tab, setTab] = useState(TAB_DOKUMEN[0]);
+  const [kategori, setKategori] = useState([]);
+  const [tab, setTab] = useState('');
   const [cari, setCari] = useState('');
   const [dipilih, setDipilih] = useState(null); // dokumen yang sedang dipratinjau
   const [pratinjau, setPratinjau] = useState(null);
@@ -42,6 +41,8 @@ export default function InformasiUmum() {
           setError(data.message || 'Gagal memuat informasi umum.');
           return;
         }
+        setKategori(data.kategori || []);
+        setTab((current) => current || data.kategori?.[0] || TAB_KONTAK);
         setDokumen(data.dokumen);
       } catch (err) {
         setError('Tidak dapat terhubung ke server.');
@@ -156,7 +157,7 @@ export default function InformasiUmum() {
       </div>
 
       <div className="iu-tab" role="tablist" aria-label="Kategori informasi umum">
-        {SEMUA_TAB.map((nama) => (
+        {[...kategori, TAB_KONTAK].map((nama) => (
           <button
             key={nama}
             type="button"

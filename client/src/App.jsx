@@ -24,19 +24,13 @@ import PersetujuanDokumen from './pages/PersetujuanDokumen';
 import HakAkses from './pages/HakAkses';
 import DokumenDivisi from './pages/DokumenDivisi';
 import InformasiUmum from './pages/InformasiUmum';
+import KelolaKategori from './pages/KelolaKategori';
 
-function SidebarPage({ title }) {
-  return (
-    <main>
-      <h1>{title}</h1>
-      <p>Halaman {title.toLowerCase()} belum tersedia.</p>
-    </main>
-  );
-}
-
-function RoleRoute({ roles, children }) {
+function RoleRoute({ roles, permission, children }) {
   const { user } = useAuth();
-  return roles.includes(user?.role)
+  const allowedByRole = !roles || roles.includes(user?.role);
+  const allowedByPermission = !permission || user?.permissions?.includes(permission);
+  return allowedByRole && allowedByPermission
     ? children
     : <Navigate to="/profile" replace />;
 }
@@ -111,8 +105,8 @@ function AppRoutes() {
         <Route
           path="/kelola-kategori"
           element={
-            <RoleRoute roles={['admin', 'super_admin']}>
-              <SidebarPage title="Kelola Kategori" />
+            <RoleRoute permission="kelola_kategori">
+              <KelolaKategori />
             </RoleRoute>
           }
         />

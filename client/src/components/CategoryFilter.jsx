@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../config';
 import './CategoryFilter.css';
 
 export const documentCategories = [
@@ -21,8 +23,26 @@ export const documentCategories = [
 ];
 
 export default function CategoryFilter({ value, onChange }) {
+  const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [categories, setCategories] = useState(documentCategories);
   const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/kategori`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) return;
+        setCategories(['Kategori', ...data.categories.map((category) => category.name)]);
+      } catch {
+        // Keep the built-in list when the category service is unavailable.
+      }
+    };
+    loadCategories();
+  }, [token]);
 
   // Tutup daftar saat klik di luar komponen atau menekan tombol Esc
   useEffect(() => {
@@ -65,7 +85,7 @@ export default function CategoryFilter({ value, onChange }) {
           role="group"
           aria-label="Pilih kategori dokumen"
         >
-          {documentCategories.map((category) => (
+          {categories.map((category) => (
             <button
               className={value === category ? 'selected' : ''}
               key={category}

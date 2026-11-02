@@ -72,6 +72,22 @@
   box-shadow: 0 4px 12px #18345c22;
 }
 
+.beranda-stat-card.is-clicked {
+  animation: beranda-card-glow 220ms ease-out;
+}
+
+@keyframes beranda-card-glow {
+  0% {
+    border-color: #1765d8;
+    box-shadow: 0 0 0 3px #1765d866, 0 0 18px #1765d899;
+  }
+
+  100% {
+    border-color: #e8edf4;
+    box-shadow: 0 2px 7px #18345c12;
+  }
+}
+
 .beranda-stat-card span {
   color: #667085;
   font-size: 13px;
@@ -85,7 +101,6 @@
 
 /* Aktivitas terbaru */
 .beranda-activity-card {
-  min-height: 220px;
   overflow: hidden;
   border: 1px solid #e8edf4;
   border-radius: 8px;
@@ -96,8 +111,7 @@
 .beranda-activity-heading {
   display: flex;
   align-items: center;
-  min-height: 52px;
-  padding: 0 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -119,7 +133,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  min-height: 48px;
   padding: 12px 20px;
   border-bottom: 1px solid #eef0f3;
   font-size: 12px;
@@ -137,7 +150,6 @@
 
 .beranda-activity-empty {
   display: grid;
-  min-height: 160px;
   place-items: center;
   padding: 24px;
   color: #7b8492;

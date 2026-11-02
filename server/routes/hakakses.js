@@ -34,6 +34,7 @@ router.use(verifyToken, (req, res, next) => {
 // GET /api/hak-akses -> daftar izin, izin default per peran, izin efektif per pengguna
 router.get('/', async (req, res) => {
   try {
+    await db.authorizationTablesReady;
     const [izin] = await db.query('SELECT perm_key AS `key`, label FROM permissions');
     izin.sort((a, b) => URUTAN.indexOf(a.key) - URUTAN.indexOf(b.key));
 
@@ -80,6 +81,7 @@ router.put('/peran/:role', async (req, res) => {
   }
 
   try {
+    await db.authorizationTablesReady;
     if (allowed) {
       await db.query('INSERT IGNORE INTO role_permissions (role, perm_key) VALUES (?, ?)', [role, perm_key]);
     } else {
@@ -103,6 +105,7 @@ router.put('/pengguna/:id', async (req, res) => {
   }
 
   try {
+    await db.authorizationTablesReady;
     const [users] = await db.query('SELECT role FROM users WHERE id = ?', [id]);
     if (users.length === 0) {
       return res.status(404).json({ success: false, message: 'Pengguna tidak ditemukan.' });

@@ -4,13 +4,17 @@ const { verifyToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-// Kategori yang tampil di halaman Informasi Umum
-const KATEGORI = ['Notulensi', 'Memorandum', 'RAB', 'Evidence Harian', 'Manajemen Risiko SPI'];
-
 // GET /api/informasi-umum
 // Hanya dokumen yang sudah disetujui dan diberi flag akses publik (lintas divisi)
 router.get('/', verifyToken, async (req, res) => {
   try {
+    const [kategori] = await db.query(
+      `SELECT name
+       FROM categories
+       WHERE category_type = 'informasi'
+       ORDER BY name`,
+    );
+    const namaKategori = kategori.map((item) => item.name);
     const [dokumen] = await db.query(
       `SELECT d.id,
               d.title AS judul,
@@ -26,10 +30,10 @@ router.get('/', verifyToken, async (req, res) => {
          AND d.status = 'approved'
          AND d.public_access = TRUE
        ORDER BY d.created_at DESC`,
-      [KATEGORI]
+      [namaKategori]
     );
 
-    res.json({ success: true, dokumen });
+    res.json({ success: true, kategori: namaKategori, dokumen });
   } catch (error) {
     console.error('Error memuat informasi umum:', error);
     res.status(500).json({ success: false, message: 'Gagal memuat informasi umum.' });

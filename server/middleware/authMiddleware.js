@@ -1,4 +1,26 @@
 const jwt = require('jsonwebtoken');
+const db = require('../config/db');
+
+async function getEffectivePermissions(userId, role) {
+  await db.authorizationTablesReady;
+  const [permissions] = await db.query('SELECT perm_key FROM permissions');
+  if (role === 'super_admin') return permissions.map((permission) => permission.perm_key);
+
+  const [rolePermissions] = await db.query(
+    'SELECT perm_key FROM role_permissions WHERE role = ?',
+    [role],
+  );
+  const [overrides] = await db.query(
+    'SELECT perm_key, allowed FROM user_permission_overrides WHERE user_id = ?',
+    [userId],
+  );
+  const effective = new Set(rolePermissions.map((permission) => permission.perm_key));
+  overrides.forEach((override) => {
+    if (override.allowed) effective.add(override.perm_key);
+    else effective.delete(override.perm_key);
+  });
+  return [...effective];
+}
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -23,4 +45,4 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken };
+module.exports = { verifyToken, getEffectivePermissions };
