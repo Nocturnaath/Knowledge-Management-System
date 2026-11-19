@@ -207,7 +207,7 @@ export default function DokumenSaya() {
       tabStatuses[activeTab] === null || document.status === tabStatuses[activeTab];
     const matchesCategory =
       selectedCategory === 'Kategori' || document.category === selectedCategory;
-    const searchableText = `${document.name} ${document.category || ''} ${(document.tags || []).join(' ')}`.toLocaleLowerCase('id-ID');
+    const searchableText = `${document.name} ${document.category || ''} ${document.description || ''} ${(document.tags || []).join(' ')} ${document.extractedText || ''}`.toLocaleLowerCase('id-ID');
     const matchesSearch = searchableText.includes(normalizedQuery);
     const matchesTag = !selectedTag || (document.tags || []).includes(selectedTag);
 
@@ -239,7 +239,7 @@ export default function DokumenSaya() {
             <span className="sr-only">Cari dokumen</span>
             <input
               type="search"
-              placeholder="Cari Judul Dokumen"
+              placeholder="Cari judul atau isi dokumen"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
             />
