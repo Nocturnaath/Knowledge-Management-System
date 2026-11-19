@@ -52,7 +52,7 @@ export default function DokumenDivisi() {
     const query = searchQuery.trim().toLocaleLowerCase('id-ID');
     return documents.filter((document) =>
       (selectedCategory === 'Kategori' || document.category === selectedCategory) &&
-      `${document.name} ${document.category || ''}`.toLocaleLowerCase('id-ID').includes(query)
+      `${document.name} ${document.category || ''} ${document.description || ''} ${document.extractedText || ''}`.toLocaleLowerCase('id-ID').includes(query)
     );
   }, [documents, searchQuery, selectedCategory]);
 
@@ -127,7 +127,7 @@ export default function DokumenDivisi() {
           <span className="sr-only">Cari dokumen divisi</span>
           <input
             type="search"
-            placeholder="Cari Judul Dokumen"
+            placeholder="Cari judul atau isi dokumen"
             value={searchQuery}
             onChange={(event) => setSearchQuery(event.target.value)}
           />

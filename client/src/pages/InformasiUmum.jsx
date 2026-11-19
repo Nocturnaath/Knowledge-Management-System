@@ -67,7 +67,10 @@ export default function InformasiUmum() {
 
   const daftar = useMemo(
     () =>
-      dokumen.filter((d) => d.kategori === tab && (!kata || d.judul.toLowerCase().includes(kata))),
+      dokumen.filter((d) =>
+        d.kategori === tab &&
+        (!kata || `${d.judul || ''} ${d.deskripsi || ''} ${d.extractedText || ''}`.toLowerCase().includes(kata)),
+      ),
     [dokumen, tab, kata]
   );
 
@@ -149,8 +152,8 @@ export default function InformasiUmum() {
       <div className="iu-cari">
         <input
           type="text"
-          placeholder="Cari Judul Dokumen"
-          aria-label="Cari judul dokumen"
+          placeholder="Cari judul atau isi dokumen"
+          aria-label="Cari judul atau isi dokumen"
           value={cari}
           onChange={(e) => setCari(e.target.value)}
         />

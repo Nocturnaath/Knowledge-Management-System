@@ -58,7 +58,11 @@ export default function PersetujuanDokumen() {
       .filter((document) => tab === 'menunggu'
         ? document.status === 'pending'
         : document.status !== 'pending')
-      .filter((document) => document.name.toLowerCase().includes(query));
+      .filter((document) =>
+        `${document.name} ${document.category || ''} ${document.description || ''} ${document.extractedText || ''}`
+          .toLowerCase()
+          .includes(query),
+      );
   }, [documents, search, tab]);
 
   const processDocument = async (action) => {
@@ -161,8 +165,8 @@ export default function PersetujuanDokumen() {
       <div className="ps-cari">
         <input
           type="search"
-          placeholder="Cari Judul Dokumen"
-          aria-label="Cari judul dokumen"
+          placeholder="Cari judul atau isi dokumen"
+          aria-label="Cari judul atau isi dokumen"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />

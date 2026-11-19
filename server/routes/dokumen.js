@@ -3,6 +3,9 @@ const fs = require('fs');
 const multer = require('multer');
 const path = require('path');
 const WordExtractor = require('word-extractor');
+const mammoth = require('mammoth');
+const XLSX = require('xlsx');
+const { PDFParse } = require('pdf-parse');
 const db = require('../config/db');
 const { verifyToken } = require('../middleware/authMiddleware');
 
@@ -48,6 +51,63 @@ function parseTags(value) {
   } catch {
     return normalizeTags(value);
   }
+}
+
+async function extractDocumentText(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  try {
+    if (extension === '.doc') {
+      const extractor = new WordExtractor();
+      const document = await extractor.extract(filePath);
+      return document.getBody() || '';
+    }
+    if (extension === '.docx') {
+      const result = await mammoth.extractRawText({ path: filePath });
+      return result.value || '';
+    }
+    if (extension === '.xls' || extension === '.xlsx') {
+      const workbook = XLSX.readFile(filePath);
+      return workbook.SheetNames
+        .map((sheetName) => {
+          const sheet = workbook.Sheets[sheetName];
+          return `${sheetName}\n${XLSX.utils.sheet_to_csv(sheet)}`;
+        })
+        .join('\n');
+    }
+    if (extension === '.pdf') {
+      const parser = new PDFParse({ data: new Uint8Array(fs.readFileSync(filePath)) });
+      try {
+        const result = await parser.getText();
+        return result.text || '';
+      } finally {
+        await parser.destroy();
+      }
+    }
+  } catch (error) {
+    console.warn(`Teks dokumen tidak dapat diekstrak (${path.basename(filePath)}):`, error.message);
+  }
+  return '';
+}
+
+async function indexDocumentText(documentId, storedFileName) {
+  const filePath = path.join(uploadDirectory, storedFileName);
+  if (!fs.existsSync(filePath)) return;
+  const extractedText = await extractDocumentText(filePath);
+  await db.query(
+    'UPDATE documents SET extracted_text = ? WHERE id = ?',
+    [extractedText.slice(0, 2 * 1024 * 1024), documentId],
+  );
+  return extractedText;
+}
+
+async function populateExtractedText(rows) {
+  await Promise.all(rows.map(async (row) => {
+    if (typeof row.extractedText === 'string' && row.extractedText.length > 0) return;
+    if (row.extractedText === null || row.extractedText === '') {
+      row.extractedText = await indexDocumentText(row.id, row.storedFileName) || '';
+    }
+  }));
+  return rows;
 }
 
 async function recordVersion(document, userId, eventTypeOverride = null) {
@@ -122,6 +182,7 @@ router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
         d.application,
         d.description,
         d.status,
+        d.extracted_text AS extractedText,
         d.created_at AS createdAt,
         owner.nama_lengkap AS uploader,
         divisi.nama_divisi AS division,
@@ -144,6 +205,7 @@ router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
       WHERE d.status IN ('pending', 'approved', 'rejected')
       ORDER BY d.created_at DESC`,
     );
+    await populateExtractedText(rows);
     return res.json({
       success: true,
       documents: rows,
@@ -286,6 +348,7 @@ router.get('/divisi', verifyToken, async (req, res) => {
         d.stored_file_name AS storedFileName,
         d.category,
         d.status,
+        d.extracted_text AS extractedText,
         d.created_at AS createdAt,
         CONCAT(owner.nama_lengkap) AS uploader
       FROM documents d
@@ -295,6 +358,8 @@ router.get('/divisi', verifyToken, async (req, res) => {
       [req.user.divisi_id]
     );
 
+    await populateExtractedText(rows);
+    await populateExtractedText(rows);
     return res.json({ success: true, documents: rows.map((row) => ({ ...row, tags: parseTags(row.tags) })) });
   } catch (error) {
     console.error('Error mengambil dokumen divisi:', error);
@@ -446,6 +511,8 @@ router.put('/:id', verifyToken, (req, res) => {
         description: description.trim(),
       }, req.user.id, 'update');
 
+      await indexDocumentText(req.params.id, storedFileName);
+
       if (req.file && oldFileName !== storedFileName) {
         const oldPath = path.join(uploadDirectory, oldFileName);
         if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
@@ -491,6 +558,7 @@ router.get('/', verifyToken, async (req, res) => {
         tags,
         description,
         status,
+        extracted_text AS extractedText,
         public_access AS publicAccess,
         created_at AS updatedAt
       FROM documents
@@ -499,6 +567,7 @@ router.get('/', verifyToken, async (req, res) => {
       [req.user.id]
     );
 
+    await populateExtractedText(rows);
     return res.json({ success: true, documents: rows.map((row) => ({ ...row, tags: parseTags(row.tags) })) });
   } catch (error) {
     console.error('Error mengambil dokumen:', error);
@@ -557,6 +626,8 @@ router.post('/', verifyToken, (req, res) => {
         tags,
         description: description.trim(),
       }, req.user.id);
+
+      await indexDocumentText(result.insertId, req.file.filename);
 
       return res.status(201).json({
         success: true,

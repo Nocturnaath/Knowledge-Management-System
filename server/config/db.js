@@ -91,6 +91,11 @@ async function initDatabase() {
     } catch (error) {
       if (error.code !== 'ER_DUP_FIELDNAME') throw error;
     }
+    try {
+      await pool.query('ALTER TABLE documents ADD COLUMN extracted_text LONGTEXT NULL');
+    } catch (error) {
+      if (error.code !== 'ER_DUP_FIELDNAME') throw error;
+    }
 
     // 6. Buat tabel kategori dokumen
     await pool.query(`
