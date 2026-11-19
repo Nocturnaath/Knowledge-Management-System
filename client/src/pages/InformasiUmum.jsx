@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './InformasiUmum.css';
+import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
+import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 const TAB_KONTAK = 'Kontak IT';
 
@@ -43,7 +45,7 @@ export default function InformasiUmum() {
         }
         setKategori(data.kategori || []);
         setTab((current) => current || data.kategori?.[0] || TAB_KONTAK);
-        setDokumen(data.dokumen);
+        setDokumen(Array.isArray(data.dokumen) ? data.dokumen : []);
       } catch (err) {
         setError('Tidak dapat terhubung ke server.');
       } finally {
@@ -121,9 +123,7 @@ export default function InformasiUmum() {
         } else if (extension === 'xls' || extension === 'xlsx') {
           const XLSX = await import('xlsx');
           const workbook = XLSX.read(buffer, { type: 'array' });
-          const value = workbook.SheetNames.map((sheetName) => (
-            `<h3>${sheetName}</h3>${XLSX.utils.sheet_to_html(workbook.Sheets[sheetName])}`
-          )).join('');
+          const value = spreadsheetToPreviewHtml(workbook, XLSX);
           setPratinjau({ type: 'html', value });
         } else {
           throw new Error('Format file belum didukung untuk pratinjau.');
@@ -172,38 +172,49 @@ export default function InformasiUmum() {
       </div>
 
       {tab === TAB_KONTAK ? (
-        <div className="iu-kontak">
-          {kontak.length === 0 && <div className="iu-pesan">Kontak tidak ditemukan.</div>}
-          {kontak.map((k) => (
-            <div className="iu-kontak-baris" key={k.nama}>
-              <strong>{k.nama}</strong>
-              <span>{k.tugas}</span>
-              <span>{k.kontak}</span>
-            </div>
-          ))}
+        <div className="iu-tabel">
+          <div className="iu-baris iu-kepala iu-kontak-kepala">
+            <span>Nama</span>
+            <span>Keperluan</span>
+            <span>Kontak</span>
+          </div>
+          {kontak.length === 0 ? (
+            <div className="iu-kosong">Kontak tidak ditemukan.</div>
+          ) : (
+            kontak.map((k) => (
+              <div className="iu-baris iu-kontak-baris" key={k.nama}>
+                <strong>{k.nama}</strong>
+                <span>{k.tugas}</span>
+                <span>{k.kontak}</span>
+              </div>
+            ))
+          )}
         </div>
       ) : (
-        <>
-          {loading && <div className="iu-pesan">Memuat dokumen...</div>}
-          {error && <div className="iu-pesan error">{error}</div>}
-          {!loading && !error && daftar.length === 0 && (
-            <div className="iu-pesan">
+        <div className="iu-tabel">
+          <div className="iu-baris iu-kepala iu-dokumen-kepala">
+            <span>Judul Dokumen</span>
+            <span>Deskripsi</span>
+            <span>Tanggal</span>
+          </div>
+          {loading ? (
+            <div className="iu-kosong">Memuat dokumen...</div>
+          ) : error ? (
+            <div className="iu-kosong error">{error}</div>
+          ) : daftar.length === 0 ? (
+            <div className="iu-kosong">
               {kata ? 'Tidak ada dokumen yang cocok.' : `Belum ada ${tab} yang dipublikasikan.`}
             </div>
-          )}
-
-          <div className="iu-daftar">
-            {daftar.map((d) => (
-              <button type="button" className="iu-item" key={d.id} onClick={() => bukaPratinjau(d)}>
-                <div>
-                  <strong>{d.judul}</strong>
-                  <small>{d.deskripsi}</small>
-                </div>
+          ) : (
+            daftar.map((d) => (
+              <button type="button" className="iu-baris iu-dokumen-baris" key={d.id} onClick={() => bukaPratinjau(d)}>
+                <strong>{d.judul}</strong>
+                <span>{d.deskripsi || '-'}</span>
                 <time>{formatTanggal(d.tanggal)}</time>
               </button>
-            ))}
-          </div>
-        </>
+            ))
+          )}
+        </div>
       )}
 
       {/* Jendela pratinjau: klik area gelap, tombol Tutup, atau Esc untuk menutup */}
@@ -237,7 +248,7 @@ export default function InformasiUmum() {
               <pre className="iu-isi">{pratinjau.value}</pre>
             )}
             {!memuatPratinjau && !errorPratinjau && pratinjau?.type === 'html' && (
-              <div className="iu-isi" dangerouslySetInnerHTML={{ __html: pratinjau.value }} />
+              <div className="iu-isi" dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(pratinjau.value) }} />
             )}
 
             <h3 className="iu-riwayat">Riwayat Versi</h3>

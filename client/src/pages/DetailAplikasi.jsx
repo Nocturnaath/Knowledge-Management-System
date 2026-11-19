@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './DetailAplikasi.css';
+import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
+import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 function extensionOf(document) {
   return document.fileName?.split('.').pop()?.toLowerCase() || '';
@@ -113,10 +115,7 @@ export default function DetailAplikasi() {
       } else if (extension === 'xls' || extension === 'xlsx') {
         const XLSX = await import('xlsx');
         const workbook = XLSX.read(buffer, { type: 'array' });
-        const value = workbook.SheetNames.map((sheetName) => {
-          const sheet = workbook.Sheets[sheetName];
-          return `<h3>${sheetName}</h3>${XLSX.utils.sheet_to_html(sheet)}`;
-        }).join('');
+        const value = spreadsheetToPreviewHtml(workbook, XLSX);
         setPreview({ type: 'html', value });
       } else {
         throw new Error('Format file belum didukung untuk pratinjau.');
@@ -229,7 +228,7 @@ export default function DetailAplikasi() {
               <pre className="document-preview-unavailable document-preview-text">{preview.value}</pre>
             )}
             {!previewLoading && !previewError && preview?.type === 'html' && (
-              <div className="document-preview-unavailable document-preview-html" dangerouslySetInnerHTML={{ __html: preview.value }} />
+              <div className="document-preview-unavailable document-preview-html" dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(preview.value) }} />
             )}
 
             <section className="document-version-history" aria-labelledby="document-version-title">

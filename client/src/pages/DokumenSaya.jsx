@@ -4,6 +4,8 @@ import CategoryFilter from '../components/CategoryFilter';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './DokumenSaya.css';
+import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
+import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 const documentTabs = ['Semua', 'Menunggu Persetujuan', 'Disetujui', 'Ditolak'];
 
@@ -125,9 +127,7 @@ export default function DokumenSaya() {
       } else if (extension === 'xls' || extension === 'xlsx') {
         const XLSX = await import('xlsx');
         const workbook = XLSX.read(buffer, { type: 'array' });
-        const value = workbook.SheetNames.map((sheetName) => (
-          `<h3>${sheetName}</h3>${XLSX.utils.sheet_to_html(workbook.Sheets[sheetName])}`
-        )).join('');
+        const value = spreadsheetToPreviewHtml(workbook, XLSX);
         setPreview({ type: 'html', value });
       } else {
         throw new Error('Format file belum didukung untuk pratinjau.');
@@ -291,65 +291,70 @@ export default function DokumenSaya() {
               <h2>Dokumen gagal dimuat</h2>
               <p>{error}</p>
             </div>
-          ) : visibleDocuments.length === 0 ? (
-            <div className="document-empty-state">
-              <span className="empty-document-icon" aria-hidden="true">▤</span>
-              <h2>{noDocuments ? 'Belum ada dokumen' : 'Dokumen tidak ditemukan'}</h2>
-              <p>
-                {noDocuments
-                  ? `Dokumen dengan status “${activeTab}” akan muncul di sini.`
-                  : 'Coba ubah kata pencarian atau filter kategori.'}
-              </p>
-            </div>
           ) : (
             <div className="document-table-scroll">
               <table className="document-table">
                 <thead>
                   <tr>
-                    <th>Judul Dokumen</th>
-                    <th>Kategori & Tag</th>
-                    <th>Tanggal</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                    <th scope="col">Judul Dokumen</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleDocuments.map((document) => (
-                    <tr key={document.id}>
-                      <td>{document.name}</td>
-                      <td>
-                        <div>{document.category || 'Lainnya'}</div>
-                        {document.tags?.length > 0 && (
-                          <div className="document-tags">
-                            {/* Tag menjadi filter langsung agar pengguna dapat menemukan dokumen terkait. */}
-                            {document.tags.map((tag) => (
-                              <button
-                                type="button"
-                                className={`document-tag ${selectedTag === tag ? 'active' : ''}`}
-                                key={tag}
-                                onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
-                                title={`Tampilkan dokumen dengan tag ${tag}`}
-                              >
-                                {tag}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </td>
-                      <td>{formatDocumentDate(document.updatedAt)}</td>
-                      <td>
-                        <span className={`document-status status-${document.status}`}>
-                          {statusLabels[document.status] || 'Menunggu Persetujuan'}
-                        </span>
-                      </td>
-                      <td className="document-actions">
-                        <button type="button" onClick={() => openPreview(document)}>Lihat</button>
-                        <a href={`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`} download={document.fileName}>Unduh</a>
-                        <button type="button" onClick={() => openEdit(document)}>Edit</button>
-                        <button className="delete-action" type="button" onClick={() => deleteDocument(document)}>Hapus</button>
+                  {visibleDocuments.length === 0 ? (
+                    <tr>
+                      <td colSpan="5">
+                        <div className="document-empty-state">
+                          <h2>{noDocuments ? 'Belum ada dokumen' : 'Dokumen tidak ditemukan'}</h2>
+                          <p>
+                            {noDocuments
+                              ? `Dokumen dengan status â€œ${activeTab}â€ akan muncul di sini.`
+                              : 'Coba ubah kata pencarian atau filter kategori.'}
+                          </p>
+                        </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    visibleDocuments.map((document) => (
+                      <tr key={document.id}>
+                        <td>{document.name}</td>
+                        <td>
+                          <div>{document.category || 'Lainnya'}</div>
+                          {document.tags?.length > 0 && (
+                            <div className="document-tags">
+                              {/* Tag menjadi filter langsung agar pengguna dapat menemukan dokumen terkait. */}
+                              {document.tags.map((tag) => (
+                                <button
+                                  type="button"
+                                  className={`document-tag ${selectedTag === tag ? 'active' : ''}`}
+                                  key={tag}
+                                  onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
+                                  title={`Tampilkan dokumen dengan tag ${tag}`}
+                                >
+                                  {tag}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                        <td>{formatDocumentDate(document.updatedAt)}</td>
+                        <td>
+                          <span className={`document-status status-${document.status}`}>
+                            {statusLabels[document.status] || 'Menunggu Persetujuan'}
+                          </span>
+                        </td>
+                        <td className="document-actions">
+                          <button type="button" onClick={() => openPreview(document)}>Lihat</button>
+                          <a href={`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`} download={document.fileName}>Unduh</a>
+                          <button type="button" onClick={() => openEdit(document)}>Edit</button>
+                          <button className="delete-action" type="button" onClick={() => deleteDocument(document)}>Hapus</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -377,14 +382,14 @@ export default function DokumenSaya() {
               <pre className="document-preview-text">{preview.value}</pre>
             )}
             {!previewLoading && !previewError && preview?.type === 'html' && (
-              <div className="document-preview-html" dangerouslySetInnerHTML={{ __html: preview.value }} />
+              <div className="document-preview-html" dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(preview.value) }} />
             )}
             <section className="document-version-history">
               <h3>Riwayat Versi</h3>
               {versions.map((version) => (
                 <article key={version.id}>
                   <div>
-                    <strong>v{version.version} · {version.eventType === 'upload' ? 'Dokumen pertama diunggah' : 'Pembaruan dokumen'}</strong>
+                    <strong>v{version.version} Â· {version.eventType === 'upload' ? 'Dokumen pertama diunggah' : 'Pembaruan dokumen'}</strong>
                     <small>Diunggah oleh {version.uploader}</small>
                   </div>
                   <time>{formatDocumentDate(version.createdAt)}</time>
@@ -431,10 +436,6 @@ export default function DokumenSaya() {
           </form>
         </div>
       )}
-
-      <footer className="dashboard-footer">
-        C-BIJAK <span>•</span> Portal pengetahuan internal
-      </footer>
     </div>
   );
 }

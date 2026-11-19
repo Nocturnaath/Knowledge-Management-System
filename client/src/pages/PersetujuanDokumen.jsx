@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './PersetujuanDokumen.css';
+import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
+import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 function formatDate(value) {
   return new Date(value).toLocaleDateString('id-ID', {
@@ -126,10 +128,7 @@ export default function PersetujuanDokumen() {
       } else if (extension === 'xls' || extension === 'xlsx') {
         const XLSX = await import('xlsx');
         const workbook = XLSX.read(buffer, { type: 'array' });
-        const value = workbook.SheetNames.map((sheetName) => {
-          const sheet = workbook.Sheets[sheetName];
-          return `<h3>${sheetName}</h3>${XLSX.utils.sheet_to_html(sheet)}`;
-        }).join('');
+        const value = spreadsheetToPreviewHtml(workbook, XLSX);
         setPreview({ type: 'html', value });
       } else {
         throw new Error('Format file belum didukung untuk pratinjau.');
@@ -168,9 +167,11 @@ export default function PersetujuanDokumen() {
         />
       </div>
 
-      <div className="ps-tab">
+      <div className="ps-tab" role="tablist" aria-label="Section persetujuan dokumen">
         <button
           type="button"
+          role="tab"
+          aria-selected={tab === 'menunggu'}
           className={tab === 'menunggu' ? 'aktif' : ''}
           onClick={() => setTab('menunggu')}
         >
@@ -178,6 +179,8 @@ export default function PersetujuanDokumen() {
         </button>
         <button
           type="button"
+          role="tab"
+          aria-selected={tab === 'riwayat'}
           className={tab === 'riwayat' ? 'aktif' : ''}
           onClick={() => setTab('riwayat')}
         >
@@ -320,7 +323,7 @@ export default function PersetujuanDokumen() {
             {!previewLoading && !previewError && preview?.type === 'html' && (
               <div
                 className="ps-file-preview-html"
-                dangerouslySetInnerHTML={{ __html: preview.value }}
+                dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(preview.value) }}
               />
             )}
 

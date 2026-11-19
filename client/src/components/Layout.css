@@ -251,6 +251,8 @@
    ======================================== */
 
 .app-layout .app-main {
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   height: 100vh;
   min-width: 0;
@@ -260,6 +262,10 @@
   overflow-y: scroll;
   scrollbar-width: auto;
   scrollbar-color: #c6cbd3 #eef2f8;
+}
+
+.app-layout .app-content {
+  flex: 1 0 auto;
 }
 
 .app-layout .app-main::-webkit-scrollbar {
@@ -429,6 +435,20 @@
 .app-layout .app-main .ha-sub,
 .app-layout .app-main .ha-tanggal {
   font-size: 13px;
+}
+
+.app-layout .app-main .page-header time,
+.app-layout .app-main .division-page-header time,
+.app-layout .app-main .ps-tanggal,
+.app-layout .app-main .apl-tanggal,
+.app-layout .app-main .iu-tanggal,
+.app-layout .app-main .ha-tanggal,
+.app-layout .app-main .notifications-header > time {
+  align-self: flex-start;
+  margin: 0;
+  padding-top: 0;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .app-layout .app-main .document-search input,

@@ -29,19 +29,20 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 24px;
-    margin: 2px 0 48px;
+    margin: 0 0 clamp(16px, 4vh, 40px);
 }
 
 .dokumen-saya .page-header h1 {
     margin: 0 0 4px;
     color: #000;
-    font-size: 28px;
+    font-size: 21px;
+    font-weight: 600;
     line-height: 1.3;
 }
 
 .dokumen-saya .page-header p {
     margin: 0;
-    font-size: 16px;
+    font-size: 13px;
     line-height: 1.5;
 }
 
@@ -62,22 +63,29 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     padding: 0;
+    letter-spacing: normal;
+}
+
+.dokumen-saya .document-toolbar .category-filter .category-toggle {
+    height: 54px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
 }
 
 .dokumen-saya .document-search {
-    min-width: 160px;
-    height: 48px;
+    min-width: 0;
+    height: 54px;
     display: flex;
     flex: 1;
     align-items: center;
-    padding: 0 16px;
+    padding: 0 36px;
     border: 0;
-    border-radius: 6px;
+    border-radius: 4px;
     background: #fff;
     color: #778397;
-    box-shadow: 0 2px 7px #18345c20;
+    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
 }
 
 .dokumen-saya .document-search:focus-within {
@@ -88,15 +96,17 @@
 .dokumen-saya .document-search input {
     width: 100%;
     min-width: 0;
+    height: 54px;
     border: 0;
     outline: 0;
     background: transparent;
-    color: #344054;
-    font-size: 16px;
+    color: #111827;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
 }
 
 .dokumen-saya .document-search input::placeholder {
-    color: #98a2b3;
+    color: #6b7280;
 }
 
 /* Ikon kaca pembesar */
@@ -131,7 +141,7 @@
 }
 
 .dokumen-saya .upload-button {
-    height: 48px;
+    height: 54px;
     display: flex;
     flex: none;
     align-items: center;
@@ -139,9 +149,10 @@
     min-width: 96px;
     padding: 0 16px;
     border: 0;
-    border-radius: 7px;
+    border-radius: 4px;
     background: #0d5cdb;
     color: #fff;
+    font-family: Inter, Arial, sans-serif;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -163,7 +174,7 @@
     overflow-x: auto;
     margin-top: 18px;
     margin-bottom: 14px;
-    padding: 0 16px;
+    padding: 0;
     scrollbar-width: thin;
 }
 
@@ -188,7 +199,7 @@
 
 .dokumen-saya .document-tab.active {
     background: #8dbaf4;
-    color: #164c9b;
+    color: #0b2f73;
 }
 
 .dokumen-saya .document-tag-filter {
@@ -219,12 +230,14 @@
 /* Daftar dokumen (tingginya mengikuti layar supaya halaman tidak ikut ter-scroll) */
 .dokumen-saya .document-list {
     margin-top: 0;
-    min-height: 200px;
-    max-height: calc(100vh - 300px);
+    min-height: 193px;
+    box-sizing: border-box;
+    padding: 20px;
+    max-height: calc(100vh - 340px);
     overflow-y: auto;
     border-radius: 6px;
     background: #fff;
-    box-shadow: 0 2px 7px #18345c20;
+    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
     overscroll-behavior: contain;
     scrollbar-gutter: stable;
     scrollbar-color: #c3ccd8 #f4f6f8;
@@ -238,38 +251,64 @@
     width: 100%;
     min-width: 760px;
     border-collapse: collapse;
+    table-layout: fixed;
     color: #242424;
     font-size: 13px;
+    letter-spacing: normal;
     white-space: nowrap;
 }
 
 .dokumen-saya .document-table th,
 .dokumen-saya .document-table td {
-    height: 49px;
-    padding: 0 14px;
-    border-bottom: 1px solid #dedede;
+    padding: 14px 12px;
+    border-bottom: 1px solid #e5e7eb;
     text-align: left;
 }
 
 .dokumen-saya .document-table th {
-    color: #707070;
-    font-size: 14px;
+    color: #0b2f73;
+    font-size: 13px;
     font-weight: 700;
+}
+
+.dokumen-saya .document-table th:nth-child(1) {
+    width: 23%;
+}
+
+.dokumen-saya .document-table th:nth-child(2) {
+    width: 20%;
+}
+
+.dokumen-saya .document-table th:nth-child(3) {
+    width: 19%;
+}
+
+.dokumen-saya .document-table th:nth-child(4) {
+    width: 16%;
+}
+
+.dokumen-saya .document-table th:nth-child(5) {
+    width: 22%;
+}
+
+.dokumen-saya .document-table thead th {
+    text-align: left;
 }
 
 .dokumen-saya .document-table th:first-child,
 .dokumen-saya .document-table td:first-child {
-    padding-left: 16px;
+    padding-left: 12px;
 }
 
-.dokumen-saya .document-table th:nth-child(3),
 .dokumen-saya .document-table td:nth-child(3),
-.dokumen-saya .document-table th:nth-child(4),
 .dokumen-saya .document-table td:nth-child(4) {
     text-align: center;
 }
 
-.dokumen-saya .document-table th:last-child,
+.dokumen-saya .document-table th:last-child {
+    padding-right: 12px;
+}
+
 .dokumen-saya .document-table td:last-child {
     padding-right: 12px;
     text-align: center;
@@ -347,19 +386,8 @@
     text-align: center;
 }
 
-.dokumen-saya .empty-document-icon {
-    width: 54px;
-    height: 54px;
-    display: grid;
-    place-items: center;
-    border-radius: 15px;
-    background: #edf4ff;
-    color: #2563b9;
-    font-size: 28px;
-}
-
 .dokumen-saya .document-empty-state h2 {
-    margin: 18px 0 6px;
+    margin: 0 0 6px;
     color: #344054;
     font-size: 16px;
 }
@@ -651,16 +679,16 @@
     .dokumen-saya .document-toolbar {
         flex-wrap: wrap;
         gap: 10px;
-        padding: 14px;
+        padding: 0;
     }
 
     .dokumen-saya .document-search {
         flex-basis: 100%;
-        height: 40px;
+        height: 54px;
     }
 
     .dokumen-saya .upload-button {
-        height: 40px;
+        height: 54px;
     }
 
     .dokumen-saya .document-tabs {

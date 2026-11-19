@@ -90,26 +90,34 @@ function RecentActivities({ activities }) {
         <h2>Aktivitas Terbaru</h2>
       </div>
 
-      {activities.length > 0 ? (
-        <ul>
-          {activities.map((activity) => (
-            <li key={activity.id}>
-              <span>
-                <b>{activity.uploader}</b>{' '}
-                {activity.eventType === 'category_move'
-                  ? `memindahkan ${activity.documentName}`
-                  : `${activity.eventType === 'update' ? 'memperbarui' : 'mengunggah'} dokumen `}
-                {activity.eventType !== 'category_move' && <b>{activity.documentName}</b>}
-              </span>
-              <time>{formatActivityDate(activity.createdAt)}</time>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="beranda-activity-empty">
-          Belum ada aktivitas dokumen di divisi Anda.
-        </div>
-      )}
+      <div className="beranda-activity-table-scroll">
+        <table className="beranda-activity-table">
+          <tbody>
+            {activities.length > 0 ? (
+              activities.map((activity) => (
+                <tr key={activity.id}>
+                  <td>
+                    <b>{activity.uploader}</b>{' '}
+                    {activity.eventType === 'category_move'
+                      ? `memindahkan ${activity.documentName}`
+                      : `${activity.eventType === 'update' ? 'memperbarui' : 'mengunggah'} dokumen `}
+                    {activity.eventType !== 'category_move' && <b>{activity.documentName}</b>}
+                  </td>
+                  <td>
+                    <time>{formatActivityDate(activity.createdAt)}</time>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="beranda-activity-empty" colSpan="2">
+                  Belum ada aktivitas dokumen di divisi Anda.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </section>
   );
 }
@@ -155,10 +163,6 @@ export default function Beranda() {
       />
       <RecentActivities activities={activities} />
       {error && <p className="beranda-error">{error}</p>}
-
-      <footer className="beranda-footer">
-        C-BIJAK <span>•</span> Portal pengetahuan internal
-      </footer>
     </div>
   );
 }

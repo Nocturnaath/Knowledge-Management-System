@@ -96,11 +96,23 @@ export default function HakAkses() {
         terakhir pada baris Admin.
       </div>
 
-      <div className="ha-tab">
-        <button type="button" className={tab === 'pengguna' ? 'aktif' : ''} onClick={() => setTab('pengguna')}>
+      <div className="ha-tab" role="tablist" aria-label="Tampilan hak akses">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'pengguna'}
+          className={tab === 'pengguna' ? 'aktif' : ''}
+          onClick={() => setTab('pengguna')}
+        >
           Per Pengguna
         </button>
-        <button type="button" className={tab === 'peran' ? 'aktif' : ''} onClick={() => setTab('peran')}>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === 'peran'}
+          className={tab === 'peran' ? 'aktif' : ''}
+          onClick={() => setTab('peran')}
+        >
           Per Peran (Default)
         </button>
       </div>

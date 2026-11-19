@@ -285,42 +285,42 @@ export default function KelolaKategori() {
       <div className="kategori-grid">
         {renderPanel('Jenis Dokumen Aplikasi', applicationCategories, 'aplikasi')}
         {renderPanel('Kategori Informasi Umum', informationCategories, 'informasi')}
-      </div>
-      <section className="kategori-panel rumpun-panel">
-        <h2>Rumpun Aplikasi</h2>
-        <div className="kategori-panel-list">
-          {rumpun.map((item) => (
-            <div className="kategori-panel-row" key={item.id}>
-              <div>
-                <strong>{item.name}</strong>
-                <small>{item.applicationCount} Aplikasi</small>
+        <section className="kategori-panel rumpun-panel">
+          <h2>Rumpun Aplikasi</h2>
+          <div className="kategori-panel-list">
+            {rumpun.map((item) => (
+              <div className="kategori-panel-row" key={item.id}>
+                <div>
+                  <strong>{item.name}</strong>
+                  <small>{item.applicationCount} Aplikasi</small>
+                </div>
+                <div className="kategori-actions">
+                  <button type="button" onClick={() => setRumpunNames({ new: '', editing: item, value: item.name })}>Ubah</button>
+                  <button type="button" onClick={() => deleteRumpun(item)}>Hapus</button>
+                </div>
               </div>
-              <div className="kategori-actions">
-                <button type="button" onClick={() => setRumpunNames({ new: '', editing: item, value: item.name })}>Ubah</button>
-                <button type="button" onClick={() => deleteRumpun(item)}>Hapus</button>
-              </div>
-            </div>
-          ))}
-          {!loading && rumpun.length === 0 && <p className="kategori-empty">Belum ada rumpun.</p>}
-        </div>
-        <form className="kategori-inline-form" onSubmit={saveRumpun}>
-          <input
-            value={rumpunNames.editing ? rumpunNames.value : rumpunNames.new}
-            onChange={(event) => setRumpunNames((current) => (
-              current.editing
-                ? { ...current, value: event.target.value }
-                : { ...current, new: event.target.value }
             ))}
-            placeholder={rumpunNames.editing ? 'Ubah nama rumpun.....' : 'Tambah baru.....'}
-            maxLength={150}
-            aria-label="Tambah rumpun aplikasi"
-          />
-          <button type="submit" disabled={saving}>{rumpunNames.editing ? 'Simpan' : 'Tambah'}</button>
-          {rumpunNames.editing && (
-            <button type="button" className="rumpun-cancel" onClick={() => setRumpunNames({ new: '', editing: null, value: '' })}>Batal</button>
-          )}
-        </form>
-      </section>
+            {!loading && rumpun.length === 0 && <p className="kategori-empty">Belum ada rumpun.</p>}
+          </div>
+          <form className="kategori-inline-form" onSubmit={saveRumpun}>
+            <input
+              value={rumpunNames.editing ? rumpunNames.value : rumpunNames.new}
+              onChange={(event) => setRumpunNames((current) => (
+                current.editing
+                  ? { ...current, value: event.target.value }
+                  : { ...current, new: event.target.value }
+              ))}
+              placeholder={rumpunNames.editing ? 'Ubah nama rumpun.....' : 'Tambah baru.....'}
+              maxLength={150}
+              aria-label="Tambah rumpun aplikasi"
+            />
+            <button type="submit" disabled={saving}>{rumpunNames.editing ? 'Simpan' : 'Tambah'}</button>
+            {rumpunNames.editing && (
+              <button type="button" className="rumpun-cancel" onClick={() => setRumpunNames({ new: '', editing: null, value: '' })}>Batal</button>
+            )}
+          </form>
+        </section>
+      </div>
       {deleteTarget && (
         <div className="kategori-dialog-backdrop" onClick={() => setDeleteTarget(null)}>
           <section className="kategori-dialog" role="dialog" aria-modal="true" onClick={(event) => event.stopPropagation()}>

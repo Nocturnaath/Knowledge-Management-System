@@ -3,20 +3,36 @@
   color: #111827;
 }
 
-.division-page-header h1 {
-  margin: 0;
-  font-size: 28px;
+.division-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
 }
 
-.division-page-header p {
-  margin: 8px 0 0;
+.division-page-header time {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.app-layout .app-main .division-page .division-page-header h1 {
+  margin: 0;
+  font-size: 21px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+.app-layout .app-main .division-page .division-page-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .division-toolbar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-top: 32px;
+  gap: 20px;
+  margin-top: clamp(16px, 4vh, 40px);
 }
 
 .division-search {
@@ -25,24 +41,41 @@
 }
 
 .division-toolbar .category-filter {
-  flex: 0 0 228px;
+  flex: 0 0 335px;
 }
 
-.division-search input {
+.division-toolbar .category-filter .category-toggle {
+  height: 54px;
+  border-radius: 4px;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.app-layout .app-main .division-page .division-search input {
   width: 100%;
+  height: 54px;
   box-sizing: border-box;
-  padding: 16px 24px;
+  padding: 0 36px;
   border: 0;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
-  font-size: 17px;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+color: #111827;
+}
+.app-layout .app-main .division-page .division-search input::placeholder {
+  color: #6b7280;
+  opacity: 1;
 }
 
 .division-table-card {
-  margin-top: 16px;
+  display: block;
+  min-height: 193px;
+  box-sizing: border-box;
+  margin-top: 18px;
   padding: 20px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 6px;
   background: #fff;
   box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
 }
@@ -68,6 +101,13 @@
   color: #0b2f73;
 }
 
+.division-empty {
+  height: 100px;
+  color: #6b7280;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
 .division-table button {
   padding: 6px 12px;
   border: 1px solid #9ca3af;
@@ -81,7 +121,16 @@
 .division-preview-empty {
   padding: 36px 16px;
   color: #6b7280;
+  font-size: 16px;
   text-align: center;
+}
+
+.division-table-card > .division-message {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  min-height: 153px;
+  place-items: center;
 }
 
 .division-message.error,
@@ -210,13 +259,36 @@
 }
 
 @media (max-width: 700px) {
+  .division-page-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .division-toolbar {
     align-items: stretch;
     flex-direction: column;
   }
 
   .division-toolbar .category-filter {
-    flex-basis: auto;
+    flex: 1 1 auto;
     width: 100%;
   }
+
+  .division-toolbar .category-filter .category-toggle {
+    height: 54px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
+  }
+
+  .app-layout .app-main .division-page .division-search input {
+    height: 54px;
+    padding: 0 36px;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
+  color: #111827;
+}
+.app-layout .app-main .division-page .division-search input::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
 }

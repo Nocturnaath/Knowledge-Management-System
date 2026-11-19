@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import { API_URL } from '../config';
 import './Login.css';
+import SiteFooter from '../components/SiteFooter';
 
 export default function Login() {
   const [ssoId, setSsoId] = useState('');
@@ -138,6 +139,7 @@ export default function Login() {
           </button>
         </form>
       </section>
+      <SiteFooter />
     </main>
   );
 }

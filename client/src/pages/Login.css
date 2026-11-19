@@ -10,8 +10,10 @@
 .login-wrapper {
   min-height: 100vh;
   width: 100%;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   padding: 32px 20px;
 
   background:
@@ -22,6 +24,15 @@
     url('/bg_welcome.png') center center / cover no-repeat;
 
   font-family: Inter, Arial, sans-serif;
+}
+
+.login-wrapper .login-card {
+  margin: auto 0;
+}
+
+.login-wrapper .site-footer {
+  width: min(420px, 100%);
+  margin-top: auto;
 }
 
 /* ==================================================

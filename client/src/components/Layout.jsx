@@ -16,6 +16,7 @@ import {
 
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
+import SiteFooter from './SiteFooter';
 import './Layout.css';
 
 export default function Layout() {
@@ -179,7 +180,10 @@ export default function Layout() {
 
       {/* Konten halaman dari React Router. */}
       <main className="app-main">
-        <Outlet />
+        <div className="app-content">
+          <Outlet />
+        </div>
+        <SiteFooter />
       </main>
     </div>
   );

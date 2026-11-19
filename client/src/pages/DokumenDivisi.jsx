@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import CategoryFilter from '../components/CategoryFilter';
 import './DokumenDivisi.css';
+import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
+import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 const statusLabels = {
   approved: 'Disetujui',
@@ -26,6 +28,12 @@ export default function DokumenDivisi() {
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState('');
   const [previewError, setPreviewError] = useState('');
+  const tanggal = new Date().toLocaleDateString('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   useEffect(() => {
     const loadDocuments = async () => {
@@ -37,7 +45,7 @@ export default function DokumenDivisi() {
         if (!response.ok || !data.success) {
           throw new Error(data.message || 'Gagal mengambil dokumen divisi.');
         }
-        setDocuments(data.documents);
+        setDocuments(Array.isArray(data.documents) ? data.documents : []);
       } catch (requestError) {
         setError(requestError.message);
       } finally {
@@ -98,10 +106,7 @@ export default function DokumenDivisi() {
       } else if (extension === 'xls' || extension === 'xlsx') {
         const XLSX = await import('xlsx');
         const workbook = XLSX.read(buffer, { type: 'array' });
-        const value = workbook.SheetNames.map((sheetName) => {
-          const sheet = workbook.Sheets[sheetName];
-          return `<h3>${sheetName}</h3>${XLSX.utils.sheet_to_html(sheet)}`;
-        }).join('');
+        const value = spreadsheetToPreviewHtml(workbook, XLSX);
         setPreview({ type: 'html', value });
       } else {
         throw new Error('Format file belum didukung untuk pratinjau.');
@@ -120,6 +125,7 @@ export default function DokumenDivisi() {
           <h1>Dokumen Divisi</h1>
           <p>Dokumen divisi termasuk dokumen milik Anda.</p>
         </div>
+        <time>{tanggal}</time>
       </header>
 
       <div className="division-toolbar">
@@ -136,36 +142,44 @@ export default function DokumenDivisi() {
       </div>
 
       <section className="division-table-card" aria-label="Daftar dokumen divisi">
-        {loading ? <p className="division-message">Memuat dokumen...</p> : null}
-        {error ? <p className="division-message error">{error}</p> : null}
-        {!loading && !error && visibleDocuments.length === 0 ? (
-          <p className="division-message">Belum ada dokumen divisi.</p>
+        {loading ? (
+          <p className="division-message">Memuat dokumen...</p>
+        ) : error ? (
+          <p className="division-message error">{error}</p>
         ) : (
           <div className="division-table-scroll">
             <table className="division-table">
               <thead>
                 <tr>
-                  <th>Judul Dokumen</th>
-                  <th>Pengunggah</th>
-                  <th>Kategori</th>
-                  <th>Tanggal</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
+                  <th scope="col">Judul Dokumen</th>
+                  <th scope="col">Pengunggah</th>
+                  <th scope="col">Kategori</th>
+                  <th scope="col">Tanggal</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {visibleDocuments.map((document) => (
-                  <tr key={document.id}>
-                    <td>{document.name}</td>
-                    <td>{document.uploader}</td>
-                    <td>{document.category}</td>
-                    <td>{new Date(document.createdAt).toLocaleDateString('id-ID')}</td>
-                    <td>{statusLabels[document.status] || document.status}</td>
-                    <td>
-                      <button type="button" onClick={() => openPreview(document)}>Lihat</button>
+                {visibleDocuments.length === 0 ? (
+                  <tr>
+                    <td className="division-empty" colSpan="6">
+                      {documents.length === 0 ? 'Belum ada dokumen divisi.' : 'Dokumen tidak ditemukan.'}
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  visibleDocuments.map((document) => (
+                    <tr key={document.id}>
+                      <td>{document.name}</td>
+                      <td>{document.uploader}</td>
+                      <td>{document.category}</td>
+                      <td>{new Date(document.createdAt).toLocaleDateString('id-ID')}</td>
+                      <td>{statusLabels[document.status] || document.status}</td>
+                      <td>
+                        <button type="button" onClick={() => openPreview(document)}>Lihat</button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -195,7 +209,7 @@ export default function DokumenDivisi() {
               <pre className="division-preview-text">{preview.value}</pre>
             )}
             {!previewLoading && !previewError && preview?.type === 'html' && (
-              <div className="division-preview-html" dangerouslySetInnerHTML={{ __html: preview.value }} />
+              <div className="division-preview-html" dangerouslySetInnerHTML={{ __html: sanitizePreviewHtml(preview.value) }} />
             )}
             <section className="division-version-history">
               <h3>Riwayat Versi</h3>

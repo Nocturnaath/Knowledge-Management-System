@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 24px;
-  margin: 2px 0 40px;
+  margin: 2px 0 clamp(16px, 4vh, 40px);
 }
 
 .beranda-header h1 {
@@ -102,59 +102,61 @@
 /* Aktivitas terbaru */
 .beranda-activity-card {
   overflow: hidden;
-  border: 1px solid #e8edf4;
-  border-radius: 8px;
+  box-sizing: border-box;
+  min-height: 193px;
+  padding: 20px;
+  border-radius: 6px;
   background: #fff;
-  box-shadow: 0 2px 7px #18345c12;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
 }
 
 .beranda-activity-heading {
   display: flex;
   align-items: center;
-  padding: 16px 20px;
+  padding: 0 12px 14px;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .beranda-activity-heading h2 {
   margin: 0;
-  color: #344054;
+  color: #0b2f73;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
-.beranda-activity-card ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.beranda-activity-table-scroll {
+  overflow-x: auto;
 }
 
-.beranda-activity-card li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 20px;
-  border-bottom: 1px solid #eef0f3;
+.beranda-activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #242424;
+  font-size: 13px;
+  white-space: normal;
+}
+
+.beranda-activity-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.beranda-activity-table td:last-child {
+  width: 180px;
+  white-space: nowrap;
+}
+
+.beranda-activity-table time {
+  color: #667085;
   font-size: 12px;
 }
 
-.beranda-activity-card li:last-child {
-  border-bottom: 0;
-}
-
-.beranda-activity-card li time {
-  flex-shrink: 0;
-  color: #667085;
-  font-size: 11px;
-}
-
 .beranda-activity-empty {
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  color: #7b8492;
-  font-size: 13px;
-  text-align: center;
+  height: 100px;
+  color: #6b7280;
+  text-align: center !important;
 }
 
 .beranda-error {
@@ -182,7 +184,7 @@
   }
 
   .beranda-header h1 {
-    font-size: 20px;
+    font-size: 21px;
   }
 
   .beranda-header time {
@@ -198,11 +200,5 @@
   .beranda-stat-card {
     min-height: 82px;
     gap: 8px;
-  }
-
-  .beranda-activity-card li {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
   }
 }

@@ -61,7 +61,11 @@
 
 .ha-tab button.aktif {
     background: #8ebcff;
-    color: #0b2f73;
+    color: #0e3676;
+}
+
+.app-layout .app-main .ha-page .ha-tab button[aria-selected="true"] {
+    color: #0e3676;
 }
 
 .ha-tab button:hover:not(.aktif) {
