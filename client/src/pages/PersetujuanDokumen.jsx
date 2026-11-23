@@ -120,7 +120,7 @@ export default function PersetujuanDokumen() {
       }
 
       const response = await fetch(
-        `${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`,
+        `${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}?token=${encodeURIComponent(token)}`,
       );
       if (!response.ok) throw new Error('File tidak dapat dibaca.');
       const buffer = await response.arrayBuffer();
@@ -318,7 +318,7 @@ export default function PersetujuanDokumen() {
               <iframe
                 className="ps-file-preview-frame"
                 title={`Pratinjau ${previewDocument.name}`}
-                src={`${API_URL}/document-files/${previewDocument.storedFileName}`}
+                src={`${API_URL}/document-files/${previewDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               />
             )}
             {!previewLoading && !previewError && preview?.type === 'text' && (
@@ -333,10 +333,10 @@ export default function PersetujuanDokumen() {
 
             <a
               className="ps-file-download"
-              href={`${API_URL}/document-files/${previewDocument.storedFileName}`}
+              href={`${API_URL}/document-files/${previewDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               download={previewDocument.fileName}
             >
-              Unduh Dokumen
+              Unduh File
             </a>
           </section>
         </div>

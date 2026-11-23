@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../config/db');
-const { verifyToken } = require('../middleware/authMiddleware');
+const { verifyToken, requirePermission, getEffectivePermissions } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 // Komponen teknis tetap dihitung, tetapi isi dokumennya dibatasi pada endpoint detail.
@@ -18,12 +18,7 @@ const REQUIRED_COMPONENTS = [
 ];
 const INTERNAL_COMPONENTS = ['Data Model', 'Application Architecture', 'API & Integration'];
 
-function requireApplicationManager(req, res, next) {
-  if (!['admin', 'super_admin'].includes(req.user.role)) {
-    return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses untuk mengelola rumpun aplikasi.' });
-  }
-  next();
-}
+const requireApplicationManager = requirePermission('aplikasi.kelola');
 
 // GET /api/aplikasi
 // Aturan: divisi SI melihat semua aplikasi.
@@ -35,7 +30,9 @@ router.get('/', verifyToken, async (req, res) => {
       'SELECT kode_divisi FROM divisi WHERE id = ?',
       [req.user.divisi_id]
     );
-    const lihatSemua = divisiRows[0]?.kode_divisi === 'SI';
+    const lihatSemua =
+      req.user.role === 'super_admin' ||
+      divisiRows[0]?.kode_divisi === 'SI';
 
     // 2. Ambil aplikasi; kalau bukan divisi SI, saring berdasarkan divisi
     let sql = `
@@ -61,7 +58,8 @@ router.get('/', verifyToken, async (req, res) => {
     sql += ' GROUP BY a.id, a.nama_aplikasi, a.status, a.rumpun_id, r.nama_rumpun ORDER BY a.id';
 
     const [aplikasi] = await db.query(sql, params);
-    const canViewInternal = lihatSemua || req.user.role === 'staff_it';
+    const permissions = await getEffectivePermissions(req.user.id);
+    const canViewInternal = lihatSemua || permissions.includes('akses_dokumen_sensitif') || permissions.includes('aplikasi.kelola');
     const [tagRows] = await db.query(
       `SELECT application, tags FROM documents
        WHERE status = ? AND application IS NOT NULL
@@ -204,9 +202,12 @@ router.get('/:id/dokumen', verifyToken, async (req, res) => {
       [req.user.divisi_id, req.user.id]
     );
     const user = userRows[0];
-    const canSeeAll = user?.kodeDivisi === 'SI';
+    const canSeeAll =
+      req.user.role === 'super_admin' ||
+      user?.kodeDivisi === 'SI';
     // Staff IT juga boleh membuka tiga komponen teknis internal.
-    const canViewInternal = canSeeAll || req.user.role === 'staff_it';
+    const permissions = await getEffectivePermissions(req.user.id);
+    const canViewInternal = canSeeAll || permissions.includes('akses_dokumen_sensitif') || permissions.includes('aplikasi.kelola');
     if (!canSeeAll && application.divisiId !== req.user.divisi_id) {
       return res.status(403).json({
         success: false,

@@ -61,15 +61,19 @@
 }
 
 .kategori-form-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
   gap: 7px;
 }
 
 .kategori-form-row input,
 .kategori-inline-form input {
   min-width: 0;
-  height: 54px;
-  padding: 0 24px;
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  box-sizing: border-box;
+  padding: 0 12px;
   border: 1px solid #cbd0d8;
   border-radius: 5px;
   background: #fff;
@@ -87,7 +91,10 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  min-height: 54px;
+  min-height: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  width: 84px;
   border: 0;
   border-radius: 4px;
   background: #0d5cdb;
@@ -214,18 +221,34 @@
 }
 
 .kategori-inline-form {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
   gap: 10px;
   padding: 12px 16px 16px;
 }
 
-.kategori-inline-form input {
-  flex: 1;
+.kategori-panel > .kategori-inline-form input,
+.rumpun-panel > .kategori-inline-form input {
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.kategori-inline-form button {
-  min-width: 64px;
+.kategori-inline-form:has(.rumpun-cancel) {
+  grid-template-columns: minmax(0, 1fr) 84px 84px;
+}
+
+.kategori-panel > .kategori-inline-form button,
+.rumpun-panel > .kategori-inline-form button {
+  height: 32px;
+  min-height: 32px;
+  max-height: 32px;
+  min-width: 84px;
+  width: 84px;
   padding: 0 16px;
+  box-sizing: border-box;
 }
 
 .rumpun-panel {

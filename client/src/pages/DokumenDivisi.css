@@ -57,6 +57,10 @@
   box-sizing: border-box;
   padding: 0 36px;
   border: 0;
+  outline: 0;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
   font-family: Inter, Arial, sans-serif;
@@ -94,7 +98,7 @@ color: #111827;
 .division-table td {
   padding: 14px 12px;
   border-bottom: 1px solid #e5e7eb;
-  text-align: left;
+  text-align: center;
 }
 
 .division-table th {
@@ -108,13 +112,43 @@ color: #111827;
   vertical-align: middle;
 }
 
+.division-status {
+  display: inline-block;
+  min-width: 96px;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #fff1cc;
+  color: #946200;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.division-status.status-approved {
+  background: #e8f7ee;
+  color: #247346;
+}
+
+.division-status.status-rejected {
+  background: #fff0f0;
+  color: #b42318;
+}
+
 .division-table button {
   padding: 6px 12px;
   border: 1px solid #9ca3af;
   border-radius: 4px;
   background: #fff;
-  color: #0b2f73;
+  color: #303030;
+  font-weight: 400;
   cursor: pointer;
+}
+
+.division-table button:hover {
+  background: #f1f5fb;
+  text-decoration: none;
 }
 
 .division-message,
@@ -150,7 +184,7 @@ color: #111827;
 
 .division-preview-modal {
   display: flex;
-  width: min(850px, 100%);
+  width: min(760px, 100%);
   max-height: calc(100vh - 48px);
   overflow-y: auto;
   flex-direction: column;

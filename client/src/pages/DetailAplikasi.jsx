@@ -105,7 +105,7 @@ export default function DetailAplikasi() {
         return;
       }
 
-      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`);
+      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}?token=${encodeURIComponent(token)}`);
       if (!response.ok) throw new Error('File tidak dapat dibaca.');
       const buffer = await response.arrayBuffer();
       if (extension === 'docx') {
@@ -175,6 +175,12 @@ export default function DetailAplikasi() {
           {lengkap ? 'Lengkap' : 'Belum Lengkap'}
         </span>
         <span>• Rumpun {aplikasi.rumpun}</span>
+        <Link
+          to={`/dokumen/upload?applicationId=${encodeURIComponent(aplikasi.id)}&applicationName=${encodeURIComponent(aplikasi.nama)}`}
+          className="detail-upload-button"
+        >
+          Unggah
+        </Link>
       </div>
 
       <section className="detail-dokumen" aria-labelledby="judul-dokumen">
@@ -221,7 +227,7 @@ export default function DetailAplikasi() {
               <iframe
                 className="document-preview-frame"
                 title={`Pratinjau ${selectedDocument.name}`}
-                src={`${API_URL}/document-files/${selectedDocument.storedFileName}`}
+                src={`${API_URL}/document-files/${selectedDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               />
             )}
             {!previewLoading && !previewError && preview?.type === 'text' && (
@@ -250,7 +256,7 @@ export default function DetailAplikasi() {
 
             <a
               className="document-download-button"
-              href={`${API_URL}/document-files/${selectedDocument.storedFileName}`}
+              href={`${API_URL}/document-files/${selectedDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               download={selectedDocument.fileName}
             >
               Unduh File

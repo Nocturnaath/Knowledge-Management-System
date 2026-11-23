@@ -70,7 +70,7 @@ function DocumentStats({ counts, onNavigate, isReviewer }) {
     >
       {documentStats.map(({ label, key, path }) => (
         <button
-          className={`beranda-stat-card${activeCard === key ? ' is-clicked' : ''}`}
+          className={`beranda-stat-card stat-${key}${activeCard === key ? ' is-clicked' : ''}`}
           key={label}
           type="button"
           onClick={() => handleNavigate(key, path)}

@@ -14,6 +14,9 @@
   font-family: Inter, Arial, sans-serif;
   color: #111827;
   background: #f0f4fb;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ========================================
@@ -186,6 +189,9 @@
 
 .app-layout .sidebar-link span {
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-layout .sidebar-link:hover {
@@ -497,4 +503,78 @@
 .app-layout .app-main .detail-back,
 .app-layout .app-main .apl-skor {
   font-size: 13px;
+}
+
+/* Spacing dan lebar kontrol yang seragam untuk semua halaman internal. */
+.app-layout .app-main .apl-filter,
+.app-layout .app-main .division-toolbar,
+.app-layout .app-main .document-toolbar,
+.app-layout .app-main .ps-cari,
+.app-layout .app-main .iu-cari,
+.app-layout .app-main .ha-info,
+.app-layout .app-main .kategori-info {
+  margin-top: clamp(16px, 4vh, 40px);
+}
+
+.app-layout .app-main .apl-select,
+.app-layout .app-main .category-filter {
+  width: 335px;
+  max-width: 45%;
+  flex-basis: 335px;
+}
+
+.app-layout .app-main .apl-cari,
+.app-layout .app-main .document-search,
+.app-layout .app-main .division-search,
+.app-layout .app-main .ps-cari,
+.app-layout .app-main .iu-cari {
+  min-width: 0;
+}
+
+.app-layout .app-main .ps-baris,
+.app-layout .app-main .iu-kontak-kepala,
+.app-layout .app-main .iu-kontak-baris,
+.app-layout .app-main .ha-baris,
+.app-layout .app-main .ha-kepala {
+  text-align: center;
+}
+
+.app-layout .app-main .ps-baris > *,
+.app-layout .app-main .iu-kontak-kepala > *,
+.app-layout .app-main .iu-kontak-baris > *,
+.app-layout .app-main .ha-baris > * {
+  justify-self: center;
+  text-align: center;
+}
+
+/* Ukuran pratinjau dokumen seragam seperti di halaman detail aplikasi. */
+.app-layout .app-main .document-preview-modal,
+.app-layout .app-main .division-preview-modal,
+.app-layout .app-main .ps-file-preview-modal {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+  box-sizing: border-box;
+}
+
+.app-layout .app-main .document-preview-frame,
+.app-layout .app-main .division-preview-frame,
+.app-layout .app-main .ps-file-preview-frame {
+  height: min(480px, calc(100vh - 220px));
+  min-height: 220px;
+}
+
+.app-layout .app-main .iu-modal {
+  width: min(760px, 100%);
+  max-width: 760px;
+  max-height: calc(100vh - 48px);
+  box-sizing: border-box;
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.app-layout .app-main .iu-frame {
+  height: min(480px, calc(100vh - 220px));
+  min-height: 220px;
+  box-sizing: border-box;
+  border-radius: 4px;
 }

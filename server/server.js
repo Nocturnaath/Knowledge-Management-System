@@ -11,8 +11,9 @@ const authRoutes = require('./routes/auth');
 const aplikasiRoutes = require('./routes/aplikasi');
 const hakAksesRoutes = require('./routes/hakakses');
 const dokumenRoutes = require('./routes/dokumen');
-const informasiRoutes = require('./routes/informasi');
+const { router: informasiRoutes, publicRouter: publicInformasiRoutes } = require('./routes/informasi');
 const kategoriRoutes = require('./routes/kategori');
+const fileRoutes = require('./routes/file');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -27,12 +28,12 @@ app.use('/api/hak-akses', hakAksesRoutes); // Rute ini untuk super_admin, middle
 app.use('/api/dokumen', dokumenRoutes);
 app.use('/api/informasi-umum', informasiRoutes);
 app.use('/api/kategori', kategoriRoutes);
-app.use('/document-files', express.static(path.join(__dirname, 'uploads', 'documents'), {
-  index: false,
-}));
+// File dokumen selalu melewati validasi kepemilikan/flag publik di server.
+app.use('/document-files', fileRoutes);
 
 // Sambung rute auth
 app.use('/api/auth', authRoutes);
+app.use('/api/public/documents', publicInformasiRoutes);
 
 // Rute tes utama
 app.get('/', (req, res) => {

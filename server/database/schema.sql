@@ -3,8 +3,11 @@
 
 -- 0. Hapus tabel lama (urutan penting: users bergantung pada divisi)
 DROP TABLE IF EXISTS document_approval_logs;
-DROP TABLE IF EXISTS user_permission_overrides;
+DROP TABLE IF EXISTS user_permissions;
+DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS role_permissions;
+DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS user_permission_overrides;
 DROP TABLE IF EXISTS permissions;
 DROP TABLE IF EXISTS documents;
 DROP TABLE IF EXISTS users;
@@ -45,6 +48,7 @@ CREATE TABLE documents (
     description TEXT NOT NULL,
     status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
     public_access BOOLEAN NOT NULL DEFAULT FALSE,
+    is_public BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -88,14 +92,32 @@ CREATE TABLE permissions (
     label VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    description VARCHAR(255) NULL,
+    is_system BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE role_permissions (
-    role ENUM('super_admin', 'admin', 'staff_it', 'staff_divisi') NOT NULL,
+    role_id INT NOT NULL,
     perm_key VARCHAR(50) NOT NULL,
-    PRIMARY KEY (role, perm_key),
+    PRIMARY KEY (role_id, perm_key),
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
     FOREIGN KEY (perm_key) REFERENCES permissions(perm_key) ON DELETE CASCADE
 );
 
-CREATE TABLE user_permission_overrides (
+CREATE TABLE user_roles (
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+);
+
+CREATE TABLE user_permissions (
     user_id INT NOT NULL,
     perm_key VARCHAR(50) NOT NULL,
     allowed BOOLEAN NOT NULL,
@@ -122,16 +144,27 @@ INSERT INTO permissions (perm_key, label) VALUES
 ('akses_dokumen_sensitif', 'Akses Dokumen Sensitif'),
 ('review_dokumen', 'Review Dokumen'),
 ('acc_final', 'ACC Final'),
-('kelola_hak_akses', 'Kelola Hak Akses');
+('kelola_hak_akses', 'Kelola Hak Akses'),
+('dokumen.unggah', 'Unggah dokumen'),
+('dokumen.kelola', 'Kelola dokumen'),
+('dokumen.acc_final', 'ACC final'),
+('dokumen.publikasi', 'Publikasi dokumen'),
+('aplikasi.kelola', 'Kelola aplikasi'),
+('hak_akses.kelola', 'Kelola hak akses');
 
-INSERT INTO role_permissions (role, perm_key)
-SELECT 'super_admin', perm_key FROM permissions;
+INSERT INTO roles (name, slug, is_system) VALUES
+('Super Admin', 'super_admin', TRUE),
+('Admin', 'admin', TRUE),
+('Staf IT', 'staff_it', TRUE),
+('Staf Divisi', 'staff_divisi', TRUE);
 
-INSERT INTO role_permissions (role, perm_key) VALUES
-('admin', 'review_dokumen'),
-('admin', 'unggah_dokumen'),
-('staff_it', 'unggah_dokumen'),
-('staff_divisi', 'unggah_dokumen');
+INSERT INTO role_permissions (role_id, perm_key)
+SELECT r.id, p.perm_key FROM roles r CROSS JOIN permissions p WHERE r.slug = 'super_admin';
+
+INSERT INTO role_permissions (role_id, perm_key)
+SELECT r.id, p.perm_key FROM roles r JOIN permissions p
+WHERE (r.slug = 'admin' AND p.perm_key IN ('review_dokumen', 'unggah_dokumen', 'dokumen.unggah', 'dokumen.kelola'))
+   OR (r.slug = 'staff_it' AND p.perm_key IN ('akses_dokumen_sensitif', 'unggah_dokumen', 'dokumen.unggah'));
 
 -- 3. Masukkan data divisi awal
 INSERT INTO divisi (nama_divisi, kode_divisi) VALUES
@@ -147,3 +180,6 @@ INSERT INTO users (sso_id, username, password, nama_lengkap, email, divisi_id, r
 ('SSO002', 'mahito.admin', '$2b$10$yN8e.bfqnxGGgdOILN3AU.BB3qaYcUz62MZsypsQn.5N3wJVX6.5i', 'Mahito', 'mahito@cbijak.local', 1, 'admin'),
 ('SSO003', 'nanami.it', '$2b$10$cYS62rcrhHjbLNhUC2PaFuCToCYWpqlj8tLcpx.rlm28xshHofTWy', 'Kento Nanami', 'nami@cbijak.local', 1, 'staff_it'),
 ('SSO004', 'gojo.keu', '$2b$10$EbqG.i8VeGOds.MzDAHXUOSIJHmoS9ldpU8ELdwkeLa/.qG82LKgC', 'Satoru Gojo', 'gojo@cbijak.local', 2, 'staff_divisi');
+
+INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u JOIN roles r ON r.slug = u.role;

@@ -35,16 +35,33 @@ router.use(verifyToken, (req, res, next) => {
 router.get('/', async (req, res) => {
   try {
     await db.authorizationTablesReady;
-    const [izin] = await db.query('SELECT perm_key AS `key`, label FROM permissions');
+    const [permissionRows] = await db.query('SELECT perm_key, label FROM permissions');
+    const izin = permissionRows.map((permission) => ({
+      key: permission.perm_key,
+      label: permission.label,
+    }));
     izin.sort((a, b) => URUTAN.indexOf(a.key) - URUTAN.indexOf(b.key));
 
-    const [rolePerm] = await db.query('SELECT role, perm_key FROM role_permissions');
-    const [override] = await db.query('SELECT user_id, perm_key, allowed FROM user_permission_overrides');
+    const [rolePerm] = await db.query(`
+      SELECT r.slug AS role, rp.perm_key
+      FROM role_permissions rp
+      JOIN roles r ON r.id = rp.role_id
+    `);
+    await db.query(`
+      INSERT IGNORE INTO user_permissions (user_id, perm_key, allowed)
+      SELECT user_id, perm_key, allowed FROM user_permission_overrides
+    `);
+    const [override] = await db.query('SELECT user_id, perm_key, allowed FROM user_permissions');
     const [users] = await db.query(`
       SELECT u.id, u.nama_lengkap AS nama, u.jabatan, u.role, d.nama_divisi AS divisi
       FROM users u
       LEFT JOIN divisi d ON d.id = u.divisi_id
       ORDER BY u.id
+    `);
+    const [userRoleRows] = await db.query(`
+      SELECT ur.user_id, r.slug
+      FROM user_roles ur
+      JOIN roles r ON r.id = ur.role_id
     `);
 
     const peran = PERAN.map((p) => ({
@@ -52,16 +69,26 @@ router.get('/', async (req, res) => {
       izin: rolePerm.filter((r) => r.role === p.key).map((r) => r.perm_key)
     }));
 
-    // Izin efektif pengguna = izin default perannya, lalu ditimpa pengecualian (override)
+    // Izin efektif pengguna = gabungan semua peran, lalu ditimpa pengecualian (override)
     const pengguna = users.map((u) => {
-      const set = new Set(rolePerm.filter((r) => r.role === u.role).map((r) => r.perm_key));
+      const roleKeys = [
+        ...new Set([
+          u.role,
+          ...userRoleRows.filter((row) => row.user_id === u.id).map((row) => row.slug),
+        ]),
+      ];
+      const set = new Set(
+        rolePerm
+          .filter((permission) => roleKeys.includes(permission.role))
+          .map((permission) => permission.perm_key)
+      );
       override
         .filter((o) => o.user_id === u.id)
         .forEach((o) => (o.allowed ? set.add(o.perm_key) : set.delete(o.perm_key)));
-      return { ...u, izin: [...set] };
+      return { ...u, roles: roleKeys, izin: [...set] };
     });
 
-    res.json({ success: true, izin, peran, pengguna });
+    res.json({ success: true, izin, peran, pengguna, override });
   } catch (error) {
     console.error('Error memuat hak akses:', error);
     res.status(500).json({ success: false, message: 'Gagal memuat hak akses.' });
@@ -83,14 +110,67 @@ router.put('/peran/:role', async (req, res) => {
   try {
     await db.authorizationTablesReady;
     if (allowed) {
-      await db.query('INSERT IGNORE INTO role_permissions (role, perm_key) VALUES (?, ?)', [role, perm_key]);
+      await db.query(`
+        INSERT IGNORE INTO role_permissions (role_id, perm_key)
+        SELECT id, ? FROM roles WHERE slug = ?
+      `, [perm_key, role]);
     } else {
-      await db.query('DELETE FROM role_permissions WHERE role = ? AND perm_key = ?', [role, perm_key]);
+      await db.query(`
+        DELETE rp FROM role_permissions rp
+        JOIN roles r ON r.id = rp.role_id
+        WHERE r.slug = ? AND rp.perm_key = ?
+      `, [role, perm_key]);
     }
     res.json({ success: true });
   } catch (error) {
     console.error('Error mengubah izin peran:', error);
     res.status(500).json({ success: false, message: 'Gagal menyimpan perubahan.' });
+  }
+});
+
+// PUT /api/hak-akses/pengguna/:id/peran body: { role }
+router.put('/pengguna/:id/peran', async (req, res) => {
+  const { id } = req.params;
+  const roles = Array.isArray(req.body.roles)
+    ? req.body.roles
+    : (req.body.role ? [req.body.role] : []);
+
+  if (
+    roles.length === 0 ||
+    roles.some((role) => !PERAN.some((p) => p.key === role))
+  ) {
+    return res.status(400).json({ success: false, message: 'Peran tidak valid.' });
+  }
+  const uniqueRoles = [...new Set(roles)];
+
+  try {
+    await db.authorizationTablesReady;
+    const [users] = await db.query('SELECT role FROM users WHERE id = ?', [id]);
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: 'Pengguna tidak ditemukan.' });
+    }
+    const primaryRole = uniqueRoles.includes('super_admin')
+      ? 'super_admin'
+      : uniqueRoles.includes('admin')
+        ? 'admin'
+        : uniqueRoles[0];
+
+    await db.query('UPDATE users SET role = ? WHERE id = ?', [primaryRole, id]);
+    await db.query(`
+      DELETE ur FROM user_roles ur
+      JOIN roles r ON r.id = ur.role_id
+      WHERE ur.user_id = ? AND r.is_system = TRUE
+    `, [id]);
+    for (const role of uniqueRoles) {
+      await db.query(`
+        INSERT IGNORE INTO user_roles (user_id, role_id)
+        SELECT ?, id FROM roles WHERE slug = ?
+      `, [id, role]);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error mengubah peran pengguna:', error);
+    res.status(500).json({ success: false, message: 'Gagal mengubah peran pengguna.' });
   }
 });
 
@@ -115,16 +195,31 @@ router.put('/pengguna/:id', async (req, res) => {
     }
 
     const [dasar] = await db.query(
-      'SELECT 1 FROM role_permissions WHERE role = ? AND perm_key = ?',
-      [users[0].role, perm_key]
+      `SELECT 1
+       FROM user_roles ur
+       JOIN role_permissions rp ON rp.role_id = ur.role_id
+       WHERE ur.user_id = ? AND rp.perm_key = ?
+       UNION
+       SELECT 1
+       FROM role_permissions rp
+       JOIN roles r ON r.id = rp.role_id
+       WHERE r.slug = ? AND rp.perm_key = ?
+       LIMIT 1`,
+      [id, perm_key, users[0].role, perm_key]
     );
     const adaDiDefault = dasar.length > 0;
 
     if (Boolean(allowed) === adaDiDefault) {
       await db.query('DELETE FROM user_permission_overrides WHERE user_id = ? AND perm_key = ?', [id, perm_key]);
+      await db.query('DELETE FROM user_permissions WHERE user_id = ? AND perm_key = ?', [id, perm_key]);
     } else {
       await db.query(
         `INSERT INTO user_permission_overrides (user_id, perm_key, allowed) VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE allowed = VALUES(allowed)`,
+        [id, perm_key, allowed ? 1 : 0]
+      );
+      await db.query(
+        `INSERT INTO user_permissions (user_id, perm_key, allowed) VALUES (?, ?, ?)
          ON DUPLICATE KEY UPDATE allowed = VALUES(allowed)`,
         [id, perm_key, allowed ? 1 : 0]
       );

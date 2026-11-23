@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './UnggahDokumen.css';
@@ -71,8 +71,9 @@ function ApplicationSelect({ applications, value, onChange }) {
 }
 
 export default function UnggahDokumen() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     title: '',
@@ -82,6 +83,7 @@ export default function UnggahDokumen() {
     description: '',
     needsApproval: false,
     publicAccess: false,
+    isPublic: false,
   });
   const [file, setFile] = useState(null);
   const [applications, setApplications] = useState([]);
@@ -116,6 +118,16 @@ export default function UnggahDokumen() {
           throw new Error(data.message || 'Gagal memuat daftar aplikasi.');
         }
         setApplications(data.applications);
+        const applicationId = searchParams.get('applicationId');
+        const applicationName = searchParams.get('applicationName');
+        const selectedApplication = data.applications.find((application) =>
+          applicationId
+            ? String(application.id) === String(applicationId)
+            : application.nama === applicationName,
+        );
+        if (selectedApplication) {
+          setForm((current) => ({ ...current, application: selectedApplication.nama }));
+        }
       } catch (requestError) {
         setApplicationsError(requestError.message);
       }
@@ -123,7 +135,7 @@ export default function UnggahDokumen() {
 
     loadCategories();
     loadApplications();
-  }, [token]);
+  }, [token, searchParams]);
 
   const updateField = (event) => {
     const { name, value, checked, type } = event.target;
@@ -237,7 +249,17 @@ export default function UnggahDokumen() {
         </label>
         <label className="upload-checkbox">
           <input type="checkbox" name="publicAccess" checked={form.publicAccess} onChange={updateField} />
-          Akses publik lintas divisi
+          <span>
+            Akses publik lintas divisi
+            <small className="upload-field-help">Dokumen dapat dibaca pengguna lintas divisi setelah disetujui.</small>
+          </span>
+        </label>
+        <label className="upload-checkbox">
+          <input type="checkbox" name="isPublic" disabled={!user?.permissions?.includes('dokumen.publikasi')} checked={form.isPublic} onChange={updateField} />
+          <span>
+            Akses Publik tampil di halaman utama
+            <small className="upload-field-help">Hanya gunakan untuk manual guide, troubleshooting, atau pengumuman yang aman dibaca umum.</small>
+          </span>
         </label>
         {error && <p className="upload-error" role="alert">{error}</p>}
         <div className="upload-actions">

@@ -1,184 +1,866 @@
-/* ===== Halaman Hak Akses (RBAC) ===== */
 .ha-page {
-    width: 100%;
-    color: #111827;
-    font-family: Inter, Arial, sans-serif;
+  width: 100%;
+  color: #172033;
+  font-family: Inter, Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.ha-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+.ha-page,
+.ha-page button,
+.ha-page input,
+.ha-page select {
+  font-family: Inter, Arial, sans-serif;
 }
 
 .ha-head h1 {
-    margin: 0;
-    color: #000;
-    font-size: 21px;
-    line-height: 1.3;
-    font-weight: 600;
+  margin: 0;
+  color: #172033;
+  font-size: 22px;
+  line-height: 1.25;
 }
 
 .ha-sub {
-    margin: 4px 0 0;
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.ha-tanggal {
-    flex-shrink: 0;
-    font-size: 16px;
-}
-
-.ha-info {
-    margin-top: clamp(14px, 3.5vh, 36px);
-    padding: 14px 24px;
-    border-radius: 3px;
-    background: #dbe7fb;
-    color: #1a3b9c;
-    font-size: 14px;
-}
-
-/* Tab */
-.ha-tab {
-    display: flex;
-    gap: 18px;
-    margin: clamp(12px, 2.6vh, 24px) 0 clamp(10px, 2vh, 16px) 24px;
-}
-
-.ha-tab button {
-    padding: 7px 24px;
-    border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: #555;
-    font-family: inherit;
-    font-size: 18px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.ha-tab button.aktif {
-    background: #8ebcff;
-    color: #0e3676;
-}
-
-.app-layout .app-main .ha-page .ha-tab button[aria-selected="true"] {
-    color: #0e3676;
-}
-
-.ha-tab button:hover:not(.aktif) {
-    background: rgba(142, 188, 255, 0.25);
-}
-
-/* Tabel */
-.ha-tabel {
-    max-height: calc(100vh - 330px);
-    min-height: 160px;
-    overflow: auto;
-    border: 1px solid #c9d6ee;
-    border-radius: 8px;
-    background: #fff;
-}
-
-.ha-baris {
-    display: grid;
-    grid-template-columns: 200px repeat(7, minmax(92px, 1fr));
-    align-items: center;
-    min-width: 880px;
-    padding: 10px 14px;
-    border-bottom: 1px solid #edf0f6;
-}
-
-.ha-baris:last-child {
-    border-bottom: 0;
-}
-
-.ha-kepala {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #dbe7fb;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
-}
-
-.ha-kepala span:first-child {
-    text-align: left;
-}
-
-.ha-nama {
-    font-size: 15px;
-    font-weight: 700;
-    color: #000;
-}
-
-.ha-nama small {
-    display: block;
-    margin-top: 2px;
-    color: #374151;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.ha-sel {
-    display: grid;
-    place-items: center;
-}
-
-.ha-sel input {
-    appearance: none;
-    width: 17px;
-    height: 17px;
-    margin: 0;
-    border: 1.5px solid #9ca3af;
-    border-radius: 3px;
-    background: #fff;
-    cursor: pointer;
-    position: relative;
-}
-
-.ha-sel input:checked {
-    border-color: #0a5de0;
-    background: #0a5de0;
-}
-
-.ha-sel input:checked::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 1px;
-    width: 5px;
-    height: 9px;
-    border: solid #fff;
-    border-width: 0 1.5px 1.5px 0;
-    transform: rotate(45deg);
-}
-
-.ha-sel input:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+  margin: 5px 0 0;
+  color: #254c85;
+  font-size: 13px;
 }
 
 .ha-pesan {
-    padding: 40px 0;
-    text-align: center;
-    color: #6b7280;
+  padding: 40px 0;
+  text-align: center;
+  color: #6b7280;
 }
 
 .ha-pesan.error {
-    margin-bottom: 10px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: #fde6e4;
-    color: #b42318;
-    font-size: 14px;
+  margin: 10px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fde8e7;
+  color: #b42318;
+  text-align: left;
+  font-size: 13px;
+}
+
+.ha-panel {
+  border: 1px solid #dfe6f1;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(27 52 92 / 4%);
+}
+
+.ha-role-panel {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.ha-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.ha-panel-title h2,
+.ha-special-head h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 16px;
+}
+
+.ha-panel-title p,
+.ha-special-head p {
+  margin: 2px 0 0;
+  color: #5d6b7d;
+  font-size: 10px;
+}
+
+.ha-title-icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 8px;
+  background: #eaf1fc;
+  color: #1d62c9;
+}
+
+.ha-role-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 18px;
+  margin-top: 14px;
+}
+
+.ha-role-list {
+  border: 1px solid #e3e8f1;
+  border-radius: 7px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ha-role-list h3,
+.ha-permissions h3 {
+  margin: 0;
+  padding: 10px 12px;
+  color: #172033;
+  font-size: 12px;
+}
+
+.ha-role-list h3 {
+  border-bottom: 1px solid #e5eaf3;
+}
+
+.ha-role-list button {
+  display: grid;
+  grid-template-columns: 24px 1fr 16px;
+  align-items: center;
+  width: 100%;
+  min-height: 50px;
+  padding: 7px 11px;
+  border: 0;
+  border-bottom: 1px solid #edf1f6;
+  background: #fff;
+  color: #3167c7;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ha-role-list button:last-child {
+  border-bottom: 0;
+}
+
+.ha-role-item {
+  position: relative;
+}
+
+.ha-role-list button.active {
+  background: #eef4fd;
+  box-shadow: inset 3px 0 #2d73d7;
+}
+
+.ha-role-list button span {
+  display: flex;
+  flex-direction: column;
+  color: #172033;
+  line-height: 1.25;
+}
+
+.ha-role-list button strong {
+  font-size: 12px;
+}
+
+.ha-role-list button small {
+  margin-top: 3px;
+  color: #65758c;
+  font-size: 9px;
+}
+
+.ha-role-users {
+  display: none;
+}
+
+.ha-role-layout {
+  position: relative;
+}
+
+.ha-role-user-popover {
+  position: absolute;
+  z-index: 30;
+  left: 272px;
+  width: 240px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid #dfe7f3;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(25 55 95 / 14%);
+}
+
+.ha-role-user-popover > strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #172033;
+  font-size: 11px;
+}
+
+.ha-role-user-popover div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 0;
+  border-top: 1px solid #edf1f6;
+  font-size: 10px;
+}
+
+.ha-role-user-popover div small {
+  color: #65758c;
+  font-size: 8px;
+}
+
+.ha-role-user-empty {
+  color: #65758c;
+  font-size: 9px;
+}
+
+.ha-permissions {
+  min-width: 0;
+  border: 1px solid #e3e8f1;
+  border-radius: 7px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.ha-permissions h3 {
+  border-bottom: 1px solid #e5eaf3;
+  font-size: 13px;
+}
+
+.ha-permission-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(110px, 1fr));
+  gap: 9px 12px;
+  padding: 14px;
+  max-height: 116px;
+  overflow: auto;
+}
+
+.ha-permission-check,
+.ha-modal-permissions label {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: #37465a;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ha-permission-check input,
+.ha-modal-permissions input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: #2e73de;
+}
+
+.ha-permission-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 14px 12px;
+  padding: 10px 12px;
+  border-radius: 5px;
+  background: #eaf2fe;
+  color: #255fa9;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.ha-permission-note svg {
+  flex: 0 0 17px;
+}
+
+.ha-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.ha-users-panel,
+.ha-special-panel {
+  min-width: 0;
+  padding: 14px;
+}
+
+.ha-user-tools {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) 335px;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ha-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 54px;
+  padding: 0 36px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+  color: #6f7f94;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+}
+
+.ha-search input {
+  width: 100%;
+  height: 54px;
+  border: 0;
+  outline: 0;
+  font-family: inherit;
+  font-size: 13px;
+  color: #111827;
+  background: transparent;
+}
+
+.ha-search input::placeholder {
+  color: #6b7280;
+}
+
+.ha-user-tools button:not(.ha-division-dropdown-trigger),
+.ha-special-head button,
+.ha-modal-action select {
+  height: 32px;
+  border: 1px solid #cfdaf0;
+  border-radius: 5px;
+  background: #fff;
+  color: #315fa6;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ha-user-tools button:not(.ha-division-dropdown-trigger) {
+  border-color: #2f74df;
+  background: #2f74df;
+  color: #fff;
+  cursor: pointer;
+  padding: 0 9px;
+}
+
+.ha-division-select {
+  width: 100%;
+  height: 54px;
+  box-sizing: border-box;
+  padding: 0 44px 0 24px;
+  border: 0;
+  border-radius: 4px;
+  background: #fff;
+  color: #4b5563;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+.ha-user-table,
+.ha-special-table {
+  margin-top: 10px;
+  border: 1px solid #edf1f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ha-user-row {
+  display: grid;
+  grid-template-columns: 55px 1.15fr 1.25fr 0.95fr 70px;
+  align-items: center;
+  min-height: 38px;
+  padding: 5px 8px;
+  border-bottom: 1px solid #edf1f6;
+  font-size: 9px;
+}
+
+.ha-user-row:last-child {
+  border-bottom: 0;
+}
+
+.ha-user-head,
+.ha-special-head-row,
+.ha-special-row.ha-special-head {
+  min-height: 32px;
+  background: #edf3fc;
+  color: #27364b;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.ha-user-row button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 24px;
+  border: 1px solid #cfdaf0;
+  border-radius: 5px;
+  background: #f7faff;
+  color: #2e67bd;
+  font-family: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.ha-role-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.ha-role-badge {
+  display: inline-flex;
+  padding: 3px 5px;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #2d67b6;
+  font-size: 8px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ha-role-badge.hijau {
+  background: #e8f6ed;
+  color: #188548;
+}
+
+.ha-special-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.ha-special-head button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 0;
+  background: #2f74df;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ha-special-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 38px;
+  align-items: center;
+  min-height: 38px;
+  padding: 5px 8px;
+  border-bottom: 1px solid #edf1f6;
+  font-size: 9px;
+}
+
+.ha-special-row:last-child {
+  border-bottom: 0;
+}
+
+.ha-special-row button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #dd4b55;
+  cursor: pointer;
+}
+
+.ha-special-empty {
+  padding: 28px 12px;
+  color: #7a8797;
+  text-align: center;
+  font-size: 10px;
+}
+
+.ha-modal-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(18 38 70 / 42%);
+}
+
+.ha-modal {
+  position: relative;
+  width: min(520px, calc(100vw - 32px));
+  padding: 18px;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 18px 55px rgb(15 38 75 / 24%);
+}
+
+.ha-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #8a96a6;
+  cursor: pointer;
+}
+
+.ha-modal h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.ha-modal > p {
+  margin: 5px 0 12px;
+  color: #66758a;
+  font-size: 11px;
+}
+
+.ha-modal-options {
+  display: grid;
+  gap: 7px;
+}
+
+.ha-modal-options button {
+  display: grid;
+  grid-template-columns: 28px 1fr 16px;
+  align-items: center;
+  min-height: 48px;
+  padding: 7px 9px;
+  border: 1px solid #edf1f6;
+  border-radius: 7px;
+  background: #fff;
+  color: #2e67bd;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ha-modal-options button.active {
+  border-color: #70a3ed;
+  background: #edf4ff;
+}
+
+.ha-modal-options button span {
+  display: flex;
+  flex-direction: column;
+  color: #172033;
+  font-size: 11px;
+}
+
+.ha-modal-options button small {
+  margin-top: 2px;
+  color: #748196;
+  font-size: 9px;
+}
+
+.ha-modal-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ha-role-manager {
+  margin-top: 12px;
+}
+
+.ha-role-manager-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+
+.ha-role-manager-head span {
+  color: #718096;
+  font-size: 9px;
+}
+
+.ha-draft-roles {
+  display: grid;
+  gap: 6px;
+}
+
+.ha-draft-role {
+  display: grid;
+  grid-template-columns: 24px 1fr 28px;
+  align-items: center;
+  min-height: 48px;
+  padding: 7px 8px;
+  border: 1px solid #dfe7f3;
+  border-radius: 7px;
+  color: #2e67bd;
+}
+
+.ha-draft-role > span {
+  display: flex;
+  flex-direction: column;
+  color: #172033;
+  font-size: 11px;
+}
+
+.ha-draft-role small {
+  margin-top: 2px;
+  color: #23864d;
+  font-size: 9px;
+}
+
+.ha-draft-role button {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #dd4b55;
+  cursor: pointer;
+}
+
+.ha-draft-role button:disabled {
+  color: #c1c8d1;
+  cursor: not-allowed;
+}
+
+.ha-add-role {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ha-role-dropdown {
+  position: relative;
+  min-width: 0;
+}
+
+.ha-role-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #cfdaf0;
+  border-radius: 6px;
+  background: #fff;
+  color: #31435e;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.ha-role-dropdown-trigger svg {
+  flex: 0 0 15px;
+  color: #718096;
+}
+
+.ha-role-dropdown-menu {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 5px);
+  left: 0;
+  padding: 5px;
+  border: 1px solid #dfe7f3;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgb(25 55 95 / 14%);
+}
+
+.ha-role-dropdown-menu button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  background: #fff;
+  color: #31435e;
+  font-family: inherit;
+  font-size: 10px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ha-role-dropdown-menu button:hover,
+.ha-role-dropdown-menu button[aria-selected='true'] {
+  background: #f3f5f8;
+}
+
+.ha-add-role > button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #2f74df;
+  color: #fff;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ha-add-role > button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ha-effective-preview {
+  margin-top: 10px;
+  padding: 9px;
+  border-radius: 7px;
+  background: #edf4ff;
+  font-size: 10px;
+}
+
+.ha-effective-preview > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.ha-effective-preview span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #267642;
+  font-size: 9px;
+}
+
+.ha-user-special-permissions {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #d5e2f5;
+}
+
+.ha-user-special-permissions strong {
+  color: #31435e;
+}
+
+.ha-user-special-permissions span {
+  width: fit-content;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.ha-user-special-permissions span.revoked {
+  color: #b42318;
+}
+
+.ha-user-special-permissions small {
+  margin-left: 2px;
+  font-size: 8px;
+  opacity: 0.8;
+}
+
+.ha-role-confirm {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #bdd2f5;
+  border-radius: 7px;
+  background: #f6f9ff;
+  font-size: 11px;
+}
+
+.ha-role-confirm p {
+  margin: 5px 0 10px;
+  color: #66758a;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.ha-role-confirm > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.ha-role-confirm .ha-modal-action {
+  align-items: center;
+  margin-top: 10px;
+}
+
+.ha-role-confirm .ha-modal-action button {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ha-modal-action select {
+  width: 180px;
+  padding: 0 8px;
+}
+
+.ha-modal-action > div {
+  display: flex;
+  gap: 7px;
+}
+
+.ha-modal-action button {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ha-secondary {
+  border: 1px solid #dfe5ef;
+  background: #fff;
+  color: #65748a;
+}
+
+.ha-primary {
+  border: 1px solid #2f74df;
+  background: #2f74df;
+  color: #fff;
+}
+
+.ha-modal-permissions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 220px;
+  margin-top: 12px;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid #edf1f6;
+  border-radius: 7px;
+}
+
+@media (max-width: 1180px) {
+  .ha-bottom-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 800px) {
-    .ha-head {
-        flex-direction: column;
-    }
+  .ha-role-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ha-permission-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ha-user-tools {
+    grid-template-columns: 1fr 120px;
+  }
+
+  .ha-user-tools button {
+    grid-column: 1 / -1;
+  }
 }

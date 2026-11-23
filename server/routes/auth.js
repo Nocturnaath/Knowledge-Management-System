@@ -138,6 +138,20 @@ router.get('/me', verifyToken, async (req, res) => {
         success: false,
         message: 'Pengguna tidak ditemukan.'
       });
+
+      router.patch('/profile', verifyToken, async (req, res) => {
+        const jabatan = String(req.body.jabatan || '').trim();
+        if (jabatan.length > 100) {
+          return res.status(400).json({ success: false, message: 'Jabatan maksimal 100 karakter.' });
+        }
+        try {
+          await db.query('UPDATE users SET jabatan = ? WHERE id = ?', [jabatan || null, req.user.id]);
+          return res.json({ success: true, jabatan: jabatan || null });
+        } catch (error) {
+          console.error('Error memperbarui jabatan:', error);
+          return res.status(500).json({ success: false, message: 'Gagal memperbarui jabatan.' });
+        }
+      });
     }
 
     const user = rows[0];

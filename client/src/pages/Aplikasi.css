@@ -62,7 +62,7 @@
     background: transparent;
     color: #111827;
     font-family: inherit;
-    font-size: 18px;
+    font-size: 13px;
     outline: none;
 }
 
@@ -150,6 +150,14 @@
   margin: 8px 0;
 }
 
+.apl-tags.single {
+  justify-content: flex-start;
+}
+
+.apl-tags.multiple {
+  justify-content: flex-start;
+}
+
 .apl-tags span,
 .detail-document-tags {
   display: inline-flex;
@@ -188,6 +196,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-top: auto;
     padding-top: 12px;
 }
@@ -200,6 +210,16 @@
 
 .apl-detail:hover {
     text-decoration: underline;
+}
+
+.apl-rumpun-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 4px;
+    color: #667085;
+    font-size: 12px;
 }
 
 .apl-badge {

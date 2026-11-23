@@ -82,6 +82,7 @@ async function initDatabase() {
         description TEXT NOT NULL,
         status ENUM('pending', 'approved', 'rejected') NOT NULL DEFAULT 'pending',
         public_access BOOLEAN NOT NULL DEFAULT FALSE,
+        is_public BOOLEAN NOT NULL DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
@@ -93,6 +94,11 @@ async function initDatabase() {
     }
     try {
       await pool.query('ALTER TABLE documents ADD COLUMN extracted_text LONGTEXT NULL');
+    } catch (error) {
+      if (error.code !== 'ER_DUP_FIELDNAME') throw error;
+    }
+    try {
+      await pool.query('ALTER TABLE documents ADD COLUMN is_public BOOLEAN NOT NULL DEFAULT FALSE');
     } catch (error) {
       if (error.code !== 'ER_DUP_FIELDNAME') throw error;
     }
@@ -187,6 +193,56 @@ async function initDatabase() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     `);
 
+    // RBAC baru: role dapat dibuat tanpa mengubah ENUM role lama pada users.
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS roles (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        slug VARCHAR(100) NOT NULL UNIQUE,
+        description VARCHAR(255) NULL,
+        is_system BOOLEAN NOT NULL DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    const [rolePermissionColumns] = await pool.query(
+      `SELECT COLUMN_NAME FROM information_schema.columns
+       WHERE table_schema = DATABASE() AND table_name = 'role_permissions'`,
+    );
+    const hadLegacyRolePermissions = rolePermissionColumns.some((column) => column.COLUMN_NAME === 'role');
+    if (rolePermissionColumns.some((column) => column.COLUMN_NAME === 'role')) {
+      await pool.query('RENAME TABLE role_permissions TO role_permissions_legacy');
+    }
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS role_permissions (
+        role_id INT NOT NULL,
+        perm_key VARCHAR(50) NOT NULL,
+        PRIMARY KEY (role_id, perm_key),
+        FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+        FOREIGN KEY (perm_key) REFERENCES permissions(perm_key) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_roles (
+        user_id INT NOT NULL,
+        role_id INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, role_id),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_permissions (
+        user_id INT NOT NULL,
+        perm_key VARCHAR(50) NOT NULL,
+        allowed BOOLEAN NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, perm_key),
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (perm_key) REFERENCES permissions(perm_key) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    `);
+
     // 10. Buat tabel document_approval_logs
     await pool.query(`
       CREATE TABLE IF NOT EXISTS document_approval_logs (
@@ -271,20 +327,44 @@ async function initDatabase() {
       ('akses_dokumen_sensitif', 'Akses Dokumen Sensitif'),
       ('review_dokumen', 'Review Dokumen'),
       ('acc_final', 'ACC Final'),
-      ('kelola_hak_akses', 'Kelola Hak Akses')
+      ('kelola_hak_akses', 'Kelola Hak Akses'),
+      ('dokumen.unggah', 'Unggah dokumen'),
+      ('dokumen.kelola', 'Kelola dokumen'),
+      ('dokumen.acc_final', 'ACC final'),
+      ('dokumen.publikasi', 'Publikasi dokumen'),
+      ('aplikasi.kelola', 'Kelola aplikasi'),
+      ('hak_akses.kelola', 'Kelola hak akses')
     `);
 
     await pool.query(`
-      INSERT IGNORE INTO role_permissions (role, perm_key)
-      SELECT 'super_admin', perm_key FROM permissions
+      INSERT IGNORE INTO roles (name, slug, description, is_system) VALUES
+      ('Super Admin', 'super_admin', 'Akses penuh dan pengelolaan hak akses.', TRUE),
+      ('Admin', 'admin', 'Pengelolaan dokumen dan proses persetujuan.', TRUE),
+      ('Staf IT', 'staff_it', 'Pengelolaan teknis dan unggah dokumen.', TRUE),
+      ('Staf Divisi', 'staff_divisi', 'Unggah dan akses dokumen divisi.', TRUE)
     `);
+    if (hadLegacyRolePermissions) {
+      await pool.query(`
+        INSERT IGNORE INTO role_permissions (role_id, perm_key)
+        SELECT r.id, legacy.perm_key
+        FROM role_permissions_legacy legacy JOIN roles r ON r.slug = legacy.role
+      `);
+    }
 
     await pool.query(`
-      INSERT IGNORE INTO role_permissions (role, perm_key) VALUES
-      ('admin', 'review_dokumen'),
-      ('admin', 'unggah_dokumen'),
-      ('staff_it', 'unggah_dokumen'),
-      ('staff_divisi', 'unggah_dokumen')
+      INSERT IGNORE INTO role_permissions (role_id, perm_key)
+      SELECT r.id, p.perm_key
+      FROM roles r CROSS JOIN permissions p
+      WHERE r.slug = 'super_admin'
+    `);
+    await pool.query(`
+      INSERT IGNORE INTO role_permissions (role_id, perm_key)
+      SELECT r.id, p.perm_key
+      FROM roles r JOIN permissions p
+      WHERE (r.slug = 'admin' AND p.perm_key IN
+        ('review_dokumen', 'unggah_dokumen', 'dokumen.unggah', 'dokumen.kelola'))
+        OR (r.slug = 'staff_it' AND p.perm_key IN
+        ('akses_dokumen_sensitif', 'unggah_dokumen', 'dokumen.unggah'))
     `);
 
     await pool.query(`
@@ -294,6 +374,14 @@ async function initDatabase() {
       (3, 'SSO003', 'nanami.it', '$2b$10$cYS62rcrhHjbLNhUC2PaFuCToCYWpqlj8tLcpx.rlm28xshHofTWy', 'Kento Nanami', 'nami@cbijak.local', 1, 'staff_it'),
       (4, 'SSO004', 'gojo.keu', '$2b$10$EbqG.i8VeGOds.MzDAHXUOSIJHmoS9ldpU8ELdwkeLa/.qG82LKgC', 'Satoru Gojo', 'gojo@cbijak.local', 2, 'staff_divisi')
     `);
+    await pool.query(`
+      INSERT IGNORE INTO user_roles (user_id, role_id)
+      SELECT u.id, r.id FROM users u JOIN roles r ON r.slug = u.role
+    `);
+    await pool.query(`
+      INSERT IGNORE INTO user_permissions (user_id, perm_key, allowed)
+      SELECT user_id, perm_key, allowed FROM user_permission_overrides
+    `);
 
     console.log('✅ Inisialisasi database C-BIJAK (divisi, rumpun, aplikasi, & users) berhasil disiapkan!');
   } catch (error) {
@@ -301,6 +389,8 @@ async function initDatabase() {
   }
 }
 
-initDatabase();
+const initialization = initDatabase();
+pool.authorizationTablesReady = initialization;
+pool.documentVersionTableReady = initialization;
 
 module.exports = pool;

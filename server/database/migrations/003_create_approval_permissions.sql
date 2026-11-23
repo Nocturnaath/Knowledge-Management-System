@@ -45,5 +45,5 @@ SELECT 'super_admin', perm_key FROM permissions;
 INSERT IGNORE INTO role_permissions (role, perm_key) VALUES
 ('admin', 'review_dokumen'),
 ('admin', 'unggah_dokumen'),
-('staff_it', 'unggah_dokumen'),
-('staff_divisi', 'unggah_dokumen');
+('staff_it', 'akses_dokumen_sensitif'),
+('staff_it', 'unggah_dokumen');

@@ -37,8 +37,9 @@
 .beranda-header time {
   flex-shrink: 0;
   padding-top: 5px;
-  color: #667085;
+  color: #111827;
   font-size: 13px;
+  font-weight: 700;
   text-transform: capitalize;
 }
 
@@ -97,6 +98,14 @@
   color: #0e3676;
   font-size: 30px;
   line-height: 1;
+}
+
+.beranda-stat-card.stat-totalDocuments strong {
+  color: #69a7ee;
+}
+
+.beranda-stat-card.stat-pendingDocuments strong {
+  color: #ed7a32;
 }
 
 /* Aktivitas terbaru */

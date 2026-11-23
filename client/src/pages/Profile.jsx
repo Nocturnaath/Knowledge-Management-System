@@ -4,7 +4,7 @@ import { API_URL } from '../config';
 import './Profile.css';
 
 export default function Profile() {
-  const { user, token, updateUserPhoto } = useAuth();
+  const { user, token, updateUserPhoto, updateUser } = useAuth();
   const fileInputRef = useRef(null);
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,6 +12,7 @@ export default function Profile() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [jabatan, setJabatan] = useState(user?.jabatan || '');
 
   // Bersihkan alamat pratinjau agar tidak memenuhi memori
   useEffect(() => {
@@ -52,30 +53,35 @@ export default function Profile() {
 
   // Tombol "Simpan Perubahan": kirim foto ke server
   const handleSimpan = async () => {
-    if (!selectedFile) return;
-
-    const formData = new FormData();
-    formData.append('foto', selectedFile);
-
     setLoading(true);
     setError('');
     setMessage('');
 
     try {
-      const res = await fetch(`${API_URL}/api/auth/profile/photo`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        setError(data.message || 'Gagal mengunggah foto.');
-        return;
+      if (jabatan !== (user.jabatan || '')) {
+        const profileResponse = await fetch(`${API_URL}/api/auth/profile`, {
+          method: 'PATCH',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jabatan }),
+        });
+        const profileData = await profileResponse.json();
+        if (!profileResponse.ok || !profileData.success) throw new Error(profileData.message || 'Gagal memperbarui jabatan.');
+        updateUser({ jabatan: profileData.jabatan });
       }
 
-      updateUserPhoto(data.photoUrl);
-      setMessage('Foto profil berhasil diperbarui!');
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('foto', selectedFile);
+        const res = await fetch(`${API_URL}/api/auth/profile/photo`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.message || 'Gagal mengunggah foto.');
+        updateUserPhoto(data.photoUrl);
+      }
+      setMessage('Profil berhasil diperbarui!');
       setSelectedFile(null);
       setPreview(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -94,7 +100,7 @@ export default function Profile() {
     <main className="profile-page">
       <h1>Profil Saya</h1>
       <p className="sub">
-        Hanya bisa mengubah foto. Informasi lainnya adalah informasi tetap.
+        Foto dan jabatan dapat diperbarui sendiri. Identitas lainnya berasal dari data pegawai.
       </p>
 
       {message && <div className="alert-success" role="status">{message}</div>}
@@ -128,23 +134,23 @@ export default function Profile() {
         {/* Kolom kanan: data profil (tidak bisa diedit) */}
         <div className="pf-right">
           <div className="pf-field">
-            <label htmlFor="profile-nama">Nama Lengkap*</label>
+            <label htmlFor="profile-nama">Nama Lengkap</label>
             <input id="profile-nama" type="text" value={user.nama || '-'} disabled readOnly />
           </div>
           <div className="pf-field">
-            <label htmlFor="profile-divisi">Divisi*</label>
+            <label htmlFor="profile-divisi">Divisi</label>
             <input id="profile-divisi" type="text" value={user.divisi || '-'} disabled readOnly />
           </div>
           <div className="pf-field">
-            <label htmlFor="profile-jabatan">Jabatan*</label>
-            <input id="profile-jabatan" type="text" value={user.jabatan || '-'} disabled readOnly />
+            <label htmlFor="profile-jabatan">Jabatan</label>
+            <input id="profile-jabatan" type="text" value={jabatan} onChange={(event) => setJabatan(event.target.value)} />
           </div>
 
           <button
             type="button"
             className="btn-simpan"
             onClick={handleSimpan}
-            disabled={!selectedFile || loading}
+            disabled={(!selectedFile && jabatan === (user.jabatan || '')) || loading}
           >
             {loading ? 'Menyimpan...' : 'Simpan Perubahan'}
           </button>

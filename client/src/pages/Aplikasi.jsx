@@ -130,8 +130,13 @@ export default function Aplikasi() {
             <article className="apl-card" key={a.id}>
               <h3>{a.nama}</h3>
               {a.tags?.length > 0 && (
-                <div className="apl-tags">{a.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+                <div className="apl-tags">
+                  {a.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                </div>
               )}
+              <div className="apl-rumpun-row">
+                <span>Rumpun {a.rumpun}</span>
+              </div>
               <div className="apl-skor" title="Kelengkapan dokumentasi">{a.terisi}/10</div>
               <div className="apl-foot">
                 <Link to={`/aplikasi/${a.id}`} className="apl-detail">← Lihat Detail</Link>

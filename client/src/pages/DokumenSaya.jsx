@@ -42,7 +42,7 @@ function extensionOf(document) {
 // documents = daftar dokumen: { id, name, category, status, updatedAt }
 // Sementara kosong; nanti diisi dari server.
 export default function DokumenSaya() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [documents, setDocuments] = useState([]);
@@ -58,7 +58,7 @@ export default function DokumenSaya() {
   const [previewError, setPreviewError] = useState('');
   const [versions, setVersions] = useState([]);
   const [editDocument, setEditDocument] = useState(null);
-  const [editForm, setEditForm] = useState({ title: '', category: '', tags: '', description: '', publicAccess: false });
+  const [editForm, setEditForm] = useState({ title: '', category: '', tags: '', description: '', publicAccess: false, isPublic: false });
   const [editFile, setEditFile] = useState(null);
   const [editSaving, setEditSaving] = useState(false);
 
@@ -77,6 +77,22 @@ export default function DokumenSaya() {
           throw new Error(data.message || 'Gagal mengambil daftar dokumen.');
         }
         setDocuments(data.documents);
+        const needsFullTextIndex = data.documents.some((document) =>
+          !String(document.extractedText || '').trim(),
+        );
+        if (needsFullTextIndex) {
+          await fetch(`${API_URL}/api/dokumen/reindex`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const refreshedResponse = await fetch(`${API_URL}/api/dokumen`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const refreshedData = await refreshedResponse.json();
+          if (refreshedResponse.ok && refreshedData.success) {
+            setDocuments(refreshedData.documents);
+          }
+        }
       } catch (requestError) {
         setError(requestError.message);
       } finally {
@@ -117,7 +133,7 @@ export default function DokumenSaya() {
         return;
       }
 
-      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`);
+      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}?token=${encodeURIComponent(token)}`);
       if (!response.ok) throw new Error('File tidak dapat dibaca.');
       const buffer = await response.arrayBuffer();
       if (extension === 'docx') {
@@ -147,6 +163,7 @@ export default function DokumenSaya() {
       tags: (document.tags || []).join(', '),
       description: document.description || '',
       publicAccess: Boolean(document.publicAccess),
+      isPublic: Boolean(document.isPublic),
     });
     setEditFile(null);
     setError('');
@@ -162,6 +179,7 @@ export default function DokumenSaya() {
     body.append('tags', editForm.tags);
     body.append('description', editForm.description);
     body.append('publicAccess', String(editForm.publicAccess));
+    body.append('isPublic', String(editForm.isPublic));
     if (editFile) body.append('file', editFile);
 
     try {
@@ -201,13 +219,20 @@ export default function DokumenSaya() {
     }
   };
 
-  const normalizedQuery = searchQuery.trim().toLocaleLowerCase('id-ID');
+  const normalizeSearchText = (value) =>
+    String(value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLocaleLowerCase('id-ID');
+  const normalizedQuery = normalizeSearchText(searchQuery.trim());
   const visibleDocuments = documents.filter((document) => {
     const matchesStatus =
       tabStatuses[activeTab] === null || document.status === tabStatuses[activeTab];
     const matchesCategory =
       selectedCategory === 'Kategori' || document.category === selectedCategory;
-    const searchableText = `${document.name} ${document.category || ''} ${document.description || ''} ${(document.tags || []).join(' ')} ${document.extractedText || ''}`.toLocaleLowerCase('id-ID');
+    const searchableText = normalizeSearchText(
+      `${document.name} ${document.category || ''} ${document.description || ''} ${(document.tags || []).join(' ')} ${document.extractedText || ''}`,
+    );
     const matchesSearch = searchableText.includes(normalizedQuery);
     const matchesTag = !selectedTag || (document.tags || []).includes(selectedTag);
 
@@ -247,9 +272,11 @@ export default function DokumenSaya() {
 
           <CategoryFilter value={selectedCategory} onChange={setSelectedCategory} />
 
-          <button className="upload-button" type="button" onClick={() => navigate('/dokumen/upload')}>
-            Unggah
-          </button>
+          {user?.permissions?.includes('dokumen.unggah') && (
+            <button className="upload-button" type="button" onClick={() => navigate('/dokumen/upload')}>
+              Unggah
+            </button>
+          )}
         </div>
 
         <div className="document-tabs" role="tablist" aria-label="Filter status dokumen">
@@ -309,11 +336,6 @@ export default function DokumenSaya() {
                       <td colSpan="5">
                         <div className="document-empty-state">
                           <h2>{noDocuments ? 'Belum ada dokumen' : 'Dokumen tidak ditemukan'}</h2>
-                          <p>
-                            {noDocuments
-                              ? `Dokumen dengan status â€œ${activeTab}â€ akan muncul di sini.`
-                              : 'Coba ubah kata pencarian atau filter kategori.'}
-                          </p>
                         </div>
                       </td>
                     </tr>
@@ -324,7 +346,7 @@ export default function DokumenSaya() {
                         <td>
                           <div>{document.category || 'Lainnya'}</div>
                           {document.tags?.length > 0 && (
-                            <div className="document-tags">
+                            <div className={`document-tags ${document.tags.length === 1 ? 'single' : 'multiple'}`}>
                               {/* Tag menjadi filter langsung agar pengguna dapat menemukan dokumen terkait. */}
                               {document.tags.map((tag) => (
                                 <button
@@ -348,7 +370,6 @@ export default function DokumenSaya() {
                         </td>
                         <td className="document-actions">
                           <button type="button" onClick={() => openPreview(document)}>Lihat</button>
-                          <a href={`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`} download={document.fileName}>Unduh</a>
                           <button type="button" onClick={() => openEdit(document)}>Edit</button>
                           <button className="delete-action" type="button" onClick={() => deleteDocument(document)}>Hapus</button>
                         </td>
@@ -375,7 +396,7 @@ export default function DokumenSaya() {
             {previewLoading && <div className="document-preview-empty">Memuat pratinjau...</div>}
             {previewError && <div className="document-preview-empty error">{previewError}</div>}
             {!previewLoading && !previewError && preview?.type === 'pdf' && (
-              <iframe className="document-preview-frame" title={`Pratinjau ${selectedDocument.name}`} src={`${API_URL}/document-files/${encodeURIComponent(selectedDocument.storedFileName)}`} />
+              <iframe className="document-preview-frame" title={`Pratinjau ${selectedDocument.name}`} src={`${API_URL}/document-files/${encodeURIComponent(selectedDocument.storedFileName)}?token=${encodeURIComponent(token)}`} />
             )}
 
             {!previewLoading && !previewError && preview?.type === 'text' && (
@@ -389,13 +410,20 @@ export default function DokumenSaya() {
               {versions.map((version) => (
                 <article key={version.id}>
                   <div>
-                    <strong>v{version.version} Â· {version.eventType === 'upload' ? 'Dokumen pertama diunggah' : 'Pembaruan dokumen'}</strong>
+                    <strong>v{version.version} · {version.eventType === 'upload' ? 'Dokumen pertama diunggah' : 'Pembaruan dokumen'}</strong>
                     <small>Diunggah oleh {version.uploader}</small>
                   </div>
                   <time>{formatDocumentDate(version.createdAt)}</time>
                 </article>
               ))}
             </section>
+            <a
+              className="document-download-button"
+              href={`${API_URL}/document-files/${encodeURIComponent(selectedDocument.storedFileName)}?token=${encodeURIComponent(token)}`}
+              download={selectedDocument.fileName}
+            >
+              Unduh File
+            </a>
           </section>
         </div>
       )}
@@ -423,7 +451,17 @@ export default function DokumenSaya() {
             </label>
             <label className="document-edit-checkbox">
               <input type="checkbox" checked={editForm.publicAccess} onChange={(event) => setEditForm({ ...editForm, publicAccess: event.target.checked })} />
-              Flag akses ke publik
+              <span>
+                Akses publik lintas divisi
+                <small className="upload-field-help">Dokumen dapat dibaca pengguna lintas divisi setelah disetujui.</small>
+              </span>
+            </label>
+            <label className="document-edit-checkbox">
+              <input type="checkbox" disabled={!user?.permissions?.includes('dokumen.publikasi')} checked={editForm.isPublic} onChange={(event) => setEditForm({ ...editForm, isPublic: event.target.checked })} />
+              <span>
+                Akses Publik tampil di halaman utama
+                <small className="upload-field-help">Dokumen harus aman dibaca umum dan sudah final.</small>
+              </span>
             </label>
             <label>
               Ganti berkas (opsional)

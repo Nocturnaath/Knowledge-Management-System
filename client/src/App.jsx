@@ -5,7 +5,6 @@ import {
   Routes,
   Route,
   Navigate,
-  useLocation
 } from 'react-router-dom';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -26,11 +25,11 @@ import DokumenDivisi from './pages/DokumenDivisi';
 import InformasiUmum from './pages/InformasiUmum';
 import KelolaKategori from './pages/KelolaKategori';
 
-function RoleRoute({ roles, permission, children }) {
+function RoleRoute({ permission, permissions, children }) {
   const { user } = useAuth();
-  const allowedByRole = !roles || roles.includes(user?.role);
-  const allowedByPermission = !permission || user?.permissions?.includes(permission);
-  return allowedByRole && allowedByPermission
+  const required = permissions || (permission ? [permission] : []);
+  const allowedByPermission = required.length === 0 || required.some((item) => user?.permissions?.includes(item));
+  return allowedByPermission
     ? children
     : <Navigate to="/profile" replace />;
 }
@@ -38,8 +37,6 @@ function RoleRoute({ roles, permission, children }) {
 // Mengatur route berdasarkan status login pengguna.
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const location = useLocation();
-
   // Tunggu sampai status sesi login selesai diperiksa.
   if (loading) {
     return (
@@ -61,9 +58,7 @@ function AppRoutes() {
       <Route
         path="/"
         element={
-          user && !location.state?.loggedOut
-            ? <Navigate to="/dashboard" replace />
-            : <Home />
+          <Home />
         }
       />
 
@@ -87,7 +82,7 @@ function AppRoutes() {
       >
         <Route path="/dashboard" element={<Beranda />} />
         <Route path="/dokumen" element={<DokumenSaya />} />
-        <Route path="/dokumen/upload" element={<UnggahDokumen />} />
+        <Route path="/dokumen/upload" element={<RoleRoute permission="dokumen.unggah"><UnggahDokumen /></RoleRoute>} />
         <Route path="/dokumen-divisi" element={<DokumenDivisi />} />
         <Route path="/informasi" element={<InformasiUmum />} />
         <Route path="/profile" element={<Profile />} />
@@ -97,7 +92,7 @@ function AppRoutes() {
         <Route
           path="/persetujuan-dokumen"
           element={
-            <RoleRoute roles={['admin', 'super_admin']}>
+            <RoleRoute permissions={['review_dokumen', 'dokumen.acc_final']}>
               <PersetujuanDokumen />
             </RoleRoute>
           }
@@ -113,7 +108,7 @@ function AppRoutes() {
         <Route
           path="/hak-akses"
           element={
-            <RoleRoute roles={['super_admin']}>
+            <RoleRoute permission="hak_akses.kelola">
               <HakAkses />
             </RoleRoute>
           }

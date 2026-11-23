@@ -5,15 +5,6 @@ import './InformasiUmum.css';
 import { spreadsheetToPreviewHtml } from '../utils/spreadsheetPreview';
 import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
-const TAB_KONTAK = 'Kontak IT';
-
-// GANTI dengan data kontak IT yang sebenarnya
-const KONTAK_IT = [
-  { nama: 'Helpdesk IT Support', tugas: 'Kendala teknis harian dan pengajuan tiket', kontak: 'Ext. 000' },
-  { nama: 'Staf Jaringan & Server', tugas: 'Jaringan, server, dan akses VPN', kontak: 'Ext. 000' },
-  { nama: 'Pengembangan Aplikasi', tugas: 'Pertanyaan dan masukan terkait aplikasi', kontak: 'Ext. 000' }
-];
-
 const formatTanggal = (nilai) =>
   new Date(nilai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
 
@@ -44,7 +35,7 @@ export default function InformasiUmum() {
           return;
         }
         setKategori(data.kategori || []);
-        setTab((current) => current || data.kategori?.[0] || TAB_KONTAK);
+        setTab((current) => current || data.kategori?.[0] || '');
         setDokumen(Array.isArray(data.dokumen) ? data.dokumen : []);
       } catch (err) {
         setError('Tidak dapat terhubung ke server.');
@@ -76,8 +67,6 @@ export default function InformasiUmum() {
     [dokumen, tab, kata]
   );
 
-  const kontak = KONTAK_IT.filter((k) => !kata || k.nama.toLowerCase().includes(kata));
-
   const tanggal = new Date().toLocaleDateString('id-ID', {
     weekday: 'long',
     day: 'numeric',
@@ -86,8 +75,11 @@ export default function InformasiUmum() {
   });
 
   const unduh = () => {
-    if (dipilih?.storedFileName) {
-      window.open(`${API_URL}/document-files/${encodeURIComponent(dipilih.storedFileName)}`, '_blank');
+    if (dipilih) {
+      const fileUrl = dipilih.fileUrl
+        ? `${API_URL}${dipilih.fileUrl}`
+        : `${API_URL}/document-files/${encodeURIComponent(dipilih.storedFileName)}?token=${encodeURIComponent(token)}`;
+      window.open(fileUrl, '_blank');
     }
   };
 
@@ -116,7 +108,10 @@ export default function InformasiUmum() {
         if (!response.ok || !data.success) throw new Error(data.message);
         setPratinjau({ type: 'text', value: data.text });
       } else {
-        const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(dokumen.storedFileName)}`);
+        const fileUrl = dokumen.fileUrl
+          ? `${API_URL}${dokumen.fileUrl}`
+          : `${API_URL}/document-files/${encodeURIComponent(dokumen.storedFileName)}?token=${encodeURIComponent(token)}`;
+        const response = await fetch(fileUrl);
         if (!response.ok) throw new Error('File tidak dapat dibaca.');
         const buffer = await response.arrayBuffer();
         if (extension === 'docx') {
@@ -144,7 +139,7 @@ export default function InformasiUmum() {
       <div className="iu-head">
         <div>
           <h1>Informasi Umum</h1>
-          <p className="iu-sub">Notulensi, memorandum, dokumen publik lintas divisi, dan kontak IT.</p>
+          <p className="iu-sub">Notulensi, memorandum, dan dokumen publik lintas divisi.</p>
         </div>
         <div className="iu-tanggal">{tanggal}</div>
       </div>
@@ -160,7 +155,7 @@ export default function InformasiUmum() {
       </div>
 
       <div className="iu-tab" role="tablist" aria-label="Kategori informasi umum">
-        {[...kategori, TAB_KONTAK].map((nama) => (
+        {kategori.map((nama) => (
           <button
             key={nama}
             type="button"
@@ -174,27 +169,7 @@ export default function InformasiUmum() {
         ))}
       </div>
 
-      {tab === TAB_KONTAK ? (
-        <div className="iu-tabel">
-          <div className="iu-baris iu-kepala iu-kontak-kepala">
-            <span>Nama</span>
-            <span>Keperluan</span>
-            <span>Kontak</span>
-          </div>
-          {kontak.length === 0 ? (
-            <div className="iu-kosong">Kontak tidak ditemukan.</div>
-          ) : (
-            kontak.map((k) => (
-              <div className="iu-baris iu-kontak-baris" key={k.nama}>
-                <strong>{k.nama}</strong>
-                <span>{k.tugas}</span>
-                <span>{k.kontak}</span>
-              </div>
-            ))
-          )}
-        </div>
-      ) : (
-        <div className="iu-tabel">
+      <div className="iu-tabel">
           <div className="iu-baris iu-kepala iu-dokumen-kepala">
             <span>Judul Dokumen</span>
             <span>Deskripsi</span>
@@ -211,14 +186,16 @@ export default function InformasiUmum() {
           ) : (
             daftar.map((d) => (
               <button type="button" className="iu-baris iu-dokumen-baris" key={d.id} onClick={() => bukaPratinjau(d)}>
-                <strong>{d.judul}</strong>
+                <strong className="iu-dokumen-judul">
+                  <span className="iu-dokumen-icon" aria-hidden="true">▮</span>
+                  <span>{d.judul}</span>
+                </strong>
                 <span>{d.deskripsi || '-'}</span>
                 <time>{formatTanggal(d.tanggal)}</time>
               </button>
             ))
           )}
-        </div>
-      )}
+      </div>
 
       {/* Jendela pratinjau: klik area gelap, tombol Tutup, atau Esc untuk menutup */}
       {dipilih && (
@@ -244,7 +221,9 @@ export default function InformasiUmum() {
               <iframe
                 className="iu-frame"
                 title={`Pratinjau ${dipilih.judul}`}
-                src={`${API_URL}/document-files/${encodeURIComponent(dipilih.storedFileName)}`}
+                src={dipilih.fileUrl
+                  ? `${API_URL}${dipilih.fileUrl}`
+                  : `${API_URL}/document-files/${encodeURIComponent(dipilih.storedFileName)}?token=${encodeURIComponent(token)}`}
               />
             )}
             {!memuatPratinjau && !errorPratinjau && pratinjau?.type === 'text' && (
@@ -268,7 +247,7 @@ export default function InformasiUmum() {
                 ))}
               </div>
             </div>
-            <button type="button" className="iu-unduh" onClick={unduh}>Unduh</button>
+            <button type="button" className="iu-unduh" onClick={unduh}>Unduh File</button>
           </div>
         </div>
       )}

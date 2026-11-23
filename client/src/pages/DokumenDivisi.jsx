@@ -95,7 +95,7 @@ export default function DokumenDivisi() {
         return;
       }
 
-      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}`);
+      const response = await fetch(`${API_URL}/document-files/${encodeURIComponent(document.storedFileName)}?token=${encodeURIComponent(token)}`);
       if (!response.ok) throw new Error('File tidak dapat dibaca.');
       const buffer = await response.arrayBuffer();
 
@@ -173,7 +173,11 @@ export default function DokumenDivisi() {
                       <td>{document.uploader}</td>
                       <td>{document.category}</td>
                       <td>{new Date(document.createdAt).toLocaleDateString('id-ID')}</td>
-                      <td>{statusLabels[document.status] || document.status}</td>
+                      <td>
+                        <span className={`division-status status-${document.status}`}>
+                          {statusLabels[document.status] || document.status}
+                        </span>
+                      </td>
                       <td>
                         <button type="button" onClick={() => openPreview(document)}>Lihat</button>
                       </td>
@@ -202,7 +206,7 @@ export default function DokumenDivisi() {
               <iframe
                 className="division-preview-frame"
                 title={`Pratinjau ${selectedDocument.name}`}
-                src={`${API_URL}/document-files/${selectedDocument.storedFileName}`}
+                src={`${API_URL}/document-files/${selectedDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               />
             )}
             {!previewLoading && !previewError && preview?.type === 'text' && (
@@ -225,7 +229,7 @@ export default function DokumenDivisi() {
             </section>
             <a
               className="division-download"
-              href={`${API_URL}/document-files/${selectedDocument.storedFileName}`}
+              href={`${API_URL}/document-files/${selectedDocument.storedFileName}?token=${encodeURIComponent(token)}`}
               download={selectedDocument.fileName}
             >
               Unduh File

@@ -24,17 +24,17 @@ export default function Layout() {
   const navigate = useNavigate();
 
   // menyesuaikan menu sama role pengguna yang sedang login.
-  const role = user?.role;
-  const atasan = role === 'admin' || role === 'super_admin';
   const permissions = user?.permissions || [];
   const canManageCategories = permissions.includes('kelola_kategori');
+  const canReview = permissions.includes('review_dokumen') || permissions.includes('dokumen.acc_final');
+  const canManageAccess = permissions.includes('hak_akses.kelola');
 
   const menuUtama = [
     { label: 'Beranda', path: '/dashboard', icon: Home },
     { label: 'Dokumen', path: '/dokumen', icon: FileText },
     { label: 'Dokumen Divisi', path: '/dokumen-divisi', icon: Users },
 
-    ...(atasan
+    ...(canReview
       ? [
           {
             label: 'Persetujuan Dokumen',
@@ -60,7 +60,7 @@ export default function Layout() {
         ]
       : []),
 
-    ...(role === 'super_admin'
+    ...(canManageAccess
       ? [
           {
             label: 'Hak Akses',
@@ -95,6 +95,7 @@ export default function Layout() {
   
   const handleLogout = () => {
     logout();
+    sessionStorage.removeItem('cbijak_landing_started_at');
     navigate('/', {
       replace: true,
       state: { loggedOut: true },
@@ -122,12 +123,17 @@ export default function Layout() {
       {/* Sidebar permanen pakai desain nala. */}
       <aside className="sidebar">
         {/* Logo tetap memakai aset logo C-BIJAK. */}
-        <div className="sidebar-logo">
+        <NavLink
+          to="/"
+          className="sidebar-logo"
+          aria-label="Kembali ke halaman utama C-bijak"
+          onClick={() => sessionStorage.setItem('cbijak_landing_started_at', String(Date.now()))}
+        >
           <img
             src="/logo-cbijak-putih.png"
             alt="Logo C-BIJAK"
           />
-        </div>
+        </NavLink>
 
         {/* Profil pengguna dari akun yang sedang login. */}
         <NavLink

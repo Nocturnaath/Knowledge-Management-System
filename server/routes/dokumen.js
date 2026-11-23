@@ -7,7 +7,7 @@ const mammoth = require('mammoth');
 const XLSX = require('xlsx');
 const { PDFParse } = require('pdf-parse');
 const db = require('../config/db');
-const { verifyToken } = require('../middleware/authMiddleware');
+const { verifyToken, getEffectivePermissions, requirePermission } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 const uploadDirectory = path.join(__dirname, '..', 'uploads', 'documents');
@@ -78,7 +78,11 @@ async function extractDocumentText(filePath) {
       const parser = new PDFParse({ data: new Uint8Array(fs.readFileSync(filePath)) });
       try {
         const result = await parser.getText();
-        return result.text || '';
+        return String(result.text || '')
+          .replace(/\u0000/g, '')
+          .replace(/[ \t]+\n/g, '\n')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
       } finally {
         await parser.destroy();
       }
@@ -110,6 +114,22 @@ async function populateExtractedText(rows) {
   return rows;
 }
 
+router.post('/reindex', verifyToken, async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      `SELECT id, stored_file_name AS storedFileName
+       FROM documents
+       WHERE user_id = ? AND (extracted_text IS NULL OR TRIM(extracted_text) = '')`,
+      [req.user.id],
+    );
+    await Promise.all(rows.map((row) => indexDocumentText(row.id, row.storedFileName)));
+    return res.json({ success: true, indexed: rows.length });
+  } catch (error) {
+    console.error('Error mengindeks ulang teks dokumen:', error);
+    return res.status(500).json({ success: false, message: 'Gagal mengindeks teks dokumen.' });
+  }
+});
+
 async function recordVersion(document, userId, eventTypeOverride = null) {
   const [rows] = await db.query(
     `SELECT COUNT(*) AS versionCount
@@ -138,7 +158,12 @@ async function recordVersion(document, userId, eventTypeOverride = null) {
 }
 
 function requireReviewer(req, res, next) {
-  getEffectivePermissions(req.user).then((permissions) => {
+  if (req.user.role === 'super_admin') {
+    req.permissions = new Set(['review_dokumen', 'acc_final']);
+    return next();
+  }
+
+  getEffectivePermissions(req.user.id).then((permissions) => {
     req.permissions = permissions;
     if (!permissions.has('review_dokumen') && !permissions.has('acc_final')) {
       return res.status(403).json({ success: false, message: 'Anda tidak memiliki akses persetujuan dokumen.' });
@@ -148,25 +173,6 @@ function requireReviewer(req, res, next) {
     console.error('Error memeriksa hak persetujuan:', error);
     res.status(500).json({ success: false, message: 'Gagal memeriksa hak persetujuan.' });
   });
-}
-
-async function getEffectivePermissions(user) {
-  await db.authorizationTablesReady;
-  if (user.role === 'super_admin') {
-    const [rows] = await db.query('SELECT perm_key FROM permissions');
-    return new Set(rows.map((row) => row.perm_key));
-  }
-  const [defaults] = await db.query('SELECT perm_key FROM role_permissions WHERE role = ?', [user.role]);
-  const [overrides] = await db.query(
-    'SELECT perm_key, allowed FROM user_permission_overrides WHERE user_id = ?',
-    [user.id],
-  );
-  const permissions = new Set(defaults.map((row) => row.perm_key));
-  overrides.forEach((row) => {
-    if (row.allowed) permissions.add(row.perm_key);
-    else permissions.delete(row.perm_key);
-  });
-  return permissions;
 }
 
 router.get('/persetujuan', verifyToken, requireReviewer, async (req, res) => {
@@ -312,7 +318,6 @@ router.get('/:id/versions', verifyToken, async (req, res) => {
     if (documents.length === 0) {
       return res.status(404).json({ success: false, message: 'Dokumen tidak ditemukan.' });
     }
-
     const [versions] = await db.query(
       `SELECT
         v.id,
@@ -465,7 +470,7 @@ router.put('/:id', verifyToken, (req, res) => {
       return res.status(400).json({ success: false, message: uploadError.message });
     }
 
-    const { title, category, tags, description, publicAccess } = req.body;
+    const { title, category, tags, description, publicAccess, isPublic } = req.body;
     if (!title || !category || !description) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({ success: false, message: 'Judul, kategori, dan deskripsi wajib diisi.' });
@@ -482,12 +487,19 @@ router.put('/:id', verifyToken, (req, res) => {
         if (req.file) fs.unlinkSync(req.file.path);
         return res.status(404).json({ success: false, message: 'Dokumen tidak ditemukan.' });
       }
+      if (isPublic === 'true') {
+        const permissions = await getEffectivePermissions(req.user.id);
+        if (!permissions.includes('dokumen.publikasi')) {
+          if (req.file) fs.unlinkSync(req.file.path);
+          return res.status(403).json({ success: false, message: 'Anda tidak memiliki izin mempublikasikan dokumen.' });
+        }
+      }
 
       const oldFileName = documents[0].storedFileName;
       const storedFileName = req.file ? req.file.filename : oldFileName;
       await db.query(
         `UPDATE documents
-         SET title = ?, category = ?, tags = ?, description = ?, public_access = ?, stored_file_name = ?, file_name = ?, created_at = CURRENT_TIMESTAMP
+         SET title = ?, category = ?, tags = ?, description = ?, public_access = ?, is_public = ?, stored_file_name = ?, file_name = ?, created_at = CURRENT_TIMESTAMP
          WHERE id = ? AND user_id = ?`,
         [
           title.trim(),
@@ -495,6 +507,7 @@ router.put('/:id', verifyToken, (req, res) => {
           JSON.stringify(normalizeTags(tags)),
           description.trim(),
           publicAccess === 'true',
+          isPublic === 'true',
           storedFileName,
           req.file ? req.file.originalname : documents[0].fileName,
           req.params.id,
@@ -560,6 +573,7 @@ router.get('/', verifyToken, async (req, res) => {
         status,
         extracted_text AS extractedText,
         public_access AS publicAccess,
+        is_public AS isPublic,
         created_at AS updatedAt
       FROM documents
       WHERE user_id = ?
@@ -578,7 +592,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.post('/', verifyToken, (req, res) => {
+router.post('/', verifyToken, requirePermission('dokumen.unggah'), (req, res) => {
   upload.single('file')(req, res, async (uploadError) => {
     if (uploadError) {
       const message = uploadError.code === 'LIMIT_FILE_SIZE'
@@ -587,7 +601,7 @@ router.post('/', verifyToken, (req, res) => {
       return res.status(400).json({ success: false, message });
     }
 
-    const { title, category, application, tags, description, needsApproval, publicAccess } = req.body;
+    const { title, category, application, tags, description, needsApproval, publicAccess, isPublic } = req.body;
     if (!req.file || !title || !category || !description) {
       if (req.file) fs.unlinkSync(req.file.path);
       return res.status(400).json({
@@ -600,10 +614,15 @@ router.post('/', verifyToken, (req, res) => {
 
     try {
       await ensureVersionTable();
+      const permissions = new Set(await getEffectivePermissions(req.user.id));
+      if (isPublic === 'true' && !permissions.has('dokumen.publikasi')) {
+        fs.unlinkSync(req.file.path);
+        return res.status(403).json({ success: false, message: 'Anda tidak memiliki izin mempublikasikan dokumen.' });
+      }
       const [result] = await db.query(
         `INSERT INTO documents
-          (user_id, title, file_name, stored_file_name, category, application, tags, description, status, public_access)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          (user_id, title, file_name, stored_file_name, category, application, tags, description, status, public_access, is_public)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           req.user.id,
           title.trim(),
@@ -615,6 +634,7 @@ router.post('/', verifyToken, (req, res) => {
           description.trim(),
           status,
           publicAccess === 'true',
+          isPublic === 'true',
         ]
       );
       await recordVersion({

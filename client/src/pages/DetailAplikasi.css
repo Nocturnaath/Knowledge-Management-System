@@ -63,6 +63,25 @@
   background: #f08c18;
 }
 
+.detail-upload-button {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 4px;
+  background: #0d5cdb;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.detail-upload-button:hover {
+  background: #084db9;
+}
+
 .detail-dokumen {
   margin-top: 28px;
   padding: 20px;
@@ -152,6 +171,20 @@
   color: #0b2f73;
   cursor: pointer;
   padding: 6px 12px;
+}
+
+.detail-dokumen-item button {
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background: #fff;
+  color: #303030;
+  font-weight: 400;
+  padding: 6px 12px;
+}
+
+.detail-dokumen-item button:hover {
+  background: #f1f5fb;
+  text-decoration: none;
 }
 
 .document-preview-backdrop {
