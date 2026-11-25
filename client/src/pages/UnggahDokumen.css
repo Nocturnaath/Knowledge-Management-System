@@ -1,176 +1,707 @@
+
+/* =========================================
+   HALAMAN UNGGAH DOKUMEN
+========================================= */
+
 .upload-page {
+  width: 100%;
   max-width: 860px;
   margin: 0 auto;
-  padding-bottom: 4px;
+  padding: 4px 0 24px;
+  color: #243247;
+  font-family: Inter, Arial, sans-serif;
+  box-sizing: border-box;
 }
+
+/* =========================================
+   HEADER HALAMAN
+========================================= */
 
 .upload-page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 20px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
+}
+
+.upload-heading {
+  min-width: 0;
 }
 
 .upload-page-header h1 {
   margin: 0 0 6px;
+  color: #1d3558;
+  font-size: 26px;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.5px;
 }
 
 .upload-page-header p {
   margin: 0;
-  color: #667085;
+  color: #718096;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
-.upload-back-button,
-.upload-actions button {
-  border: 0;
-  border-radius: 7px;
-  padding: 11px 16px;
+/* =========================================
+   TOMBOL KEMBALI
+========================================= */
+
+.upload-back-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid #2868b8;
+  border-radius: 9px;
+  background: #2868b8;
+  color: #fff;
+  box-shadow: 0 3px 9px rgba(40, 104, 184, 0.19);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
   cursor: pointer;
+  transition: all 180ms ease;
 }
 
-.upload-back-button,
-.upload-actions button:first-child {
-  background: #e8eef8;
-  color: #164c9b;
+.upload-back-button:hover {
+  transform: translateY(-1px);
+  border-color: #1d579f;
+  background: #1d579f;
+  box-shadow: 0 5px 12px rgba(40, 104, 184, 0.24);
 }
+
+.upload-back-button:active {
+  transform: scale(0.98);
+}
+
+.upload-back-arrow {
+  font-size: 19px;
+  line-height: 1;
+}
+
+/* =========================================
+   FORM UTAMA
+========================================= */
 
 .upload-form {
-  display: grid;
-  gap: 8px;
-  padding: 14px;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 23px 25px;
+  border: 1px solid #e5ebf3;
+  border-radius: 13px;
   background: #fff;
-  box-shadow: 0 2px 7px #18345c20;
+  box-shadow: 0 3px 12px rgba(27, 55, 91, 0.055);
+  box-sizing: border-box;
 }
 
-.upload-form label {
-  display: grid;
-  gap: 3px;
-  color: #344054;
-  font-weight: 600;
+/* =========================================
+   LABEL DAN FIELD
+========================================= */
+
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  color: #34445b;
+  font-size: 13px;
+  font-weight: 650;
 }
 
-.upload-form input:not([type="checkbox"]),
+.upload-field-label {
+  display: block;
+  margin-bottom: 2px;
+  color: #34445b;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.required-mark {
+  color: #dc5555;
+  font-weight: 700;
+}
+
+/* =========================================
+   INPUT, SELECT, TEXTAREA
+========================================= */
+
+.upload-form input:not([type="checkbox"]):not([type="file"]),
 .upload-form select,
 .upload-form textarea {
+  display: block;
   width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  outline: none;
+  background: #fbfdff;
+  color: #34445b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
   box-sizing: border-box;
-  border: 1px solid #d9dee7;
-  border-radius: 6px;
-  padding: 7px 12px;
-  font: inherit;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
 }
 
-.upload-form textarea {
-  min-height: 54px;
-  resize: vertical;
+.upload-form input:not([type="checkbox"]):not([type="file"]):hover,
+.upload-form select:hover,
+.upload-form textarea:hover {
+  border-color: #bdcfe5;
+  background: #fff;
 }
+
+.upload-form input:not([type="checkbox"]):not([type="file"]):focus,
+.upload-form select:focus,
+.upload-form textarea:focus {
+  border-color: #76a4df;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(63, 130, 210, 0.11);
+}
+
+.upload-form input::placeholder,
+.upload-form textarea::placeholder {
+  color: #9aa7b8;
+  opacity: 1;
+}
+
+
+.upload-form textarea {
+  min-height: 75px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* =========================================
+   DROPDOWN APLIKASI
+========================================= */
 
 .application-select {
   position: relative;
-}
-
-.upload-field-help {
-  display: block;
-  margin-top: 5px;
-  color: #667085;
-  font-size: 11px;
-  line-height: 1.4;
+  width: 100%;
 }
 
 .application-select-trigger {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  box-sizing: border-box;
-  padding: 7px 12px;
-  border: 1px solid #d9dee7;
-  border-radius: 6px;
-  background: #fff;
-  color: #344054;
-  font: inherit;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #34445b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
   text-align: left;
   cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
 }
 
-.application-select-trigger span {
-  color: #667085;
+.application-select-trigger:hover,
+.application-select-trigger.is-open {
+  border-color: #76a4df;
+  background: #fff;
+}
+
+.application-select-trigger.is-open {
+  box-shadow: 0 0 0 3px rgba(63, 130, 210, 0.1);
+}
+
+.application-placeholder {
+  color: #9aa7b8;
+}
+
+.application-select-arrow {
+  flex-shrink: 0;
+  color: #718096;
   font-size: 18px;
   line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.application-select-trigger.is-open .application-select-arrow {
+  transform: rotate(180deg);
 }
 
 .application-select-menu {
   position: absolute;
-  z-index: 5;
-  top: calc(100% + 2px);
+  z-index: 20;
+  top: calc(100% + 6px);
   right: 0;
   left: 0;
   max-height: 220px;
   overflow-y: auto;
-  border: 1px solid #b8c2d1;
-  border-radius: 6px;
+  padding: 6px;
+  border: 1px solid #e1e9f3;
+  border-radius: 11px;
   background: #fff;
-  box-shadow: 0 4px 10px rgba(24, 52, 92, 0.2);
+  box-shadow: 0 10px 25px rgba(37, 73, 121, 0.14);
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
 }
 
 .application-select-menu button {
   display: block;
   width: 100%;
-  padding: 7px 12px;
+  padding: 9px 11px;
   border: 0;
+  border-radius: 7px;
   background: #fff;
-  color: #344054;
-  font: inherit;
+  color: #34445b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 450;
   text-align: left;
   cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
 }
 
 .application-select-menu button:hover,
 .application-select-menu button.selected {
-  background: #e8eef8;
-  color: #164c9b;
+  background: #edf5ff;
+  color: #1d62b8;
 }
+
+/* =========================================
+   DROPDOWN KATEGORI
+   Mengikuti tampilan dropdown aplikasi
+========================================= */
+
+.category-select {
+  position: relative;
+  width: 100%;
+}
+
+.category-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  background: #fbfdff;
+  color: #34445b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.category-select-trigger:hover,
+.category-select-trigger.is-open {
+  border-color: #76a4df;
+  background: #fff;
+}
+
+.category-select-trigger.is-open {
+  box-shadow: 0 0 0 3px rgba(63, 130, 210, 0.1);
+}
+
+.category-placeholder {
+  color: #9aa7b8;
+}
+
+.category-select-arrow {
+  flex-shrink: 0;
+  color: #718096;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.category-select-trigger.is-open .category-select-arrow {
+  transform: rotate(180deg);
+}
+
+.category-select-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #e1e9f3;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(37, 73, 121, 0.14);
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
+}
+
+.category-select-menu button {
+  display: block;
+  width: 100%;
+  padding: 9px 11px;
+  border: 0;
+  border-radius: 7px;
+  background: #fff;
+  color: #34445b;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 450;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+
+.category-select-menu button:hover,
+.category-select-menu button.selected {
+  background: #edf5ff;
+  color: #1d62b8;
+}
+
+/* Fokus keyboard untuk kedua dropdown */
+.category-select-trigger:focus-visible,
+.application-select-trigger:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.2);
+  outline-offset: 2px;
+}
+
+/* Penyesuaian ukuran pada layar kecil */
+@media (max-width: 560px) {
+  .category-select-trigger {
+    font-size: 12px;
+  }
+
+  .category-select-menu button {
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   KETERANGAN DAN PESAN ERROR FIELD
+========================================= */
+
+.upload-field-help {
+  display: block;
+  margin-top: 2px;
+  color: #8996a8;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.upload-field-error {
+  display: block;
+  color: #b42318;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* =========================================
+   BAGIAN FILE
+========================================= */
 
 .upload-file-field {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #667085;
+  flex-direction: column;
+  gap: 7px;
+  padding: 13px 14px;
+  border: 1px solid #e2eaf3;
+  border-radius: 10px;
+  background: #fafdff;
+}
+
+.upload-file-field input[type="file"] {
+  width: 100%;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.upload-file-field input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 13px;
+  border: 1px solid #cbd8eb;
+  border-radius: 7px;
+  background: #edf4ff;
+  color: #245b9e;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.upload-file-field input[type="file"]::file-selector-button:hover {
+  border-color: #9bbce5;
+  background: #e2efff;
+}
+
+/* =========================================
+   PENGATURAN AKSES
+========================================= */
+
+.upload-access-options {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 15px;
+  border: 1px solid #e5ebf3;
+  border-radius: 10px;
+  background: #fbfdff;
+}
+
+.upload-access-title {
+  margin: 0 0 2px;
+  color: #34445b;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .upload-checkbox {
   display: flex !important;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 8px !important;
-  font-weight: 400 !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 10px !important;
+  color: #40516a !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.5;
+  cursor: pointer;
 }
+
+.upload-checkbox input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 2px 0 0;
+  accent-color: #2868b8;
+  cursor: pointer;
+}
+
+.upload-checkbox > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.upload-checkbox .upload-field-help {
+  margin-top: 3px;
+}
+
+.upload-checkbox.is-disabled {
+  cursor: not-allowed;
+}
+
+.upload-checkbox.is-disabled > span {
+  color: #8c96a5;
+}
+
+.upload-checkbox.is-disabled input {
+  cursor: not-allowed;
+}
+
+.upload-permission-note {
+  margin-top: 4px;
+  color: #b36a40;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* =========================================
+   PESAN ERROR
+========================================= */
+
+.upload-error {
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid #f2caca;
+  border-radius: 8px;
+  background: #fff6f6;
+  color: #b42318;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   TOMBOL AKSI
+========================================= */
 
 .upload-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 5px;
+  padding-top: 15px;
+  border-top: 1px solid #edf1f6;
 }
 
-.upload-actions button:last-child {
-  background: #0d5cdb;
+.upload-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 95px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+/* Batal */
+
+.upload-cancel-button {
+  border: 1px solid #cbd8eb;
+  background: #fafdff;
+  color: #52647c;
+}
+
+.upload-cancel-button:hover {
+  border-color: #b7c9df;
+  background: #f1f5fa;
+  color: #344b68;
+}
+
+/* Unggah */
+
+.upload-submit-button {
+  border: 1px solid #2868b8;
+  background: #2868b8;
   color: #fff;
+  box-shadow: 0 2px 6px rgba(40, 104, 184, 0.15);
+}
+
+.upload-submit-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #1d579f;
+  background: #1d579f;
+  box-shadow: 0 4px 10px rgba(40, 104, 184, 0.2);
+}
+
+.upload-actions button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.upload-actions button:focus-visible,
+.application-select-trigger:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.2);
+  outline-offset: 2px;
 }
 
 .upload-actions button:disabled {
+  opacity: 0.65;
   cursor: wait;
-  opacity: .7;
 }
 
-.upload-error {
-  margin: 0;
-  color: #b42318;
+/* =========================================
+   RESPONSIVE TABLET
+========================================= */
+
+@media (max-width: 768px) {
+  .upload-page {
+    padding-bottom: 20px;
+  }
+
+  .upload-page-header {
+    gap: 12px;
+  }
+
+  .upload-page-header h1 {
+    font-size: 23px;
+  }
+
+  .upload-form {
+    padding: 20px;
+  }
 }
 
-.upload-field-error {
-  color: #b42318;
-  font-weight: 400;
+/* =========================================
+   RESPONSIVE MOBILE
+========================================= */
+
+@media (max-width: 560px) {
+  .upload-page-header {
+    align-items: flex-start;
+  }
+
+  .upload-page-header h1 {
+    font-size: 21px;
+  }
+
+  .upload-page-header p {
+    font-size: 12px;
+  }
+
+  .upload-back-button {
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .upload-form {
+    padding: 17px 14px;
+    gap: 13px;
+    border-radius: 11px;
+  }
+
+  .upload-form input:not([type="checkbox"]):not([type="file"]),
+  .upload-form select,
+  .upload-form textarea,
+  .application-select-trigger {
+    font-size: 12px;
+  }
+
+  .upload-actions {
+    gap: 8px;
+  }
+
+  .upload-actions button {
+    flex: 1;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   AKSESIBILITAS
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .upload-page *,
+  .upload-page *::before,
+  .upload-page *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

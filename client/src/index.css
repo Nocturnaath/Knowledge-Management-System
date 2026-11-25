@@ -1,4 +1,21 @@
 *, *::before, *::after { box-sizing: border-box; }
+
+select option {
+  padding: 10px 12px;
+  background: #fff;
+  color: #374151;
+}
+
+select option:hover,
+select option:checked {
+  background: #edf5ff;
+  color: #1d62c9;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
+}
 html, body { margin: 0; }
 body {
   font-family: Inter, Arial, sans-serif;

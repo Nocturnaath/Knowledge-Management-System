@@ -1,22 +1,44 @@
+
+/* =========================================
+   HALAMAN DOKUMEN DIVISI
+========================================= */
+
 .division-page {
+  display: flex;
   width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
   color: #111827;
+  font-family: Inter, Arial, sans-serif;
+  box-sizing: border-box;
 }
+
+/* =========================================
+   HEADER HALAMAN
+========================================= */
 
 .division-page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
+  flex-shrink: 0;
 }
 
 .division-page-header time {
   flex-shrink: 0;
   white-space: nowrap;
+  color: #111827;
+  font-size: 12px;
 }
 
 .app-layout .app-main .division-page .division-page-header h1 {
   margin: 0;
+  color: #172033;
   font-size: 21px;
   line-height: 1.25;
   font-weight: 600;
@@ -24,20 +46,87 @@
 
 .app-layout .app-main .division-page .division-page-header p {
   margin: 4px 0 0;
+  color: #64748b;
   font-size: 13px;
   line-height: 1.5;
 }
+
+/* =========================================
+   SEARCH DAN FILTER KATEGORI
+========================================= */
 
 .division-toolbar {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0;
   margin-top: clamp(16px, 4vh, 40px);
 }
 
 .division-search {
-  display: block;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  height: 54px;
+  box-sizing: border-box;
+  padding: 0 20px;
+  border: 1px solid #cbd8eb;
+  border-radius: 12px;
+  background: #fafdff;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.06);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.division-search:hover {
+  border-color: #a9bfdf;
+  background: #fff;
+}
+
+.division-search:focus-within {
+  border-color: #76a4df;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(63, 130, 210, 0.1);
+}
+
+.division-search-icon {
+  flex-shrink: 0;
+  color: #718096;
+  stroke-width: 1.8;
+}
+
+.app-layout .app-main .division-page .division-search input {
   flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+  color: #111827;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+}
+
+.app-layout .app-main .division-page .division-search input::placeholder {
+  color: #718096;
+  opacity: 1;
+}
+
+.division-search input::-webkit-search-decoration,
+.division-search input::-webkit-search-results-button,
+.division-search input::-webkit-search-results-decoration {
+  display: none;
 }
 
 .division-toolbar .category-filter {
@@ -46,71 +135,180 @@
 
 .division-toolbar .category-filter .category-toggle {
   height: 54px;
-  border-radius: 4px;
+  border-radius: 12px;
   font-family: Inter, Arial, sans-serif;
   font-size: 13px;
 }
 
-.app-layout .app-main .division-page .division-search input {
-  width: 100%;
-  height: 54px;
-  box-sizing: border-box;
-  padding: 0 36px;
-  border: 0;
-  outline: 0;
-  box-shadow: none;
-  appearance: none;
-  -webkit-appearance: none;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
-  font-family: Inter, Arial, sans-serif;
-  font-size: 13px;
-color: #111827;
-}
-.app-layout .app-main .division-page .division-search input::placeholder {
-  color: #6b7280;
-  opacity: 1;
-}
+/* =========================================
+   PANEL DAFTAR DOKUMEN
+========================================= */
 
 .division-table-card {
-  display: block;
-  min-height: 193px;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: 0;
   box-sizing: border-box;
   margin-top: 18px;
-  padding: 20px;
+  padding: 16px;
   overflow: hidden;
-  border-radius: 6px;
+  border: 1px solid #edf1f6;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+  box-shadow: 0 2px 8px rgba(15, 40, 100, 0.08);
 }
 
+/* =========================================
+   AREA SCROLL TABEL
+========================================= */
+
 .division-table-scroll {
-  overflow-x: auto;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  flex: 1 1 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
 }
+
+.division-table-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.division-table-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.division-table-scroll::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #cbd8e8;
+}
+
+.division-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #aabbd1;
+}
+
+/* =========================================
+   TABEL DOKUMEN
+========================================= */
 
 .division-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 760px;
+  border-collapse: separate;
+  border-spacing: 0;
   white-space: nowrap;
 }
 
 .division-table th,
 .division-table td {
   padding: 14px 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e9edf3;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.division-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #dce5f0;
+  background: #f7faff;
+  color: #0b2f73;
+  font-size: 12px;
+  font-weight: 650;
   text-align: center;
 }
 
-.division-table th {
-  color: #0b2f73;
+.division-table thead th:first-child {
+  border-top-left-radius: 7px;
 }
 
-.division-empty {
-  height: 100px;
-  color: #6b7280;
-  text-align: center !important;
-  vertical-align: middle;
+.division-table thead th:last-child {
+  border-top-right-radius: 7px;
 }
+
+.division-table tbody td {
+  background: #fff;
+  color: #475569;
+  font-size: 12px;
+}
+
+.division-table tbody tr:hover td {
+  background: #f8fbff;
+}
+
+/* =========================================
+   JUDUL DAN IKON FILE
+========================================= */
+
+.division-document-name {
+  min-width: 220px;
+  text-align: left !important;
+}
+
+.division-document-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 11px;
+  min-width: 0;
+  text-align: left;
+}
+
+.division-document-info span {
+  display: block;
+  overflow: hidden;
+  max-width: 360px;
+  color: #26364b;
+  font-size: 12px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.division-file-icon {
+  flex-shrink: 0;
+  stroke-width: 1.8;
+}
+
+.division-file-icon.pdf {
+  color: #dc4444;
+}
+
+.division-file-icon.document {
+  color: #2870c7;
+}
+
+.division-file-icon.spreadsheet {
+  color: #218653;
+}
+
+.division-file-icon.presentation {
+  color: #d66a36;
+}
+
+.division-file-icon.image {
+  color: #8b5fc7;
+}
+
+.division-file-icon.default {
+  color: #8290a3;
+}
+
+/* =========================================
+   STATUS DOKUMEN
+========================================= */
 
 .division-status {
   display: inline-block;
@@ -136,34 +334,50 @@ color: #111827;
   color: #b42318;
 }
 
+/* =========================================
+   TOMBOL AKSI
+========================================= */
+
 .division-table button {
-  padding: 6px 12px;
-  border: 1px solid #9ca3af;
-  border-radius: 4px;
+  padding: 7px 15px;
+  border: 1px solid #cbd8e8;
+  border-radius: 7px;
   background: #fff;
-  color: #303030;
-  font-weight: 400;
+  color: #245b9e;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .division-table button:hover {
-  background: #f1f5fb;
-  text-decoration: none;
+  border-color: #9bbce5;
+  background: #edf5ff;
+  color: #174e91;
 }
+
+/* =========================================
+   PESAN LOADING, ERROR, DAN DATA KOSONG
+========================================= */
 
 .division-message,
 .division-preview-empty {
   padding: 36px 16px;
   color: #6b7280;
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
 }
 
 .division-table-card > .division-message {
+  display: grid;
+  flex: 1;
+  min-height: 153px;
   margin: 0;
   padding: 0;
-  display: grid;
-  min-height: 153px;
   place-items: center;
 }
 
@@ -171,6 +385,18 @@ color: #111827;
 .division-preview-empty.error {
   color: #b42318;
 }
+
+.division-empty {
+  height: 100px;
+  color: #8a94a3 !important;
+  font-size: 13px !important;
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+/* =========================================
+   MODAL PRATINJAU DOKUMEN
+========================================= */
 
 .division-preview-backdrop {
   position: fixed;
@@ -190,8 +416,9 @@ color: #111827;
   flex-direction: column;
   gap: 16px;
   padding: 24px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
+  box-shadow: 0 16px 50px rgba(15, 23, 42, 0.2);
 }
 
 .division-preview-modal header {
@@ -202,20 +429,31 @@ color: #111827;
 
 .division-preview-modal h2 {
   margin: 0;
+  color: #172033;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .division-preview-modal header p {
   margin: 5px 0 0;
   color: #6b7280;
+  font-size: 12px;
 }
 
 .division-preview-modal header button {
   align-self: flex-start;
-  padding: 6px 12px;
-  border: 1px solid #9ca3af;
-  border-radius: 4px;
+  padding: 7px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
   background: #fff;
+  color: #475569;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
   cursor: pointer;
+}
+
+.division-preview-modal header button:hover {
+  background: #f1f5f9;
 }
 
 .division-preview-frame {
@@ -224,6 +462,7 @@ color: #111827;
   min-height: 260px;
   flex: 0 1 auto;
   border: 1px solid #d9dde6;
+  border-radius: 7px;
 }
 
 .division-preview-text,
@@ -232,8 +471,16 @@ color: #111827;
   overflow: auto;
   padding: 16px;
   border: 1px solid #d9dde6;
+  border-radius: 7px;
   background: #f9fafb;
+  color: #344054;
+  font-size: 13px;
   line-height: 1.6;
+}
+
+.division-preview-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .division-preview-html table {
@@ -246,20 +493,19 @@ color: #111827;
   border: 1px solid #d9dde6;
 }
 
-.division-download {
-  align-self: flex-end;
-  padding: 9px 16px;
-  border-radius: 4px;
-  background: #1264d8;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
+/* =========================================
+   RIWAYAT VERSI
+========================================= */
+
+.division-version-history {
+  flex: none;
 }
 
 .division-version-history h3 {
   margin: 0 0 8px;
   color: #172033;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .division-version-history article {
@@ -269,10 +515,6 @@ color: #111827;
   gap: 16px;
   padding: 10px 0;
   border-bottom: 1px solid #e5e7eb;
-}
-
-.division-version-history {
-  flex: none;
 }
 
 .division-version-history strong,
@@ -292,7 +534,36 @@ color: #111827;
   font-size: 11px;
 }
 
+/* =========================================
+   TOMBOL UNDUH
+========================================= */
+
+.division-download {
+  align-self: flex-end;
+  padding: 9px 16px;
+  border-radius: 7px;
+  background: #1264d8;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.division-download:hover {
+  background: #0b50b2;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
 @media (max-width: 700px) {
+  .division-page {
+    height: 100%;
+    min-height: 0;
+  }
+
   .division-page-header {
     flex-direction: column;
     gap: 12px;
@@ -301,28 +572,64 @@ color: #111827;
   .division-toolbar {
     align-items: stretch;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .division-search {
+    width: 100%;
+    flex: 1 1 auto;
   }
 
   .division-toolbar .category-filter {
-    flex: 1 1 auto;
     width: 100%;
+    flex: 1 1 auto;
   }
 
   .division-toolbar .category-filter .category-toggle {
     height: 54px;
+    border-radius: 12px;
     font-family: Inter, Arial, sans-serif;
     font-size: 13px;
   }
 
-  .app-layout .app-main .division-page .division-search input {
-    height: 54px;
-    padding: 0 36px;
-    font-family: Inter, Arial, sans-serif;
-    font-size: 13px;
-  color: #111827;
+  .division-table-card {
+    flex: 1 1 0;
+    height: 0;
+    min-height: 0;
+    margin-top: 16px;
+    padding: 12px;
+  }
+
+  .division-table {
+    min-width: 760px;
+  }
+
+  .division-preview-backdrop {
+    padding: 12px;
+  }
+
+  .division-preview-modal {
+    max-height: calc(100vh - 24px);
+    padding: 18px;
+  }
 }
-.app-layout .app-main .division-page .division-search input::placeholder {
-  color: #6b7280;
-  opacity: 1;
-}
+
+@media (max-width: 420px) {
+  .division-page-header time {
+    font-size: 11px;
+  }
+
+  .division-search {
+    padding: 0 15px;
+  }
+
+  .division-preview-modal h2 {
+    font-size: 16px;
+  }
+
+  .division-version-history article {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
 }

@@ -44,8 +44,8 @@
 .apl-cari,
 .apl-select {
     background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
 }
 
 .apl-cari {
@@ -81,9 +81,9 @@
     height: 54px;
     padding: 0 44px 0 24px;
     border: 0;
-    border-radius: 4px;
+    border-radius: 12px;
     background: transparent;
-    color: #4b5563;
+    color: #374151;
     font-family: inherit;
     font-size: 17px;
     appearance: none;

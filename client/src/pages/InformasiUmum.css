@@ -1,9 +1,15 @@
-/* ===== Halaman Informasi Umum =====
-   Semua aturan diawali .informasi-umum. */
+
+/* ==================================================
+   HALAMAN INFORMASI UMUM - C-BIJAK
+================================================== */
+
 .informasi-umum {
     width: 100%;
-    color: #111827;
+    color: #172033;
     font-family: Inter, Arial, sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .informasi-umum button,
@@ -11,7 +17,10 @@
     font-family: inherit;
 }
 
-/* Judul + tanggal */
+/* ==================================================
+   HEADER
+================================================== */
+
 .informasi-umum .iu-head {
     display: flex;
     justify-content: space-between;
@@ -21,108 +30,211 @@
 
 .informasi-umum .iu-head h1 {
     margin: 0;
-    color: #000;
+    color: #111827;
     font-size: 21px;
     line-height: 1.3;
-    font-weight: 700;
+    font-weight: 650;
 }
 
 .informasi-umum .iu-sub {
-    margin: 4px 0 0;
-    font-size: 16px;
-    line-height: 1.5;
+    margin: 5px 0 0;
+    color: #64748b;
+    font-size: 15px;
+    line-height: 1.6;
 }
 
 .informasi-umum .iu-tanggal {
     flex-shrink: 0;
-    font-size: 16px;
+    color: #344054;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-/* Pencarian */
+/* ==================================================
+   SEARCH BAR
+================================================== */
+
 .informasi-umum .iu-cari {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    width: 100%;
+    height: 54px;
+    min-height: 54px;
+    box-sizing: border-box;
+
     margin-top: clamp(16px, 4vh, 40px);
+    padding: 0 23px;
+
+    border: 1px solid #cbd8eb;
+    border-radius: 12px;
+
+    background: #fafdff;
+    color: #718096;
+
+    box-shadow:
+        0 3px 10px rgba(31, 65, 115, 0.08),
+        0 1px 3px rgba(31, 65, 115, 0.04);
+
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.informasi-umum .iu-cari:hover {
+    border-color: #b5c9e8;
+    background: #f7fbff;
+    box-shadow:
+        0 5px 14px rgba(31, 65, 115, 0.09),
+        0 2px 4px rgba(31, 65, 115, 0.04);
+}
+
+.informasi-umum .iu-cari:focus-within {
+    border-color: #80a9e5;
     background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.09),
+        0 4px 12px rgba(31, 65, 115, 0.08);
 }
 
 .informasi-umum .iu-cari input {
     width: 100%;
-    height: 54px;
-    padding: 0 36px;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+
     border: 0;
-    border-radius: 4px;
-    background: transparent;
-    color: #111827;
-    font-family: Inter, Arial, sans-serif;
-    font-size: 13px;
     outline: none;
-    border: 0;
+    background: transparent;
+
+    color: #25364d;
+    font-family: inherit;
+    font-size: 14px;
+
     box-shadow: none;
     appearance: none;
     -webkit-appearance: none;
 }
-.informasi-umum .iu-cari:focus-within {
-    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
-}
 
 .informasi-umum .iu-cari input::placeholder {
-    color: #6b7280;
+    color: #8997aa;
 }
 
-/* Tab kategori */
+/* ==================================================
+   TAB KATEGORI
+================================================== */
+
 .informasi-umum .iu-tab {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
-    margin: clamp(14px, 3vh, 26px) 0 clamp(10px, 2vh, 18px) 18px;
+    align-items: center;
+    gap: 10px;
+
+    margin: clamp(17px, 3vh, 26px) 0 clamp(12px, 2vh, 18px) 4px;
 }
 
 .informasi-umum .iu-tab button {
-    padding: 8px 15px;
-    border: 0;
-    border-radius: 8px;
+    padding: 9px 17px;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
     background: transparent;
-    color: #555;
-    font-family: Inter, Arial, sans-serif;
+    color: #64748b;
+
+    font-family: inherit;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
+
     cursor: pointer;
-}
 
-.informasi-umum .iu-tab button.aktif {
-    background: #8ebcff;
-    color: #0b2f73;
-}
-
-.app-layout .app-main .informasi-umum .iu-tab button[aria-selected="true"] {
-    color: #0b2f73;
-    font-weight: 700;
+    transition:
+        color 180ms ease,
+        background 180ms ease,
+        border-color 180ms ease,
+        transform 180ms ease;
 }
 
 .informasi-umum .iu-tab button:hover:not(.aktif) {
-    background: rgba(142, 188, 255, 0.25);
+    background: #f0f6ff;
+    color: #235a9f;
 }
 
-/* Panel dokumen dan kontak mengikuti tabel pada halaman persetujuan. */
+.informasi-umum .iu-tab button:active {
+    transform: scale(0.97);
+}
+
+.informasi-umum .iu-tab button.aktif {
+    border-color: #5991e0;
+    background: #eaf3ff;
+    color: #1757a6;
+    font-weight: 700;
+}
+
+.app-layout .app-main .informasi-umum .iu-tab button[aria-selected="true"] {
+    color: #1757a6;
+    font-weight: 700;
+}
+
+/* ==================================================
+   PANEL TABEL DOKUMEN
+================================================== */
+
 .informasi-umum .iu-tabel {
     box-sizing: border-box;
     min-height: 0;
     max-height: calc(100vh - 340px);
+
     overflow-y: auto;
-    padding: 20px;
-    border-radius: 6px;
+
+    padding: 18px;
+
+    border: 1px solid #e0e7f0;
+    border-radius: 11px;
+
     background: #fff;
-    box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+
+    box-shadow:
+        0 3px 10px rgba(31, 65, 115, 0.045),
+        0 1px 3px rgba(31, 65, 115, 0.025);
+
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
 }
+
+.informasi-umum .iu-tabel::-webkit-scrollbar {
+    width: 7px;
+}
+
+.informasi-umum .iu-tabel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.informasi-umum .iu-tabel::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #cbd5e1;
+}
+
+.informasi-umum .iu-tabel::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ==================================================
+   BARIS TABEL
+================================================== */
 
 .informasi-umum .iu-baris {
     display: grid;
     align-items: center;
-    gap: 12px;
-    padding: 14px 12px;
-    border-bottom: 1px solid #e5e7eb;
-    font-size: 13px;
+    gap: 16px;
+
+    padding: 15px 13px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    font-size: 14px;
 }
 
 .informasi-umum .iu-dokumen-kepala,
@@ -139,22 +251,34 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    background: #fff;
-    color: #0b2f73;
+
+    background: #f8faff;
+    color: #31568f;
+
     font-size: 13px;
     font-weight: 700;
+
+    border-bottom: 1px solid #e1e9f4;
 }
 
 .informasi-umum .iu-dokumen-baris {
     width: 100%;
+
     border-top: 0;
     border-right: 0;
     border-left: 0;
+
     background: #fff;
     color: inherit;
+
     font: inherit;
     text-align: left;
+
     cursor: pointer;
+
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease;
 }
 
 .informasi-umum .iu-dokumen-kepala > span,
@@ -168,41 +292,103 @@
 }
 
 .informasi-umum .iu-dokumen-baris > strong {
-    color: #111827;
+    color: #26364d;
     font-weight: 600;
-}
-.informasi-umum .iu-dokumen-judul {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.informasi-umum .iu-dokumen-icon {
-    flex: none;
-    width: 30px;
-    height: 38px;
-    display: grid;
-    place-items: center;
-    border: 1px solid #b9d1f6;
-    border-radius: 5px;
-    background: #edf4ff;
-    color: #3978d8;
-    font-size: 18px;
-    line-height: 1;
 }
 
 .informasi-umum .iu-dokumen-baris > span {
     margin-left: -8px;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.informasi-umum .iu-dokumen-baris > time {
+    color: #64748b;
+    font-size: 13px;
 }
 
 .informasi-umum .iu-dokumen-baris:hover {
-    background: #f8faff;
+    background: #f7faff;
 }
+
+/* ==================================================
+   JUDUL DAN IKON DOKUMEN
+================================================== */
+
+.informasi-umum .iu-dokumen-judul {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    line-height: 1.5;
+}
+
+/* Kotak ikon */
+.informasi-umum .iu-file-icon {
+    display: flex;
+    flex: 0 0 44px;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: 11px;
+
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+/* PDF */
+.informasi-umum .iu-file-icon.pdf {
+    border-color: #f6d5d5;
+    background: #fff0f0;
+    color: #dc4545;
+}
+
+/* Word */
+.informasi-umum .iu-file-icon.word {
+    border-color: #d4e4fc;
+    background: #edf4ff;
+    color: #2874d0;
+}
+
+/* Excel */
+.informasi-umum .iu-file-icon.excel {
+    border-color: #ccebd9;
+    background: #eaf8f0;
+    color: #21965b;
+}
+
+/* File lainnya */
+.informasi-umum .iu-file-icon.other {
+    border-color: #e3d8fa;
+    background: #f3efff;
+    color: #8056c7;
+}
+
+/* Efek hover ikon */
+.informasi-umum .iu-dokumen-baris:hover .iu-file-icon {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 9px rgba(31, 65, 115, 0.09);
+}
+
+/* ==================================================
+   EMPTY STATE
+================================================== */
 
 .informasi-umum .iu-kosong {
     padding: 44px 16px;
-    border-bottom: 1px solid #e5e7eb;
-    color: #555;
-    font-size: 13px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    color: #8490a2;
+    font-size: 14px;
+    line-height: 1.6;
     text-align: center;
 }
 
@@ -210,45 +396,68 @@
     color: #b42318;
 }
 
+/* ==================================================
+   KONTAK
+================================================== */
+
 .informasi-umum .iu-kontak-baris {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .informasi-umum .iu-kontak-baris strong {
+    color: #26364d;
     font-weight: 600;
 }
 
+/* ==================================================
+   PESAN
+================================================== */
+
 .informasi-umum .iu-pesan {
     padding: 40px 0;
+    color: #64748b;
     text-align: center;
-    color: #6b7280;
+    font-size: 14px;
 }
 
 .informasi-umum .iu-pesan.error {
     color: #b42318;
 }
 
-/* Jendela pratinjau */
+/* ==================================================
+   MODAL PRATINJAU
+================================================== */
+
 .informasi-umum .iu-latar {
     position: fixed;
     inset: 0;
     z-index: 50;
+
     display: grid;
     place-items: center;
+
     padding: 20px;
-    background: rgba(15, 25, 50, 0.45);
+
+    background: rgba(15, 25, 50, 0.48);
+    backdrop-filter: blur(3px);
 }
 
 .informasi-umum .iu-modal {
     width: min(760px, 100%);
     max-width: 760px;
     max-height: calc(100vh - 48px);
+
     box-sizing: border-box;
-    padding: 24px;
+    padding: 25px;
+
     overflow-y: auto;
-    border-radius: 10px;
+
+    border: 1px solid #e4eaf2;
+    border-radius: 13px;
+
     background: #fff;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
 }
 
 .informasi-umum .iu-modal-head {
@@ -260,38 +469,69 @@
 
 .informasi-umum .iu-modal-head h2 {
     margin: 0;
-    color: #000;
-    font-size: 22px;
+    color: #172033;
+    font-size: 21px;
+    font-weight: 650;
+    line-height: 1.4;
 }
 
 .informasi-umum .iu-tutup {
-    padding: 1px 8px;
-    border: 1px solid #6b7280;
-    border-radius: 4px;
+    flex-shrink: 0;
+
+    padding: 7px 13px;
+
+    border: 1px solid #d5deeb;
+    border-radius: 7px;
+
     background: #fff;
-    color: #000;
+    color: #475467;
+
     font-size: 13px;
+    font-weight: 600;
+
     cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        border-color 180ms ease;
+}
+
+.informasi-umum .iu-tutup:hover {
+    border-color: #b8cce9;
+    background: #f1f6ff;
 }
 
 .informasi-umum .iu-meta {
-    margin: 6px 0 18px;
-    color: #374151;
+    margin: 7px 0 18px;
+    color: #64748b;
     font-size: 13px;
+    line-height: 1.6;
 }
+
+/* ==================================================
+   ISI PRATINJAU
+================================================== */
 
 .informasi-umum .iu-isi {
     min-height: 200px;
     padding: 18px 20px;
-    border: 1px solid #d9dde6;
-    border-radius: 6px;
+
+    border: 1px solid #dce4ef;
+    border-radius: 9px;
+
+    background: #fff;
+    color: #344054;
+
+    line-height: 1.6;
 }
 
 .informasi-umum .iu-frame {
     width: 100%;
     height: min(48vh, 500px);
     min-height: 260px;
-    border: 1px solid #d9dde6;
+
+    border: 1px solid #dce4ef;
+    border-radius: 8px;
 }
 
 .informasi-umum .iu-isi table {
@@ -300,19 +540,19 @@
 
 .informasi-umum .iu-isi td,
 .informasi-umum .iu-isi th {
-    padding: 6px 10px;
-    border: 1px solid #d9dde6;
+    padding: 7px 10px;
+    border: 1px solid #dce4ef;
 }
 
 .informasi-umum .iu-isi h3 {
-    margin: 0 0 4px;
-    color: #000;
+    margin: 0 0 6px;
+    color: #172033;
     font-size: 20px;
 }
 
 .informasi-umum .iu-isi p {
     margin: 0 0 14px;
-    color: #374151;
+    color: #475467;
     font-size: 13px;
 }
 
@@ -320,19 +560,24 @@
     height: 11px;
     margin-bottom: 10px;
     border-radius: 6px;
-    background: #dde3ec;
+    background: #dde5f0;
 }
 
 .informasi-umum .iu-catatan {
     margin: 8px 0 14px;
-    color: #374151;
+    color: #475467;
     font-size: 13px;
 }
 
+/* ==================================================
+   RIWAYAT VERSI
+================================================== */
+
 .informasi-umum .iu-riwayat {
-    margin: 0 0 10px;
-    color: #000;
-    font-size: 20px;
+    margin: 20px 0 12px;
+    color: #172033;
+    font-size: 17px;
+    font-weight: 650;
 }
 
 .informasi-umum .iu-versi {
@@ -340,6 +585,7 @@
     justify-content: space-between;
     align-items: flex-end;
     gap: 12px;
+
     font-size: 14px;
 }
 
@@ -347,10 +593,15 @@
     width: 100%;
 }
 
+.informasi-umum .iu-versi-list > .iu-versi {
+    padding: 12px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
 .informasi-umum .iu-versi small {
     display: block;
     margin-top: 4px;
-    color: #374151;
+    color: #64748b;
     font-size: 13px;
 }
 
@@ -359,33 +610,125 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 10px;
-    color: #374151;
+    color: #64748b;
     font-size: 13px;
 }
 
+/* ==================================================
+   TOMBOL UNDUH
+================================================== */
+
 .informasi-umum .iu-unduh {
-    margin-top: 16px;
-    padding: 9px 26px;
+    margin-top: 18px;
+    padding: 10px 25px;
+
     border: 0;
-    border-radius: 6px;
-    background: #0a5de0;
+    border-radius: 8px;
+
+    background: #1764cf;
     color: #fff;
-    font-size: 15px;
-    font-weight: 700;
+
+    font-size: 14px;
+    font-weight: 650;
+
     cursor: pointer;
+
+    transition:
+        background 180ms ease,
+        transform 180ms ease,
+        box-shadow 180ms ease;
 }
 
 .informasi-umum .iu-unduh:hover {
-    background: #0b47ad;
+    background: #1054b5;
+    box-shadow: 0 4px 10px rgba(23, 100, 207, 0.2);
+}
+
+.informasi-umum .iu-unduh:active {
+    transform: scale(0.97);
+}
+
+/* ==================================================
+   RESPONSIVE
+================================================== */
+
+@media (max-width: 900px) {
+    .informasi-umum .iu-dokumen-kepala,
+    .informasi-umum .iu-dokumen-baris {
+        grid-template-columns: 2fr 2fr 1.1fr;
+    }
+
+    .informasi-umum .iu-baris {
+        gap: 12px;
+    }
 }
 
 @media (max-width: 700px) {
     .informasi-umum .iu-head {
         flex-direction: column;
+        gap: 8px;
+    }
+
+    .informasi-umum .iu-tanggal {
+        font-size: 13px;
+    }
+
+    .informasi-umum .iu-cari {
+        height: 49px;
+        min-height: 49px;
+        padding: 0 15px;
+    }
+
+    .informasi-umum .iu-tab {
+        gap: 7px;
+        margin-left: 0;
+    }
+
+    .informasi-umum .iu-tab button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+
+    .informasi-umum .iu-tabel {
+        max-height: calc(100vh - 300px);
+        padding: 10px;
+    }
+
+    .informasi-umum .iu-dokumen-kepala {
+        display: none;
+    }
+
+    .informasi-umum .iu-dokumen-baris {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 7px;
+        padding: 14px 10px;
+    }
+
+    .informasi-umum .iu-dokumen-baris > span {
+        margin-left: 56px;
+    }
+
+    .informasi-umum .iu-dokumen-baris > time {
+        margin-left: 56px;
+        font-size: 12px;
+    }
+
+    .informasi-umum .iu-file-icon {
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
     }
 
     .informasi-umum .iu-kontak-baris {
         grid-template-columns: 1fr;
+    }
+
+    .informasi-umum .iu-modal {
+        padding: 18px;
+    }
+
+    .informasi-umum .iu-modal-head h2 {
+        font-size: 18px;
     }
 
     .informasi-umum .iu-versi {
@@ -395,5 +738,19 @@
 
     .informasi-umum .iu-versi-kanan {
         align-items: flex-start;
+    }
+}
+
+/* ==================================================
+   REDUCED MOTION
+================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .informasi-umum *,
+    .informasi-umum *::before,
+    .informasi-umum *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }

@@ -1,3 +1,8 @@
+
+/* ==================================================
+   HALAMAN HAK AKSES - C-BIJAK
+================================================== */
+
 .ha-page {
   width: 100%;
   color: #172033;
@@ -13,6 +18,10 @@
 .ha-page select {
   font-family: Inter, Arial, sans-serif;
 }
+
+/* ==================================================
+   HEADER
+================================================== */
 
 .ha-head h1 {
   margin: 0;
@@ -42,6 +51,10 @@
   text-align: left;
   font-size: 13px;
 }
+
+/* ==================================================
+   PANEL
+================================================== */
 
 .ha-panel {
   border: 1px solid #dfe6f1;
@@ -86,11 +99,16 @@
   color: #1d62c9;
 }
 
+/* ==================================================
+   ROLE LAYOUT
+================================================== */
+
 .ha-role-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 18px;
   margin-top: 14px;
+  position: relative;
 }
 
 .ha-role-list {
@@ -162,9 +180,9 @@
   display: none;
 }
 
-.ha-role-layout {
-  position: relative;
-}
+/* ==================================================
+   ROLE USER POPOVER
+================================================== */
 
 .ha-role-user-popover {
   position: absolute;
@@ -205,6 +223,10 @@
   color: #65758c;
   font-size: 9px;
 }
+
+/* ==================================================
+   PERMISSIONS
+================================================== */
 
 .ha-permissions {
   min-width: 0;
@@ -264,6 +286,10 @@
   flex: 0 0 17px;
 }
 
+/* ==================================================
+   BOTTOM GRID
+================================================== */
+
 .ha-bottom-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -277,40 +303,72 @@
   padding: 14px;
 }
 
+/* ==================================================
+   SEARCH DAN FILTER DIVISI
+================================================== */
+
 .ha-user-tools {
   display: grid;
   grid-template-columns: minmax(150px, 1fr) 335px;
+  align-items: stretch;
   gap: 10px;
   margin-top: 12px;
 }
 
+/* SEARCH INPUT */
+
 .ha-search {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  width: 100%;
   height: 54px;
-  padding: 0 36px;
-  border: 0;
-  border-radius: 4px;
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 0 24px;
+  border: 1px solid #cbd8eb;
+  border-radius: 12px;
+  background: #fafdff;
+  color: #64748b;
+  box-shadow:
+    0 3px 10px rgba(31, 65, 115, 0.08),
+    0 1px 3px rgba(31, 65, 115, 0.04);
+  transition: all 180ms ease;
+}
+
+.ha-search:hover {
+  border-color: #9db8df;
   background: #fff;
-  color: #6f7f94;
-  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+  box-shadow: 0 4px 14px rgba(31, 65, 115, 0.12);
+}
+
+.ha-search:focus-within {
+  border-color: #4c83d1;
+  background: #fff;
+  box-shadow:
+    0 0 0 3px rgba(47, 116, 223, 0.12),
+    0 4px 12px rgba(31, 65, 115, 0.08);
 }
 
 .ha-search input {
   width: 100%;
-  height: 54px;
+  height: 100%;
+  min-width: 0;
   border: 0;
   outline: 0;
   font-family: inherit;
   font-size: 13px;
-  color: #111827;
+  color: #25364d;
   background: transparent;
 }
 
 .ha-search input::placeholder {
-  color: #6b7280;
+  color: #718096;
 }
+
+/* ==================================================
+   BUTTON UMUM
+================================================== */
 
 .ha-user-tools button:not(.ha-division-dropdown-trigger),
 .ha-special-head button,
@@ -325,7 +383,7 @@
   font-weight: 700;
 }
 
-.ha-user-tools button:not(.ha-division-dropdown-trigger) {
+.ha-user-tools button:not(.ha-division-dropdown-trigger):not(.ha-division-dropdown-menu button) {
   border-color: #2f74df;
   background: #2f74df;
   color: #fff;
@@ -333,23 +391,171 @@
   padding: 0 9px;
 }
 
-.ha-division-select {
+/* ==================================================
+   CUSTOM DROPDOWN FILTER DIVISI
+================================================== */
+
+.ha-division-dropdown {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: 54px;
+}
+
+.ha-division-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   height: 54px;
+  min-height: 54px;
   box-sizing: border-box;
-  padding: 0 44px 0 24px;
-  border: 0;
-  border-radius: 4px;
-  background: #fff;
-  color: #4b5563;
+  padding: 0 22px;
+  border: 1px solid #cbd8eb;
+  border-radius: 12px;
+  background: #fafdff;
+  color: #334155;
   font-family: inherit;
-  font-size: 17px;
-  font-weight: 400;
-  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   outline: none;
-  appearance: none;
+  box-shadow:
+    0 3px 10px rgba(31, 65, 115, 0.08),
+    0 1px 3px rgba(31, 65, 115, 0.04);
+  transition: all 180ms ease;
 }
+
+.ha-division-dropdown-trigger:hover {
+  border-color: #9db8df;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(31, 65, 115, 0.12);
+}
+
+.ha-division-dropdown-trigger:focus-visible {
+  border-color: #4c83d1;
+  outline: 3px solid rgba(47, 116, 223, 0.13);
+}
+
+.ha-division-dropdown-trigger svg {
+  flex-shrink: 0;
+  color: #536b8b;
+  transition: transform 180ms ease;
+}
+
+.ha-division-dropdown-trigger svg.rotated {
+  transform: rotate(180deg);
+}
+
+/* Panel pilihan dropdown */
+
+.ha-division-dropdown-menu {
+  position: absolute;
+  z-index: 50;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 7px;
+  border: 1px solid #d7e1ef;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow:
+    0 10px 30px rgba(31, 58, 100, 0.12),
+    0 2px 8px rgba(31, 58, 100, 0.06);
+  animation: divisionDropdownIn 160ms ease;
+}
+
+@keyframes divisionDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pilihan divisi */
+
+.ha-user-tools .ha-division-dropdown-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 42px;
+  height: auto;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: #46566d;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.ha-user-tools .ha-division-dropdown-menu button:hover {
+  border: none;
+  background: #f0f5ff;
+  color: #245fb5;
+}
+
+.ha-user-tools .ha-division-dropdown-menu button.active {
+  border: none;
+  background: #eaf2ff;
+  color: #2465c5;
+  font-weight: 600;
+}
+
+.ha-division-dropdown-menu button span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ha-division-dropdown-menu button svg {
+  flex-shrink: 0;
+  color: #2f74df;
+}
+
+.ha-division-dropdown-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ha-division-dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.ha-division-dropdown-menu::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background: #d3deed;
+}
+
+.ha-division-dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #aabbd3;
+}
+
+.ha-division-dropdown-menu {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
+}
+
+/* ==================================================
+   USER TABLE
+================================================== */
 
 .ha-user-table,
 .ha-special-table {
@@ -363,55 +569,95 @@
   display: grid;
   grid-template-columns: 55px 1.15fr 1.25fr 0.95fr 70px;
   align-items: center;
-  min-height: 38px;
-  padding: 5px 8px;
+  min-height: 64px;
+  padding: 8px 10px;
   border-bottom: 1px solid #edf1f6;
-  font-size: 9px;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .ha-user-row:last-child {
   border-bottom: 0;
 }
 
+/* Nomor ID pengguna */
+
+.ha-user-row:not(.ha-user-head) > strong:first-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: #526176;
+}
+
+/* Nama pengguna */
+
+.ha-user-row:not(.ha-user-head) > strong:nth-child(2) {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: #172033;
+  overflow-wrap: anywhere;
+}
+
+/* Nama divisi */
+
+.ha-user-row:not(.ha-user-head) > span:nth-child(3) {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #526176;
+  overflow-wrap: anywhere;
+}
+
+/* Header tabel */
+
 .ha-user-head,
 .ha-special-head-row,
 .ha-special-row.ha-special-head {
-  min-height: 32px;
+  min-height: 40px;
   background: #edf3fc;
   color: #27364b;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 800;
 }
+
+/* Tombol Kelola */
 
 .ha-user-row button {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  height: 24px;
+  min-height: 34px;
+  height: auto;
+  padding: 5px 7px;
   border: 1px solid #cfdaf0;
   border-radius: 5px;
   background: #f7faff;
   color: #2e67bd;
   font-family: inherit;
-  font-size: 9px;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
 }
+
+/* ==================================================
+   ROLE BADGES
+================================================== */
 
 .ha-role-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 3px;
+  gap: 5px;
 }
 
 .ha-role-badge {
   display: inline-flex;
-  padding: 3px 5px;
+  padding: 5px 8px;
   border-radius: 999px;
   background: #edf4ff;
   color: #2d67b6;
-  font-size: 8px;
-  font-weight: 800;
+  font-size: 11px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -419,6 +665,10 @@
   background: #e8f6ed;
   color: #188548;
 }
+
+/* ==================================================
+   SPECIAL PERMISSIONS
+================================================== */
 
 .ha-special-head {
   display: flex;
@@ -470,6 +720,10 @@
   font-size: 10px;
 }
 
+/* ==================================================
+   MODAL
+================================================== */
+
 .ha-modal-backdrop {
   position: fixed;
   z-index: 100;
@@ -513,6 +767,8 @@
   font-size: 11px;
 }
 
+/* Modal options */
+
 .ha-modal-options {
   display: grid;
   gap: 7px;
@@ -551,6 +807,10 @@
   font-size: 9px;
 }
 
+/* ==================================================
+   MODAL ACTION
+================================================== */
+
 .ha-modal-action {
   display: flex;
   align-items: center;
@@ -558,6 +818,10 @@
   gap: 10px;
   margin-top: 12px;
 }
+
+/* ==================================================
+   ROLE MANAGER
+================================================== */
 
 .ha-role-manager {
   margin-top: 12px;
@@ -621,6 +885,10 @@
   cursor: not-allowed;
 }
 
+/* ==================================================
+   ADD ROLE
+================================================== */
+
 .ha-add-role {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -640,8 +908,8 @@
   width: 100%;
   height: 34px;
   padding: 0 8px;
-  border: 1px solid #cfdaf0;
-  border-radius: 6px;
+  border: 1px solid #dfe7f2;
+  border-radius: 10px;
   background: #fff;
   color: #31435e;
   font-family: inherit;
@@ -660,11 +928,15 @@
   right: 0;
   bottom: calc(100% + 5px);
   left: 0;
-  padding: 5px;
-  border: 1px solid #dfe7f3;
-  border-radius: 7px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid #e7edf5;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 8px 24px rgb(25 55 95 / 14%);
+  box-shadow: 0 12px 30px rgb(37 99 235 / 14%);
+  scrollbar-width: thin;
+  scrollbar-color: #cbd8e8 transparent;
 }
 
 .ha-role-dropdown-menu button {
@@ -672,21 +944,23 @@
   align-items: center;
   gap: 7px;
   width: 100%;
-  height: 34px;
-  padding: 0 8px;
+  height: 38px;
+  padding: 0 10px;
   border: 0;
-  border-radius: 5px;
+  border-radius: 8px;
   background: #fff;
   color: #31435e;
   font-family: inherit;
   font-size: 10px;
   text-align: left;
   cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
 }
 
 .ha-role-dropdown-menu button:hover,
 .ha-role-dropdown-menu button[aria-selected='true'] {
-  background: #f3f5f8;
+  background: #edf5ff;
+  color: #1d62c9;
 }
 
 .ha-add-role > button {
@@ -710,6 +984,10 @@
   cursor: not-allowed;
 }
 
+/* ==================================================
+   EFFECTIVE PREVIEW
+================================================== */
+
 .ha-effective-preview {
   margin-top: 10px;
   padding: 9px;
@@ -732,6 +1010,10 @@
   color: #267642;
   font-size: 9px;
 }
+
+/* ==================================================
+   USER SPECIAL PERMISSIONS
+================================================== */
 
 .ha-user-special-permissions {
   display: grid;
@@ -761,6 +1043,10 @@
   font-size: 8px;
   opacity: 0.8;
 }
+
+/* ==================================================
+   ROLE CONFIRMATION
+================================================== */
 
 .ha-role-confirm {
   margin-top: 12px;
@@ -797,6 +1083,10 @@
   font-weight: 700;
 }
 
+/* ==================================================
+   MODAL BUTTONS
+================================================== */
+
 .ha-modal-action select {
   width: 180px;
   padding: 0 8px;
@@ -829,6 +1119,10 @@
   color: #fff;
 }
 
+/* ==================================================
+   MODAL PERMISSIONS
+================================================== */
+
 .ha-modal-permissions {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -841,11 +1135,19 @@
   border-radius: 7px;
 }
 
+/* ==================================================
+   RESPONSIVE - TABLET
+================================================== */
+
 @media (max-width: 1180px) {
   .ha-bottom-grid {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==================================================
+   RESPONSIVE - MOBILE
+================================================== */
 
 @media (max-width: 800px) {
   .ha-role-layout {
@@ -860,7 +1162,33 @@
     grid-template-columns: 1fr 120px;
   }
 
-  .ha-user-tools button {
+  .ha-user-tools > button:not(.ha-division-dropdown-trigger) {
     grid-column: 1 / -1;
   }
+
+  .ha-division-dropdown {
+    width: 100%;
+  }
+
+  .ha-division-dropdown-menu {
+    max-height: 200px;
+  }
+}
+
+/* ==================================================
+   PENYAMAAN UKURAN SEARCH DAN DROPDOWN
+================================================== */
+
+.ha-user-tools > .ha-search,
+.ha-user-tools > .ha-division-dropdown {
+  height: 54px;
+  min-height: 54px;
+  min-width: 0;
+}
+
+.ha-user-tools > .ha-search,
+.ha-user-tools > .ha-division-dropdown,
+.ha-search,
+.ha-division-dropdown-trigger {
+  box-sizing: border-box;
 }

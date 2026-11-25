@@ -1,3 +1,4 @@
+
 /* Pembungkus seluruh halaman: tersusun ke bawah (header, hero, fitur) */
 .home { 
   height: 100vh;
@@ -29,16 +30,20 @@
   display: flex; 
   align-items: center; 
   gap: 12px; 
-  height: 62px; 
+  height: 62px;
+  min-height: 62px;
+  flex-shrink: 0;
   padding: 0 32px; 
   background: #fff; 
   box-shadow: 0 2px 6px rgba(15, 40, 100, 0.12); 
 }
+
 .home-logo {
   position: relative;
   width: 360px;
   height: 52px;
 }
+
 .home-logo span {
   position: absolute;
   top: 35px;
@@ -48,20 +53,35 @@
   font-weight: 700;
   white-space: nowrap;
 }
-.home-brand { display: flex; flex-direction: column; gap: 2px; color: #0b2f73; }
-.home-brand strong { font-size: 18px; }
-.home-brand span { color: #4b5563; font-size: 11px; }
+
+.home-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #0b2f73;
+}
+
+.home-brand strong {
+  font-size: 18px;
+}
+
+.home-brand span {
+  color: #4b5563;
+  font-size: 11px;
+}
+
 .logo-ico { 
   width: 40px; 
   height: 32px; 
 }
+
 .logo { 
   height: 40px; 
   width: auto; 
   display: block; 
 }
 
-/* ----- Bagian utama: selebar layar, teks di kiri, gambar di kanan ----- */
+/* ----- Bagian utama: teks di kiri, gambar di kanan ----- */
 .hero { 
   flex: 1 1 auto;
   position: relative;
@@ -74,12 +94,14 @@
   width: 100%; 
   padding: clamp(32px, 5vh, 64px) 0; 
 }
-/* Kolom teks cukup lebar untuk judul dan deskripsi tanpa memaksa satu baris. */
+
+/* Kolom teks */
 .hero-text { 
   width: 100%; 
   max-width: 100%; 
   padding-top: 76px;
 }
+
 .hero-text h1 { 
   max-width: 820px;
   margin: 0 auto 28px; 
@@ -89,6 +111,7 @@
   text-align: center;
   text-wrap: balance;
 }
+
 .hero-text p { 
   width: 680px;
   max-width: 680px;
@@ -99,6 +122,7 @@
   line-height: 1.5; 
   color: #111827; 
 }
+
 .btn-masuk { 
   display: block; 
   margin: 0 auto; 
@@ -113,16 +137,19 @@
   cursor: pointer; 
   font-family: inherit; 
 }
+
 .btn-masuk:hover { 
   background: #0b47ad; 
 }
 
+/* ----- Ilustrasi background ----- */
 .hero-art-wrap { 
   position: absolute;
   z-index: 0;
   inset: 0;
   pointer-events: none;
 }
+
 .hero-art {
   position: absolute;
   top: 28px;
@@ -133,95 +160,215 @@
   opacity: 0.18;
   transform: translateX(-50%);
 }
+
+/* =========================================
+   INFORMASI UMUM - LANDING PAGE
+   Tinggi menyesuaikan jumlah dokumen
+========================================= */
+
 .home-public-info {
   position: absolute;
   top: 41px;
   right: clamp(24px, 2.5vw, 36px);
   z-index: 2;
   pointer-events: auto;
+
+  display: flex;
+  flex-direction: column;
+
   width: min(305px, 80%);
   height: auto;
-  max-height: min(470px, calc(100% - 56px));
   min-height: 0;
-  overflow: hidden;
-  padding: 22px 18px 18px;
+
+  /*
+    Batas tinggi mengikuti ruang hero.
+    Sisakan jarak 41px di atas dan bawah
+    agar tidak bertabrakan dengan header
+    maupun bagian fitur.
+  */
+  max-height: min(470px, max(0px, calc(100% - 82px)));
+
   box-sizing: border-box;
+  overflow: hidden;
+
+  padding: 22px 18px 18px;
+
   border: 1px solid rgba(255, 255, 255, 0.78);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.72);
+
+  background: rgba(255, 255, 255, 0.82);
+
   backdrop-filter: blur(14px) saturate(125%);
   -webkit-backdrop-filter: blur(14px) saturate(125%);
+
   box-shadow:
     0 12px 32px rgba(39, 76, 119, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
-.home-public-info h2 { margin: 0 0 2px; color: #0a0a0f; font-size: 28px; }
-.home-public-info p { margin: 0 0 22px; color: #4b5563; font-size: 12px; }
+
+/* Judul Informasi Umum */
+.home-public-info h2 {
+  flex-shrink: 0;
+  margin: 0 0 2px;
+  color: #0a0a0f;
+  font-size: 28px;
+}
+
+/* Deskripsi Informasi Umum */
+.home-public-info > p {
+  flex-shrink: 0;
+  margin: 0 0 12px;
+  color: #4b5563;
+  font-size: 12px;
+}
+
+/* Kolom pencarian */
 .home-public-info > input {
-  position: absolute;
-  right: 12px;
-  bottom: 18px;
-  width: calc(100% - 24px);
+  position: static;
+  flex-shrink: 0;
+
+  display: block;
+  width: 100%;
   box-sizing: border-box;
+
+  margin-top: 12px;
   padding: 9px 14px;
+
   border: 0;
   border-color: transparent;
   outline: 0;
   box-shadow: none;
+
   appearance: none;
   -webkit-appearance: none;
+
   border-radius: 6px;
   background: #0f5bd8;
   color: #fff;
+
   font: inherit;
   font-size: 16px;
   font-weight: 700;
 }
-.home-public-info > input::placeholder { color: #fff; opacity: 1; }
-.home-public-list {
-  max-width: 900px;
-  max-height: calc(100% - 100px);
-  margin-top: 16px;
-  overflow-y: auto;
+
+.home-public-info > input::placeholder {
+  color: #fff;
+  opacity: 1;
 }
+
+/* Daftar dokumen */
+.home-public-list {
+  display: flex;
+  flex-direction: column;
+
+  flex: 0 1 auto;
+  min-height: 0;
+
+  width: 100%;
+  max-width: 900px;
+  max-height: 260px;
+
+  margin-top: 4px;
+  padding: 2px 6px 2px 0;
+
+  box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b8cce5 transparent;
+}
+
+/* Scrollbar Chrome, Edge, dan Safari */
+.home-public-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.home-public-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.home-public-list::-webkit-scrollbar-thumb {
+  background: #b8cce5;
+  border-radius: 10px;
+}
+
+/* Item dokumen */
 .home-public-document {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
+
   gap: 10px;
   width: 100%;
+
   padding: 10px 6px;
+
   border: 0;
   background: transparent;
+
   font-family: inherit;
   text-align: left;
+
   cursor: pointer;
   color: #111827;
   font-size: 13px;
 }
-.home-public-document + .home-public-document { border-top: 1px solid #eef1f6; }
-.home-public-document-icon { color: #4686e8; font-size: 22px; line-height: 1; }
-.home-public-document strong { font-weight: 500; }
-.home-public-document small { margin-left: 8px; color: #4b5563; font-size: 11px; }
-.home-public-document:hover { background: #f8faff; }
+
+.home-public-document + .home-public-document {
+  border-top: 1px solid #eef1f6;
+}
+
+.home-public-document strong {
+  font-weight: 500;
+}
+
+.home-public-document small {
+  margin-left: 8px;
+  color: #4b5563;
+  font-size: 11px;
+}
+
+.home-public-document:hover {
+  background: #f8faff;
+}
+
+.home-public-empty {
+  padding-top: 8px;
+}
+
+/* =========================================
+   PREVIEW DOKUMEN
+========================================= */
+
 .home-preview-backdrop {
   position: fixed;
   inset: 0;
   z-index: 100;
+
   display: grid;
   place-items: center;
+
   padding: 20px;
   background: rgba(15, 25, 50, 0.45);
 }
+
 .home-preview-modal {
   width: min(760px, 100%);
   max-height: calc(100vh - 40px);
+
   box-sizing: border-box;
   padding: 20px;
+
   overflow: auto;
+
   border-radius: 10px;
   background: #fff;
+
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
+
 .home-preview-modal header {
   display: flex;
   justify-content: space-between;
@@ -229,7 +376,12 @@
   gap: 12px;
   margin-bottom: 12px;
 }
-.home-preview-modal h2 { margin: 0; font-size: 20px; }
+
+.home-preview-modal h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
 .home-preview-modal header button {
   border: 1px solid #d1d5db;
   border-radius: 6px;
@@ -237,49 +389,130 @@
   padding: 6px 10px;
   cursor: pointer;
 }
+
 .home-preview-modal iframe {
   width: 100%;
   height: min(70vh, 620px);
   border: 1px solid #d9dde6;
 }
+
 .home-preview-html {
   max-height: 70vh;
   overflow: auto;
   border: 1px solid #d9dde6;
   padding: 12px;
 }
-.home-preview-html table { border-collapse: collapse; }
+
+.home-preview-html table {
+  border-collapse: collapse;
+}
+
 .home-preview-html td,
-.home-preview-html th { padding: 6px 10px; border: 1px solid #d9dde6; }
-.home-preview-message { padding: 32px 0; text-align: center; color: #6b7280; }
-.home-preview-message.error { color: #b42318; }
+.home-preview-html th {
+  padding: 6px 10px;
+  border: 1px solid #d9dde6;
+}
+
+.home-preview-message {
+  padding: 32px 0;
+  text-align: center;
+  color: #6b7280;
+}
+
+.home-preview-message.error {
+  color: #b42318;
+}
+
 .home-preview-download {
   display: block;
   margin: 14px 0 0 auto;
   padding: 9px 16px;
+
   border: 0;
   border-radius: 7px;
+
   background: #0f5bd8;
   color: #fff;
+
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
+
   cursor: pointer;
 }
-.home-preview-download:hover { background: #0b47ad; }
-.home-public-category { margin-bottom: 8px; border-radius: 6px; background: #fff; box-shadow: 0 2px 6px rgba(15, 40, 100, 0.1); }
-.home-public-category > button { display: flex; justify-content: space-between; width: 100%; padding: 14px 16px; border: 0; background: transparent; color: #0b2f73; font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
-.home-public-documents { display: grid; gap: 8px; padding: 0 16px 14px; }
-.home-public-documents a { display: grid; gap: 3px; padding: 10px; border-radius: 4px; color: #111827; text-decoration: none; }
-.home-public-documents a:hover { background: #eef5ff; }
-.home-public-documents span { color: #4b5563; font-size: 13px; }
-.home-public-empty { padding-top: 8px; }
+
+.home-preview-download:hover {
+  background: #0b47ad;
+}
+
+/* =========================================
+   KATEGORI DOKUMEN
+========================================= */
+
+.home-public-category {
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(15, 40, 100, 0.1);
+}
+
+.home-public-category > button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border: 0;
+  background: transparent;
+  color: #0b2f73;
+
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.home-public-documents {
+  display: grid;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.home-public-documents a {
+  display: grid;
+  gap: 3px;
+
+  padding: 10px;
+  border-radius: 4px;
+
+  color: #111827;
+  text-decoration: none;
+}
+
+.home-public-documents a:hover {
+  background: #eef5ff;
+}
+
+.home-public-documents span {
+  color: #4b5563;
+  font-size: 13px;
+}
+
+/* =========================================
+   ILUSTRASI HERO
+========================================= */
+
 .hero-art { 
   position: absolute;
   display: block;
   width: min(560px, 52vw);
   aspect-ratio: 420 / 300;
-  background: center / contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 300'%3E%3Cpath d='M60 150 C40 80 120 40 190 60 C250 20 360 50 380 120 C410 190 340 260 250 255 C180 285 80 250 60 150Z' fill='%23e6eefb'/%3E%3Crect x='300' y='75' width='92' height='28' rx='14' fill='%235b9cf0'/%3E%3Ccircle cx='337' cy='72' r='24' fill='%235b9cf0'/%3E%3Ccircle cx='364' cy='80' r='16' fill='%235b9cf0'/%3E%3Crect x='95' y='165' width='250' height='100' rx='8' fill='%231e4fb8'/%3E%3Crect x='105' y='175' width='230' height='80' rx='4' fill='%23dbe8fb'/%3E%3Crect x='195' y='100' width='105' height='120' rx='6' fill='white'/%3E%3Crect x='210' y='120' width='62' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='210' y='138' width='76' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='210' y='156' width='50' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='150' y='196' width='52' height='16' rx='5' fill='%235b9cf0'/%3E%3Crect x='150' y='206' width='150' height='56' rx='6' fill='%233a78e8'/%3E%3Cpath d='M70 268H370L355 282H85Z' fill='%232c5fd0'/%3E%3Ccircle cx='62' cy='168' r='28' fill='white'/%3E%3Crect x='52' y='154' width='20' height='28' rx='3' fill='%233a78e8'/%3E%3Crect x='56' y='160' width='12' height='3' fill='white'/%3E%3Crect x='56' y='167' width='12' height='3' fill='white'/%3E%3Ccircle cx='100' cy='98' r='26' fill='white'/%3E%3Crect x='90' y='85' width='20' height='26' rx='3' fill='%233a78e8'/%3E%3Crect x='94' y='91' width='12' height='3' fill='white'/%3E%3Crect x='94' y='98' width='12' height='3' fill='white'/%3E%3C/svg%3E");
+
+  background:
+    center / contain no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 300'%3E%3Cpath d='M60 150 C40 80 120 40 190 60 C250 20 360 50 380 120 C410 190 340 260 250 255 C180 285 80 250 60 150Z' fill='%23e6eefb'/%3E%3Crect x='300' y='75' width='92' height='28' rx='14' fill='%235b9cf0'/%3E%3Ccircle cx='337' cy='72' r='24' fill='%235b9cf0'/%3E%3Ccircle cx='364' cy='80' r='16' fill='%235b9cf0'/%3E%3Crect x='95' y='165' width='250' height='100' rx='8' fill='%231e4fb8'/%3E%3Crect x='105' y='175' width='230' height='80' rx='4' fill='%23dbe8fb'/%3E%3Crect x='195' y='100' width='105' height='120' rx='6' fill='white'/%3E%3Crect x='210' y='120' width='62' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='210' y='138' width='76' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='210' y='156' width='50' height='7' rx='3' fill='%235b9cf0'/%3E%3Crect x='150' y='196' width='52' height='16' rx='5' fill='%235b9cf0'/%3E%3Crect x='150' y='206' width='150' height='56' rx='6' fill='%233a78e8'/%3E%3Cpath d='M70 268H370L355 282H85Z' fill='%232c5fd0'/%3E%3Ccircle cx='62' cy='168' r='28' fill='white'/%3E%3Crect x='52' y='154' width='20' height='28' rx='3' fill='%233a78e8'/%3E%3Crect x='56' y='160' width='12' height='3' fill='white'/%3E%3Crect x='56' y='167' width='12' height='3' fill='white'/%3E%3Ccircle cx='100' cy='98' r='26' fill='white'/%3E%3Crect x='90' y='85' width='20' height='26' rx='3' fill='%233a78e8'/%3E%3Crect x='94' y='91' width='12' height='3' fill='white'/%3E%3Crect x='94' y='98' width='12' height='3' fill='white'/%3E%3C/svg%3E");
 }
 
 .hero-orbit {
@@ -307,13 +540,18 @@
   position: absolute;
   top: 50%;
   right: -12px;
+
   display: block;
   width: 34px;
   height: 42px;
+
   transform: translateY(-50%);
+
   border: 3px solid #3978d8;
   border-radius: 5px;
+
   background: #fff;
+
   box-shadow: 0 6px 14px rgba(31, 78, 160, 0.16);
 }
 
@@ -321,10 +559,13 @@
 .orbit-document::after {
   position: absolute;
   left: 7px;
+
   width: 14px;
   height: 3px;
+
   border-radius: 2px;
   background: #73a4ec;
+
   content: "";
 }
 
@@ -346,9 +587,12 @@
 .orbit-folder {
   width: 42px;
   height: 30px;
+
   border: 0;
   border-radius: 4px;
+
   background: #5b9cf0;
+
   box-shadow: 0 7px 15px rgba(31, 78, 160, 0.18);
 }
 
@@ -356,10 +600,13 @@
   position: absolute;
   top: -7px;
   left: 4px;
+
   width: 17px;
   height: 10px;
+
   border-radius: 4px 4px 0 0;
   background: #3978d8;
+
   content: "";
 }
 
@@ -375,22 +622,29 @@
   }
 }
 
-/* ----- Tiga fitur di bawah (selebar layar) ----- */
+/* =========================================
+   TIGA FITUR DI BAWAH
+========================================= */
+
 .features { 
   flex: 1 1 112px;
   min-height: 112px;
   background: #e8effc; 
+
   display: grid; 
   grid-template-columns: repeat(3, 1fr); 
+
   gap: clamp(16px, 2.5vw, 36px); 
   padding: clamp(16px, 2vw, 28px) clamp(32px, 5vw, 72px) 38px; 
 }
+
 .feat { 
   display: flex; 
   gap: 12px; 
   align-items: center; 
   min-width: 0;
 }
+
 .feat-ico { 
   flex-shrink: 0; 
   width: 64px; 
@@ -400,30 +654,44 @@
   display: grid; 
   place-items: center; 
 }
+
+/* Ikon fitur dokumen */
 .feat-ico-dokumen {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 27px 27px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='4' width='16' height='22' rx='2' fill='%233a78e8'/%3E%3Crect x='10' y='9' width='10' height='2' fill='white'/%3E%3Crect x='10' y='14' width='10' height='2' fill='white'/%3E%3Ccircle cx='23' cy='23' r='6' fill='%2322a06b'/%3E%3Crect x='20' y='22' width='6' height='2' fill='white'/%3E%3Crect x='22' y='20' width='2' height='6' fill='white'/%3E%3C/svg%3E");
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='7' y='4' width='16' height='22' rx='2' fill='%233a78e8'/%3E%3Crect x='10' y='9' width='10' height='2' fill='white'/%3E%3Crect x='10' y='14' width='10' height='2' fill='white'/%3E%3Ccircle cx='23' cy='23' r='6' fill='%2322a06b'/%3E%3Crect x='20' y='22' width='6' height='2' fill='white'/%3E%3Crect x='22' y='20' width='2' height='6' fill='white'/%3E%3C/svg%3E");
 }
+
+/* Ikon fitur divisi */
 .feat-ico-divisi {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 27px 27px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='11' r='5' fill='%233a78e8'/%3E%3Cpath d='M6 25C6 18 26 18 26 25Z' fill='%233a78e8'/%3E%3Ccircle cx='7' cy='13' r='3.5' fill='%237fb0f2'/%3E%3Ccircle cx='25' cy='13' r='3.5' fill='%237fb0f2'/%3E%3C/svg%3E");
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='11' r='5' fill='%233a78e8'/%3E%3Cpath d='M6 25C6 18 26 18 26 25Z' fill='%233a78e8'/%3E%3Ccircle cx='7' cy='13' r='3.5' fill='%237fb0f2'/%3E%3Ccircle cx='25' cy='13' r='3.5' fill='%237fb0f2'/%3E%3C/svg%3E");
 }
+
+/* Ikon fitur informasi */
 .feat-ico-info {
   background-position: center;
   background-repeat: no-repeat;
   background-size: 27px 27px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%233a78e8'/%3E%3Crect x='14.5' y='8' width='3' height='10' rx='1.5' fill='white'/%3E%3Ccircle cx='16' cy='22' r='2' fill='white'/%3E%3C/svg%3E");
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='12' fill='%233a78e8'/%3E%3Crect x='14.5' y='8' width='3' height='10' rx='1.5' fill='white'/%3E%3Ccircle cx='16' cy='22' r='2' fill='white'/%3E%3C/svg%3E");
 }
+
 .feat h3 { 
   margin: 0 0 4px; 
   font-size: 13px; 
   line-height: 1.25;
   color: #0a0a0f; 
 }
+
 .feat p { 
   margin: 0; 
   font-size: 12px; 
@@ -431,7 +699,10 @@
   color: #111827; 
 }
 
-/* ----- Layar optimal ----- */
+/* =========================================
+   RESPONSIVE - TABLET DAN HP
+========================================= */
+
 @media (max-width: 820px) {
   .home {
     height: auto;
@@ -481,21 +752,32 @@
     position: relative;
     top: auto;
     left: auto;
+
     width: min(380px, 100%);
     max-width: 380px;
+
     opacity: 0.24;
     transform: none;
   }
 
+  /* Kotak informasi mengikuti tinggi kontennya di layar kecil */
   .home-public-info {
     position: relative;
     z-index: 2;
+
     top: auto;
     right: auto;
+
     width: 100%;
     height: auto;
-    min-height: 260px;
+    min-height: 0;
+    max-height: none;
+
     margin-top: 16px;
+  }
+
+  .home-public-list {
+    max-height: 260px;
   }
 
   .features {
@@ -504,6 +786,10 @@
     padding: 20px;
   }
 }
+
+/* =========================================
+   RESPONSIVE - HP KECIL
+========================================= */
 
 @media (max-width: 420px) {
   .home > .site-footer {
@@ -527,4 +813,53 @@
   .home-public-info h2 {
     font-size: 24px;
   }
+}
+
+/* =========================================
+   IKON FILE INFORMASI UMUM - LANDING PAGE
+========================================= */
+
+.home-public-document-icon {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* PDF */
+.home-public-document-icon.pdf {
+  color: #dc4545;
+  background: #fff0f0;
+}
+
+/* Word */
+.home-public-document-icon.word {
+  color: #2672c9;
+  background: #edf5ff;
+}
+
+/* Excel */
+.home-public-document-icon.excel {
+  color: #21865a;
+  background: #eaf8f0;
+}
+
+/* File lainnya */
+.home-public-document-icon.other {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+/* Efek hover ikon dokumen */
+.home-public-document:hover .home-public-document-icon {
+  transform: translateY(-2px);
 }
