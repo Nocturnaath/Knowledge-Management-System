@@ -37,7 +37,7 @@
   max-width: 925px;
   margin: 0 auto;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 10px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(15, 40, 100, 0.12);
 }

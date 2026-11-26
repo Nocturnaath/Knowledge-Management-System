@@ -5,7 +5,8 @@ import {
   FileText,
   FileSpreadsheet,
   File,
-  FileType
+  FileType,
+  Search
 } from 'lucide-react';
 import { API_URL } from '../config';
 import { useAuth } from '../context/AuthContext';
@@ -284,13 +285,16 @@ export default function Home() {
               )}
             </div>
 
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Cari Judul Dokumen"
-              aria-label="Cari judul dokumen"
-            />
+            <label className="home-public-search">
+              <Search size={19} strokeWidth={1.8} aria-hidden="true" />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Cari Judul Dokumen"
+                aria-label="Cari judul dokumen"
+              />
+            </label>
           </section>
         </div>
       </main>

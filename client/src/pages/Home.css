@@ -129,7 +129,7 @@
   background: #0f5bd8; 
   color: #fff; 
   border: 0; 
-  border-radius: 8px; 
+  border-radius: 10px; 
   padding: 12px 28px; 
   min-width: 120px;
   font-size: 16px; 
@@ -194,7 +194,7 @@
   padding: 22px 18px 18px;
 
   border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 18px;
+  border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.82);
 
@@ -222,37 +222,60 @@
   font-size: 12px;
 }
 
-/* Kolom pencarian */
-.home-public-info > input {
-  position: static;
+/* Search bar publik mengikuti gaya kontrol pencarian di halaman internal. */
+.home-public-search {
+  display: flex;
   flex-shrink: 0;
-
-  display: block;
+  align-items: center;
+  gap: 11px;
   width: 100%;
+  height: 54px;
   box-sizing: border-box;
-
   margin-top: 12px;
-  padding: 9px 14px;
-
-  border: 0;
-  border-color: transparent;
-  outline: 0;
-  box-shadow: none;
-
-  appearance: none;
-  -webkit-appearance: none;
-
-  border-radius: 6px;
-  background: #0f5bd8;
-  color: #fff;
-
-  font: inherit;
-  font-size: 16px;
-  font-weight: 700;
+  padding: 0 15px;
+  border: 1px solid #cbd8eb;
+  border-radius: 10px;
+  background: #fafdff;
+  color: #718096;
+  box-shadow: 0 3px 10px rgba(31, 65, 115, 0.08), 0 1px 3px rgba(31, 65, 115, 0.04);
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
-.home-public-info > input::placeholder {
-  color: #fff;
+.home-public-search:hover {
+  border-color: #b5c9e8;
+  background: #f7fbff;
+  box-shadow: 0 5px 14px rgba(31, 65, 115, 0.09), 0 2px 4px rgba(31, 65, 115, 0.04);
+}
+
+.home-public-search:focus-within {
+  border-color: #80a9e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.09), 0 4px 12px rgba(31, 65, 115, 0.08);
+}
+
+.home-public-search svg {
+  flex: 0 0 auto;
+  color: #718096;
+}
+
+.home-public-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #25364d;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.home-public-search input::placeholder {
+  color: #8997aa;
   opacity: 1;
 }
 
@@ -384,7 +407,7 @@
 
 .home-preview-modal header button {
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: 10px;
   background: #fff;
   padding: 6px 10px;
   cursor: pointer;
@@ -429,7 +452,7 @@
   padding: 9px 16px;
 
   border: 0;
-  border-radius: 7px;
+  border-radius: 10px;
 
   background: #0f5bd8;
   color: #fff;
@@ -451,7 +474,7 @@
 
 .home-public-category {
   margin-bottom: 8px;
-  border-radius: 6px;
+  border-radius: 10px;
   background: #fff;
   box-shadow: 0 2px 6px rgba(15, 40, 100, 0.1);
 }
@@ -485,7 +508,7 @@
   gap: 3px;
 
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 10px;
 
   color: #111827;
   text-decoration: none;
@@ -723,6 +746,11 @@
     gap: 12px;
   }
 
+  .home-public-search {
+    height: 49px;
+    padding: 0 15px;
+  }
+
   .hero-art-wrap {
     position: relative;
     inset: auto;
@@ -828,7 +856,7 @@
   align-items: center;
   justify-content: center;
 
-  border-radius: 11px;
+  border-radius: 10px;
 
   transition:
     transform 0.2s ease,

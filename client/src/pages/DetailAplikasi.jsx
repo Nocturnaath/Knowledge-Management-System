@@ -153,7 +153,7 @@ export default function DetailAplikasi() {
             <small>{document.category} · {document.fileName}</small>
             {document.tags?.length > 0 && <small className="detail-document-tags">{document.tags.join(' ')}</small>}
           </div>
-          <button type="button" onClick={() => openPreview(document)}>Lihat</button>
+          <button className="view-action" type="button" onClick={() => openPreview(document)}>Lihat</button>
         </li>
       ))}
     </ul>

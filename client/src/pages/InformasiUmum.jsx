@@ -1,6 +1,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
-import { FileText, FileSpreadsheet, File, FileType } from 'lucide-react';
+import { FileText, FileSpreadsheet, File, FileType, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './InformasiUmum.css';
@@ -227,8 +227,9 @@ export default function InformasiUmum() {
       </div>
 
       <div className="iu-cari">
+        <Search className="iu-cari-icon" size={19} strokeWidth={1.8} aria-hidden="true" />
         <input
-          type="text"
+          type="search"
           placeholder="Cari judul atau isi dokumen"
           aria-label="Cari judul atau isi dokumen"
           value={cari}
@@ -242,16 +243,29 @@ export default function InformasiUmum() {
         aria-label="Kategori informasi umum"
       >
         {kategori.map((nama) => (
-          <button
+          <motion.button
             key={nama}
             type="button"
             role="tab"
             aria-selected={tab === nama}
             className={tab === nama ? 'aktif' : ''}
             onClick={() => setTab(nama)}
+            whileHover={{ y: -1 }}
+            whileTap={{ scale: 0.98 }}
           >
-            {nama}
-          </button>
+            {tab === nama && (
+              <motion.span
+                className="iu-tab-indicator"
+                layoutId="iu-tab-indicator"
+                transition={{
+                  type: 'spring',
+                  stiffness: 380,
+                  damping: 30,
+                }}
+              />
+            )}
+            <span className="iu-tab-label">{nama}</span>
+          </motion.button>
         ))}
       </div>
 

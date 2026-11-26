@@ -352,6 +352,7 @@ router.get('/divisi', verifyToken, async (req, res) => {
         d.file_name AS fileName,
         d.stored_file_name AS storedFileName,
         d.category,
+        d.tags,
         d.status,
         d.extracted_text AS extractedText,
         d.created_at AS createdAt,

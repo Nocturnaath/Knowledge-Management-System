@@ -32,7 +32,7 @@
   margin: 0 auto;
   background: #fff;
   border: 2px solid #bdbdbd;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -159,7 +159,7 @@
   max-width: 700px;
   margin: 0 auto 12px;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 14px;
   line-height: 1.4;
 }

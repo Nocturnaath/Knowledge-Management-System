@@ -77,7 +77,7 @@
 
   color: #fff;
   text-decoration: none;
-  border-radius: 7px;
+  border-radius: 10px;
 
   transition: background-color 0.18s ease;
 }
@@ -167,7 +167,7 @@
   padding: 8px 11px;
 
   border: 0;
-  border-radius: 7px;
+  border-radius: 10px;
   background: transparent;
   color: #fff;
 
@@ -235,7 +235,7 @@
   padding: 0 11px;
 
   border: 0;
-  border-radius: 7px;
+  border-radius: 10px;
   background: transparent;
   color: #fff;
 
@@ -286,6 +286,17 @@
   border: 3px solid #eef2f8;
   border-radius: 8px;
   background: #c6cbd3;
+}
+
+/* Dokumen Saya menggulirkan daftar di dalam tabel, bukan seluruh halaman. */
+.app-layout .app-main:has(.dokumen-saya) {
+  overflow-y: hidden;
+}
+
+.app-layout .app-main:has(.dokumen-saya) .app-content {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 /* ========================================
@@ -576,5 +587,127 @@
   height: min(480px, calc(100vh - 220px));
   min-height: 220px;
   box-sizing: border-box;
-  border-radius: 4px;
+  border-radius: 10px;
+}
+
+/* Search bar internal memakai ukuran dan tipografi Dokumen Saya. */
+.app-layout .app-main .document-search,
+.app-layout .app-main .division-search,
+.app-layout .app-main .iu-cari,
+.app-layout .app-main .apl-cari,
+.app-layout .app-main .ps-cari,
+.app-layout .app-main .ha-search {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  height: 54px;
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 0 23px;
+  border: 1px solid #cbd8eb;
+  border-radius: 10px;
+  background: #fafdff;
+  color: #718096;
+  box-shadow: 0 3px 10px rgba(31, 65, 115, 0.08), 0 1px 3px rgba(31, 65, 115, 0.04);
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.app-layout .app-main .document-search:hover,
+.app-layout .app-main .division-search:hover,
+.app-layout .app-main .iu-cari:hover,
+.app-layout .app-main .apl-cari:hover,
+.app-layout .app-main .ps-cari:hover,
+.app-layout .app-main .ha-search:hover {
+  border-color: #b5c9e8;
+  background: #f7fbff;
+  box-shadow: 0 5px 14px rgba(31, 65, 115, 0.09), 0 2px 4px rgba(31, 65, 115, 0.04);
+}
+
+.app-layout .app-main .document-search:focus-within,
+.app-layout .app-main .division-search:focus-within,
+.app-layout .app-main .iu-cari:focus-within,
+.app-layout .app-main .apl-cari:focus-within,
+.app-layout .app-main .ps-cari:focus-within,
+.app-layout .app-main .ha-search:focus-within {
+  border-color: #80a9e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.09), 0 4px 12px rgba(31, 65, 115, 0.08);
+}
+
+.app-layout .app-main .document-search-icon,
+.app-layout .app-main .division-search-icon,
+.app-layout .app-main .iu-cari-icon,
+.app-layout .app-main .apl-cari > svg,
+.app-layout .app-main .ps-search-icon,
+.app-layout .app-main .ha-search > svg {
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+  color: #718096;
+  stroke-width: 1.8;
+}
+
+.app-layout .app-main .document-search input,
+.app-layout .app-main .division-search input,
+.app-layout .app-main .iu-cari input,
+.app-layout .app-main .apl-cari input,
+.app-layout .app-main .ps-cari input,
+.app-layout .app-main .ha-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #25364d;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.app-layout .app-main .document-search input::placeholder,
+.app-layout .app-main .division-search input::placeholder,
+.app-layout .app-main .iu-cari input::placeholder,
+.app-layout .app-main .apl-cari input::placeholder,
+.app-layout .app-main .ps-cari input::placeholder,
+.app-layout .app-main .ha-search input::placeholder {
+  color: #8997aa;
+  opacity: 1;
+}
+
+.app-layout .app-main .division-toolbar {
+  gap: 10px;
+}
+
+/* Warna teks tombol lihat diseragamkan tanpa mengubah warna box tombol. */
+.app-layout .app-main button.view-action {
+  color: #000080;
+}
+
+.app-layout .app-main button.view-action:hover {
+  color: #000080;
+}
+
+@media (max-width: 700px) {
+  .app-layout .app-main .document-search,
+  .app-layout .app-main .division-search,
+  .app-layout .app-main .iu-cari,
+  .app-layout .app-main .apl-cari,
+  .app-layout .app-main .ps-cari,
+  .app-layout .app-main .ha-search {
+    height: 49px;
+    min-height: 49px;
+    padding: 0 15px;
+  }
+
+  .home-public-search {
+    height: 49px;
+    padding: 0 15px;
+  }
 }

@@ -18,68 +18,52 @@ import { sanitizePreviewHtml } from '../utils/sanitizePreviewHtml';
 
 const statusLabels = {
   approved: 'Disetujui',
-  pending: 'Menunggu',
+  pending: 'Menunggu Persetujuan',
   rejected: 'Ditolak',
 };
 
 // Mengambil ekstensi file.
 function extensionOf(document) {
-  return document.fileName?.split('.').pop()?.toLowerCase() || '';
+  const fileName = document.fileName || document.storedFileName || '';
+  return fileName.split('.').pop()?.toLowerCase() || '';
 }
 
 // Menentukan ikon berdasarkan jenis file.
 function DocumentFileIcon({ document }) {
   const extension = extensionOf(document);
+  let Icon = File;
+  let type = 'default';
 
   if (['xls', 'xlsx', 'csv'].includes(extension)) {
-    return (
-      <FileSpreadsheet
-        className="division-file-icon spreadsheet"
-        size={21}
-        aria-label="File spreadsheet"
-      />
-    );
-  }
-
-  if (['ppt', 'pptx'].includes(extension)) {
-    return (
-      <Presentation
-        className="division-file-icon presentation"
-        size={21}
-        aria-label="File presentasi"
-      />
-    );
-  }
-
-  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension)) {
-    return (
-      <FileImage
-        className="division-file-icon image"
-        size={21}
-        aria-label="File gambar"
-      />
-    );
-  }
-
-  if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension)) {
-    return (
-      <FileText
-        className={`division-file-icon ${
-          extension === 'pdf' ? 'pdf' : 'document'
-        }`}
-        size={21}
-        aria-label={`File ${extension.toUpperCase()}`}
-      />
-    );
+    Icon = FileSpreadsheet;
+    type = 'spreadsheet';
+  } else if (['ppt', 'pptx'].includes(extension)) {
+    Icon = Presentation;
+    type = 'presentation';
+  } else if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension)) {
+    Icon = FileImage;
+    type = 'image';
+  } else if (['pdf', 'doc', 'docx', 'txt', 'rtf'].includes(extension)) {
+    Icon = FileText;
+    type = extension === 'pdf' ? 'pdf' : 'document';
   }
 
   return (
-    <File
-      className="division-file-icon default"
-      size={21}
-      aria-label="File"
-    />
+    <span className={`division-file-icon ${type}`} aria-hidden="true">
+      <Icon size={22} strokeWidth={1.8} />
+    </span>
   );
+}
+
+function formatDivisionDate(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  return date.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 }
 
 export default function DokumenDivisi() {
@@ -88,6 +72,7 @@ export default function DokumenDivisi() {
   const [documents, setDocuments] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Kategori');
+  const [selectedTag, setSelectedTag] = useState('');
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [preview, setPreview] = useState(null);
   const [versions, setVersions] = useState([]);
@@ -131,16 +116,19 @@ export default function DokumenDivisi() {
   const visibleDocuments = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase('id-ID');
 
-    return documents.filter((document) =>
-      (selectedCategory === 'Kategori' ||
-        document.category === selectedCategory) &&
-      `${document.name} ${document.category || ''} ${
+    return documents.filter((document) => {
+      const matchesCategory = selectedCategory === 'Kategori'
+        || document.category === selectedCategory;
+      const matchesSearch = `${document.name} ${document.category || ''} ${
         document.description || ''
-      } ${document.extractedText || ''}`
+      } ${(document.tags || []).join(' ')} ${document.extractedText || ''}`
         .toLocaleLowerCase('id-ID')
-        .includes(query)
-    );
-  }, [documents, searchQuery, selectedCategory]);
+        .includes(query);
+      const matchesTag = !selectedTag || (document.tags || []).includes(selectedTag);
+
+      return matchesCategory && matchesSearch && matchesTag;
+    });
+  }, [documents, searchQuery, selectedCategory, selectedTag]);
 
   // Membuka pratinjau dan mengambil riwayat versi dokumen.
   const openPreview = async (document) => {
@@ -275,6 +263,16 @@ export default function DokumenDivisi() {
         />
       </div>
 
+      {selectedTag && (
+        <div className="division-tag-filter" role="status">
+          Menampilkan <strong>{visibleDocuments.length}</strong> dokumen dengan tag{' '}
+          <strong>{selectedTag}</strong>
+          <button type="button" onClick={() => setSelectedTag('')}>
+            Hapus filter
+          </button>
+        </div>
+      )}
+
       {/* Panel daftar dokumen */}
       <section
         className="division-table-card"
@@ -314,7 +312,7 @@ export default function DokumenDivisi() {
                         <div className="division-document-info">
                           <DocumentFileIcon document={document} />
 
-                          <span title={document.name}>
+                          <span className="division-document-title" title={document.name}>
                             {document.name}
                           </span>
                         </div>
@@ -322,12 +320,27 @@ export default function DokumenDivisi() {
 
                       <td>{document.uploader}</td>
 
-                      <td>{document.category}</td>
+                      <td className="division-category-cell">
+                        <div>{document.category || 'Lainnya'}</div>
+                        {document.tags?.length > 0 && (
+                          <div className={`division-tags ${document.tags.length === 1 ? 'single' : 'multiple'}`}>
+                            {document.tags.map((tag) => (
+                              <button
+                                className={`division-tag ${selectedTag === tag ? 'active' : ''}`}
+                                key={tag}
+                                type="button"
+                                onClick={() => setSelectedTag(selectedTag === tag ? '' : tag)}
+                                title={`Tampilkan dokumen dengan tag ${tag}`}
+                              >
+                                {tag.startsWith('#') ? tag : `#${tag}`}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </td>
 
                       <td>
-                        {new Date(document.createdAt).toLocaleDateString(
-                          'id-ID'
-                        )}
+                        {formatDivisionDate(document.createdAt)}
                       </td>
 
                       <td>
@@ -340,6 +353,7 @@ export default function DokumenDivisi() {
 
                       <td>
                         <button
+                          className="view-action"
                           type="button"
                           onClick={() => openPreview(document)}
                         >

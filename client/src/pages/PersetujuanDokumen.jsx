@@ -611,7 +611,7 @@ export default function PersetujuanDokumen() {
 
                 <button
                   type="button"
-                  className="ps-view-file"
+                  className="ps-view-file view-action"
                   onClick={() => openPreview(selectedDocument)}
                 >
                   Lihat Dokumen

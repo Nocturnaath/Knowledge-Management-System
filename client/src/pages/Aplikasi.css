@@ -44,70 +44,164 @@
 .apl-cari,
 .apl-select {
     background: #fff;
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
 }
 
 .apl-cari {
+    display: flex;
+    align-items: center;
+    gap: 11px;
     flex: 1;
     min-width: 0;
+    height: 54px;
+    box-sizing: border-box;
+    padding: 0 23px;
+    border: 1px solid #cbd8eb;
+    background: #fafdff;
+    color: #718096;
+    box-shadow: 0 3px 10px rgba(31, 65, 115, 0.08), 0 1px 3px rgba(31, 65, 115, 0.04);
+    transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.apl-cari:hover {
+    border-color: #b5c9e8;
+    background: #f7fbff;
+    box-shadow: 0 5px 14px rgba(31, 65, 115, 0.09), 0 2px 4px rgba(31, 65, 115, 0.04);
+}
+
+.apl-cari:focus-within {
+    border-color: #80a9e5;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.09), 0 4px 12px rgba(31, 65, 115, 0.08);
+}
+
+.apl-cari svg {
+    flex: 0 0 auto;
+    color: #718096;
 }
 
 .apl-cari input {
     width: 100%;
-    height: 54px;
-    padding: 0 36px;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
     border: 0;
-    border-radius: 4px;
     background: transparent;
-    color: #111827;
+    color: #25364d;
     font-family: inherit;
-    font-size: 13px;
     outline: none;
+    box-shadow: none;
+    appearance: none;
 }
 
 .apl-cari input::placeholder {
-    color: #6b7280;
+    color: #8997aa;
 }
 
 .apl-select {
     position: relative;
     width: 335px;
     max-width: 45%;
+    flex: 0 0 335px;
 }
 
-.apl-select select {
+.apl-select-toggle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     width: 100%;
     height: 54px;
     padding: 0 44px 0 24px;
     border: 0;
-    border-radius: 12px;
-    background: transparent;
+    border-radius: 10px;
+    background: #fff;
     color: #374151;
-    font-family: inherit;
-    font-size: 17px;
-    appearance: none;
+    font: inherit;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
     cursor: pointer;
     outline: none;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.08);
+    transition: color 180ms ease, box-shadow 180ms ease, background 180ms ease;
 }
 
-.apl-select svg {
+.apl-select-toggle:hover,
+.apl-select-toggle.open {
+    color: #1d62c9;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.12);
+}
+
+.apl-select-chevron {
     position: absolute;
     right: 18px;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+    color: #667085;
+    transition: transform 180ms ease;
+}
+
+.apl-select-toggle.open .apl-select-chevron {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.apl-select-options {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    z-index: 4;
+    width: 100%;
+    max-height: 360px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    padding: 6px;
+    border: 1px solid #e7edf5;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(37, 99, 235, 0.14);
+    scrollbar-width: thin;
+    scrollbar-color: #cbd8e8 transparent;
+}
+
+.apl-select-options button {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
     color: #374151;
+    text-align: left;
+    font: inherit;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease;
+}
+
+.apl-select-options button:hover,
+.apl-select-options button.selected {
+    background: #edf5ff;
+    color: #1d62c9;
+}
+
+.apl-select-toggle:focus-visible,
+.apl-select-options button:focus-visible {
+    outline: 3px solid #7eb4ff;
+    outline-offset: 2px;
 }
 
 /* Kotak info biru */
 .apl-info {
     margin: 12px 0 22px;
-    padding: 10px 42px;
-    border-radius: 2px;
+    padding: 10px 24px;
+    border-radius: 10px;
     background: #dbe7fb;
     color: #1a3b9c;
     font-size: 14px;
+    text-align: left;
 }
 
 /* Daftar kartu */
@@ -123,7 +217,7 @@
     min-height: 165px;
     padding: 16px;
     border: 1px solid #d9dde6;
-    border-radius: 4px;
+    border-radius: 10px;
     background: #fff;
     transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
@@ -259,6 +353,7 @@
     .apl-select {
         width: 100%;
         max-width: none;
+        flex-basis: auto;
     }
 
     .apl-info {

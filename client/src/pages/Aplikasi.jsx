@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../config';
 import './Aplikasi.css';
@@ -13,8 +13,30 @@ export default function Aplikasi() {
   const [lihatSemua, setLihatSemua] = useState(true);
   const [cari, setCari] = useState('');
   const [rumpunDipilih, setRumpunDipilih] = useState('semua');
+  const [rumpunTerbuka, setRumpunTerbuka] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const rumpunFilterRef = useRef(null);
+
+  useEffect(() => {
+    if (!rumpunTerbuka) return undefined;
+
+    const tutupDiLuar = (event) => {
+      if (rumpunFilterRef.current && !rumpunFilterRef.current.contains(event.target)) {
+        setRumpunTerbuka(false);
+      }
+    };
+    const tutupDenganEscape = (event) => {
+      if (event.key === 'Escape') setRumpunTerbuka(false);
+    };
+
+    document.addEventListener('mousedown', tutupDiLuar);
+    document.addEventListener('keydown', tutupDenganEscape);
+    return () => {
+      document.removeEventListener('mousedown', tutupDiLuar);
+      document.removeEventListener('keydown', tutupDenganEscape);
+    };
+  }, [rumpunTerbuka]);
 
   // Ambil daftar aplikasi (sudah disaring server sesuai divisi pengguna)
   useEffect(() => {
@@ -84,6 +106,7 @@ export default function Aplikasi() {
 
       <div className="apl-filter">
         <div className="apl-cari">
+          <Search size={19} strokeWidth={1.8} aria-hidden="true" />
           <input
             type="text"
             placeholder="Cari Nama Aplikasi"
@@ -95,18 +118,40 @@ export default function Aplikasi() {
 
         {/* Dropdown rumpun tampil jika ada rumpun yang tersedia */}
         {rumpunTersedia.length > 0 && (
-          <div className="apl-select">
-            <select
+          <div className="apl-select" ref={rumpunFilterRef}>
+            <button
+              className={`apl-select-toggle${rumpunTerbuka ? ' open' : ''}`}
+              type="button"
               aria-label="Filter rumpun aplikasi"
-              value={rumpunDipilih}
-              onChange={(e) => setRumpunDipilih(e.target.value)}
+              aria-expanded={rumpunTerbuka}
+              aria-controls="apl-rumpun-options"
+              onClick={() => setRumpunTerbuka((open) => !open)}
             >
-              <option value="semua">Rumpun Aplikasi (Semua)</option>
-              {rumpunTersedia.map((r) => (
-                <option key={r.id} value={String(r.id)}>{r.nama}</option>
-              ))}
-            </select>
-            <ChevronDown size={20} />
+              <span>{rumpunDipilih === 'semua'
+                ? 'Rumpun Aplikasi (Semua)'
+                : rumpunTersedia.find((r) => String(r.id) === rumpunDipilih)?.nama}</span>
+              <ChevronDown className="apl-select-chevron" size={18} aria-hidden="true" />
+            </button>
+            {rumpunTerbuka && (
+              <div className="apl-select-options" id="apl-rumpun-options" role="group" aria-label="Pilih rumpun aplikasi">
+                {[
+                  { id: 'semua', nama: 'Rumpun Aplikasi (Semua)' },
+                  ...rumpunTersedia.map((rumpun) => ({ id: String(rumpun.id), nama: rumpun.nama }))
+                ].map((rumpun) => (
+                  <button
+                    className={rumpunDipilih === String(rumpun.id) ? 'selected' : ''}
+                    key={rumpun.id}
+                    type="button"
+                    onClick={() => {
+                      setRumpunDipilih(String(rumpun.id));
+                      setRumpunTerbuka(false);
+                    }}
+                  >
+                    {rumpun.nama}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

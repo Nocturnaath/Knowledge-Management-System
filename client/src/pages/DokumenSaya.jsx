@@ -726,6 +726,7 @@ export default function DokumenSaya() {
 
                               <td className="document-actions">
                                 <button
+                                  className="view-action"
                                   type="button"
                                   onClick={() =>
                                     openPreview(document)
